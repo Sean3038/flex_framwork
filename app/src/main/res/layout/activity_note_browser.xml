@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.ffes.flex_framwork.noteview.widget.HackyViewPager
+        android:id="@+id/notestage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.example.ffes.flex_framwork.noteview.widget.HackyViewPager>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/pageindicator"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/currentpage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/pageIndicatorColor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textColor="@color/pageIndicatorColor" />
+
+        <TextView
+            android:id="@+id/totalpage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/pageIndicatorColor" />
+
+    </LinearLayout>
+
+    <com.example.ffes.flex_framwork.noteview.widget.SupplyView
+        android:id="@+id/supplyview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"></com.example.ffes.flex_framwork.noteview.widget.SupplyView>
+
+
+</RelativeLayout>
