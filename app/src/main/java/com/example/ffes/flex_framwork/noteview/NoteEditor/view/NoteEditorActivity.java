@@ -2,9 +2,6 @@ package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
 import android.content.Intent;
 import android.database.DataSetObserver;
-import android.graphics.Color;
-import android.graphics.RectF;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -26,12 +23,16 @@ import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.PageListAdapter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPresenter;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.PageContent;
+import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.example.ffes.flex_framwork.noteview.widget.UnderlinedTextView;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +73,7 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     String noteUrl;
 
+    PageStateModel stateModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +89,9 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         initToolBar();
         initAdapter();
         init();
-        presenter=new NoteEidtorPresenter(this, NoteRepository.getInstance());
-        presenter.loadData(null);
+
+        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),stateModel);
+        presenter.loadData("sdf4K5df6a");
     }
 
     @Override
@@ -142,7 +145,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
             @Override
             public void onPageSelected(int position) {
-                setPageState(position+1,noteViewAdapter.getCount());
+                stateModel.setCurrentPage(position+1);
+                setPageState(stateModel.getCurrentPage(),stateModel.getTotalPage());
             }
 
             @Override
@@ -185,6 +189,10 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         noteViewAdapter=new NoteViewAdapter(this,this);
         pageListAdapter=new PageListAdapter(this);
         pageListAdapter.setListener(this);
+
+        stateModel=new PageStateModel();
+        stateModel.addModel(pageListAdapter);
+        stateModel.addModel(noteViewAdapter);
     }
 
     private void initToolBar(){
@@ -194,7 +202,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.getTitleDetail(null);
+                presenter.getTitleDetail("sdf4K5df6a");
+                Toast.makeText(v.getContext(),"click", Toast.LENGTH_SHORT).show();
             }
         });
         save_btn.setOnClickListener(new View.OnClickListener() {
@@ -208,7 +217,7 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         supply_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openSupplyEdit();
+
             }
         });
     }
@@ -227,8 +236,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         editor_layout.setVisibility(View.GONE);
     }
 
-    public void openSupplyEdit(){
-        supplyEditorFragment = SupplyEditorFragment.newInstance("dsaf",noteViewAdapter.get(content.getCurrentItem()).getPage());
+    public void openSupplyEdit(int page){
+        supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",page);
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction ft=fragmentManager.beginTransaction();
         ft.replace(R.id.supplyfragment,supplyEditorFragment,"SupplyFragment");
@@ -284,31 +293,31 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
     }
 
     @Override
-    public void setNoteMenu(List<PageContent> pageContents) {
-        noteViewAdapter.setPageList(pageContents);
-        pageListAdapter.setPageList(pageContents);
+    public void setNoteMenu(List<String> pageurl) {
+        noteViewAdapter.setPageList(pageurl);
+        pageListAdapter.setPageList(pageurl);
     }
 
     @Override
-    public void setTitleDetail(String title, int color) {
+    public void setTitleDetail(String title,int color) {
         this.title.setText(title);
         this.title.setUnderLineColor(color);
     }
 
     @Override
     public void onConfirm(String title, int color) {
-        setTitleDetail(title,color);
+        presenter.updataTitleDetail("sdf4K5df6a",title,color);
     }
 
     @Override
     public void onSelect(int position) {
+        stateModel.setCurrentPage(position+1);
         content.setCurrentItem(position);
         currentpage.setText((position+1)+"");
     }
 
     @Override
-    public void onDelete(int page,int position) {
-        presenter.removePage(null,page);
-        noteViewAdapter.remove(position);
+    public void onDelete(int position) {
+        stateModel.remove(position);
     }
 }

@@ -16,10 +16,14 @@ import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyWordAdapter;
+import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteShowContract;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageContentModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteShowPresenter;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.widget.NoteView;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import org.w3c.dom.Text;
 
@@ -75,7 +79,7 @@ public class NoteFragment extends Fragment implements NoteShowContract.View, Key
         keyWordAdapter.setDeleteKeyClick(this);
         keyWordAdapter.setKeyClick(this);
         noteView.setAddNoteListener(this);
-        presenter=new NoteShowPresenter(this);
+        presenter=new NoteShowPresenter(this,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
 
         addkeynotify.setVisibility(View.GONE);
     }

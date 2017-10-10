@@ -13,8 +13,11 @@ import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.NotePageAdapter;
+import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.KeyEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.KeyEditorPresenter;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -71,16 +74,14 @@ public class KeyEditorFragment extends Fragment implements KeyEditorContract.Vie
         adapter.setEdit(true);
         viewpager.setAdapter(adapter);
         viewpager.addOnPageChangeListener(adapter);
-
-
-
     }
+
     @Override
     public void showAddKeyDialog() {
         AddKeyDialogFragment dialogFragment=AddKeyDialogFragment.newInstance(new AddKeyDialogFragment.OnConfirmListener() {
             @Override
             public void onConfirm(String key) {
-                adapter.addKey(key);
+                presenter.clickAdd();
             }
         });
         dialogFragment.show(getFragmentManager(),"AddKeyDialogFragment");
@@ -89,7 +90,7 @@ public class KeyEditorFragment extends Fragment implements KeyEditorContract.Vie
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter=new KeyEditorPresenter(this);
+        presenter=new KeyEditorPresenter(this,new NoteRepository(FirebaseDatabase.getInstance(),FirebaseStorage.getInstance()));
     }
 
     @Override

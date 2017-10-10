@@ -7,26 +7,26 @@ import java.util.List;
  */
 
 public class Page {
-    PageContent pageContent;
+    String pagenoteurl;
     List<Supply> supplyLiist;
     List<KeyWord> keyWordList;
     List<QA> qaList;
 
     public Page(){}
 
-    public Page(PageContent pageContent,List<Supply> supply,List<KeyWord> keyWordList,List<QA> qaList){
-        this.pageContent=pageContent;
+    public Page(String pagenoteurl,List<Supply> supply,List<KeyWord> keyWordList,List<QA> qaList){
+        this.pagenoteurl=pagenoteurl;
         this.keyWordList=keyWordList;
         this.supplyLiist=supply;
         this.qaList=qaList;
     }
 
-    public void setPageContent(PageContent pageContent) {
-        this.pageContent = pageContent;
+    public void setPageContent(String pagenoteurl) {
+        this.pagenoteurl = pagenoteurl;
     }
 
-    public PageContent getPageContent() {
-        return pageContent;
+    public String getPageNoteUrl() {
+        return pagenoteurl;
     }
 
     public void setKeyWordList(List<KeyWord> keyWordList) {

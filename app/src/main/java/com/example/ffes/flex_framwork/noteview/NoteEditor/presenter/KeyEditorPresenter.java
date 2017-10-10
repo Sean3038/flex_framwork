@@ -1,13 +1,10 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.util.NoteDecomposeUtil;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.KeyEditorContract;
-import com.example.ffes.flex_framwork.noteview.data.Note;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
+import java.util.List;
 
 /**
  * Created by Ffes on 2017/9/25.
@@ -16,25 +13,25 @@ import io.reactivex.schedulers.Schedulers;
 public class KeyEditorPresenter implements KeyEditorContract.Presenter {
 
     KeyEditorContract.View view;
-    NoteRepository repository;
+    KeyEditorModel model;
 
-    public KeyEditorPresenter(KeyEditorContract.View view){
+    public KeyEditorPresenter(KeyEditorContract.View view, KeyEditorModel model){
         this.view=view;
-        repository= NoteRepository.getInstance();
+        this.model=model;
     }
 
     @Override
     public void loadData(String noteUrl) {
-        repository.getNote(noteUrl)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<Note>() {
-                    @Override
-                    public void accept(Note note) throws Exception {
-                        view.setNoteList(NoteDecomposeUtil.getPageList(note));
-                    }
-                });
-        ;
+        model.getShowPages(noteUrl, new OnGetDataCallBack<List<Integer>>() {
+            @Override
+            public void onSuccess(List<Integer> pages) {
+                view.setNoteList(pages);
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
     }
 
     @Override

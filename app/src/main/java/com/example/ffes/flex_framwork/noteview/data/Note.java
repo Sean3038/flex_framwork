@@ -10,20 +10,18 @@ public class Note{
     String id;
     List<Page> pagesList;
     String coverUrl;
-    String title;
-    String color;
+    TitleDetail titleDetail;
     String authorID;
     String createdAt;
     String updatedAt;
 
     public Note(){}
 
-    public Note(String id,List<Page> pagesList,String coverUrl,String title,String color,String authorID,String createdAt,String updatedAt){
+    public Note(String id,List<Page> pagesList,String coverUrl,TitleDetail titleDetail,String authorID,String createdAt,String updatedAt){
         this.id=id;
         this.pagesList=pagesList;
         this.coverUrl=coverUrl;
-        this.title=title;
-        this.color=color;
+        this.titleDetail=titleDetail;
         this.authorID=authorID;
         this.createdAt=createdAt;
         this.updatedAt=updatedAt;
@@ -41,10 +39,6 @@ public class Note{
         return coverUrl;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public String getAuthorID() {
         return authorID;
     }
@@ -57,12 +51,8 @@ public class Note{
         return createdAt;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
+    public TitleDetail getTitleDetail() {
+        return titleDetail;
     }
 
     public void setCoverUrl(String coverUrl) {
@@ -77,10 +67,6 @@ public class Note{
         this.pagesList = pagesList;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public void setAuthorID(String authorID) {
         this.authorID = authorID;
     }
@@ -91,5 +77,9 @@ public class Note{
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setTitleDetail(TitleDetail titleDetail) {
+        this.titleDetail = titleDetail;
     }
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.OnImageClick;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.PageContent;
 import com.squareup.picasso.Picasso;
 
@@ -18,10 +19,10 @@ import java.util.List;
  * Created by Ffes on 2017/10/2.
  */
 
-public class NoteViewAdapter extends PagerAdapter{
+public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
 
     Context context;
-    List<PageContent> pages;
+    List<String> pages;
     OnImageClick listener;
 
     public  NoteViewAdapter(Context context,OnImageClick listener){
@@ -30,7 +31,7 @@ public class NoteViewAdapter extends PagerAdapter{
         this.listener=listener;
     }
 
-    public void setPageList(List<PageContent> pages){
+    public void setPageList(List<String> pages){
         this.pages.clear();
         this.pages.addAll(pages);
         notifyDataSetChanged();
@@ -50,24 +51,33 @@ public class NoteViewAdapter extends PagerAdapter{
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         ImageView imageView=new ImageView(context);
-        final PageContent pageContent=pages.get(position);
-        loadImage(imageView,pageContent);
+        final String pageurl=pages.get(position);
+        loadImage(imageView,pageurl);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {listener.onClickImage(pageContent.getPage());
+            public void onClick(View v) {
+                listener.onClickImage(pages.indexOf(pageurl));
             }
         });
         container.addView(imageView);
         return imageView;
     }
 
+    @Override
+    public void add(String pageurl) {
+        pages.add(pageurl);
+        notifyDataSetChanged();
+    }
+
+    @Override
     public void remove(int position){
         pages.remove(position);
         notifyDataSetChanged();
     }
 
-    public PageContent get(int position){
-        return pages.get(position);
+    @Override
+    public void setCurrentPage(int page) {
+
     }
 
     @Override
@@ -80,9 +90,9 @@ public class NoteViewAdapter extends PagerAdapter{
         return view==object;
     }
 
-    private void loadImage(ImageView imageView,PageContent pageContent){
+    private void loadImage(ImageView imageView,String pageurl){
         Picasso.with(context)
-                .load(pageContent.getPageNoteUrl())
+                .load(pageurl)
                 .resize(1500,1500)
                 .centerInside()
                 .into(imageView);

@@ -25,6 +25,8 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.SupplyEditPresenter;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.SupplyView;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -97,7 +99,7 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
             }
         });
         init();
-        presenter=new SupplyEditPresenter(this, NoteRepository.getInstance());
+        presenter=new SupplyEditPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
     }
 
     public void init(){

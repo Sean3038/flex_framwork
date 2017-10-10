@@ -23,6 +23,8 @@ import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.HackyViewPager;
 import com.example.ffes.flex_framwork.noteview.widget.LottieButton;
 import com.example.ffes.flex_framwork.noteview.widget.SupplyView;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowse
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        noteBrowserPresenter=new NoteBrowserPresenter(this, NoteRepository.getInstance());
+        noteBrowserPresenter=new NoteBrowserPresenter(this,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
     }
 
     @Override

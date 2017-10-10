@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.PageContent;
 import com.squareup.picasso.Picasso;
@@ -19,12 +20,12 @@ import java.util.List;
  * Created by Ffes on 2017/9/14.
  */
 
-public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements PageDataModel{
 
     public static final int TYPE_FOOT=1;
     public static final int TYPE_VIEW=0;
 
-    List<PageContent> list;
+    List<String> list;
     boolean isEditor;
 
     OnAddPageListener listener;
@@ -59,6 +60,22 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return list.size()+1;
     }
 
+    @Override
+    public void add(String pageurl) {
+        list.add(pageurl);
+        notifyItemInserted(getItemCount()-1);
+    }
+
+    @Override
+    public void remove(int index) {
+        list.remove(index);
+        notifyItemRemoved(index);
+    }
+
+    @Override
+    public void setCurrentPage(int page) {
+
+    }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -80,8 +97,8 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void viewBindValue(final ViewHolder vh, int position){
-        final PageContent page=list.get(position);
-        Picasso.with(vh.itemView.getContext()).load(page.getPageNoteUrl()).into(vh.pageImage);
+        final String page=list.get(position);
+        Picasso.with(vh.itemView.getContext()).load(page).into(vh.pageImage);
         if(isEditor){
             vh.delete.setVisibility(View.VISIBLE);
         }else{
@@ -96,10 +113,7 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         vh.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectItemListener.onDelete(page.getPage(),vh.getAdapterPosition());
-                list.remove(vh.getAdapterPosition());
-                notifyItemRemoved(vh.getAdapterPosition());
-                notifyDataSetChanged();
+                selectItemListener.onDelete(vh.getAdapterPosition());
             }
         });
     }
@@ -120,9 +134,9 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-    public void setPageList(List<PageContent> pageContents){
+    public void setPageList(List<String> pageurls){
         this.list.clear();
-        this.list.addAll(pageContents);
+        this.list.addAll(pageurls);
         notifyDataSetChanged();
     }
 
@@ -145,6 +159,6 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public interface OnSelectItemListener{
         void onSelect(int position);
-        void onDelete(int page,int position);
+        void onDelete(int position);
     }
 }

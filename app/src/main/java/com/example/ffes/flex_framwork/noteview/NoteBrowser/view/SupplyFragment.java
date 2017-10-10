@@ -17,6 +17,8 @@ import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyAdapter
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.SupplyShowPresenter;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
@@ -80,7 +82,7 @@ public class SupplyFragment extends Fragment implements SupplyShowContract.View{
                 recyclerView.scrollToPosition(listAdapter.getItemCount());
             }
         });
-        presenter=new SupplyShowPresenter(this, NoteRepository.getInstance());
+        presenter=new SupplyShowPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
     }
 
     @Override
