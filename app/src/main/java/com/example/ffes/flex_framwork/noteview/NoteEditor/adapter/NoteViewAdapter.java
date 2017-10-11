@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.OnImageClick;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
+import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -21,24 +23,16 @@ import java.util.List;
 public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
 
     Context context;
-    List<String> pages;
     OnImageClick listener;
-
+    PageStateModel model;
     public  NoteViewAdapter(Context context,OnImageClick listener){
         this.context=context;
-        this.pages=new ArrayList<>();
         this.listener=listener;
-    }
-
-    public void setPageList(List<String> pages){
-        this.pages.clear();
-        this.pages.addAll(pages);
-        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return pages.size();
+        return model.getTotalPage();
     }
 
     @Override
@@ -50,33 +44,16 @@ public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         ImageView imageView=new ImageView(context);
-        final String pageurl=pages.get(position);
-        loadImage(imageView,pageurl);
+        final Page page=model.getPage(position);
+        loadImage(imageView,page.getImageurl());
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClickImage(pages.indexOf(pageurl));
+                listener.onClickImage(position);
             }
         });
         container.addView(imageView);
         return imageView;
-    }
-
-    @Override
-    public void add(String pageurl) {
-        pages.add(pageurl);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void remove(int position){
-        pages.remove(position);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void setCurrentPage(int page) {
-
     }
 
     @Override
@@ -97,4 +74,28 @@ public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
                 .into(imageView);
     }
 
+    @Override
+    public void notifyAddPage() {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyRemovePage(int index) {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyCurrentPage(int page) {
+
+    }
+
+    @Override
+    public void bind(PageStateModel pageStateModel) {
+        model=pageStateModel;
+    }
+
+    @Override
+    public void unbind() {
+        model=null;
+    }
 }

@@ -9,7 +9,6 @@ import java.util.List;
 public interface NoteEditorContract {
     interface View{
         void setPageState(int currentpage,int totalpage);
-        void setNoteMenu(List<String> pageContents);
         void setTitleDetail(String title,String color);
         void showTitleEditor(String title,String color);
     }

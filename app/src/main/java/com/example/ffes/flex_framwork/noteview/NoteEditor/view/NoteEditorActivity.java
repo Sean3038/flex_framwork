@@ -25,7 +25,9 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.PageListAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModelImpl;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPresenter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.example.ffes.flex_framwork.noteview.widget.UnderlinedTextView;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,7 +36,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.List;
 
 public class NoteEditorActivity extends AppCompatActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
-        PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick{
+        PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick,PageDataModel{
 
     public static final String URL_KEY="NoteURL";
 
@@ -68,7 +70,7 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     String noteUrl;
 
-    PageStateModel stateModel;
+    PageStateModelImpl stateModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +83,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
             noteUrl=intent.getStringExtra(URL_KEY);
         }
         initUI();
-        initToolBar();
         initAdapter();
+        initToolBar();
         init();
 
         presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),stateModel);
@@ -140,29 +142,12 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
             @Override
             public void onPageSelected(int position) {
-                stateModel.setCurrentPage(position+1);
-                setPageState(stateModel.getCurrentPage(),stateModel.getTotalPage());
+                stateModel.setCurrentPage(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
-            }
-        });
-        noteViewAdapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-
-                if(noteViewAdapter.getCount()>0) {
-                    setPageState(content.getCurrentItem()+1, noteViewAdapter.getCount());
-                    supply_btn.setVisibility(View.VISIBLE);
-                    notifyNoPage.setVisibility(View.GONE);
-                }else{
-                    setPageState(0,0);
-                    supply_btn.setVisibility(View.GONE);
-                    notifyNoPage.setVisibility(View.VISIBLE);
-                }
             }
         });
         pagelistview.setAdapter(pageListAdapter);
@@ -185,7 +170,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         pageListAdapter=new PageListAdapter(this);
         pageListAdapter.setListener(this);
 
-        stateModel=new PageStateModel();
+        stateModel=new PageStateModelImpl();
+        stateModel.addModel(this);
         stateModel.addModel(pageListAdapter);
         stateModel.addModel(noteViewAdapter);
     }
@@ -294,12 +280,6 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
     }
 
     @Override
-    public void setNoteMenu(List<String> pageurl) {
-        noteViewAdapter.setPageList(pageurl);
-        pageListAdapter.setPageList(pageurl);
-    }
-
-    @Override
     public void setTitleDetail(String title,String color) {
         this.title.setText(title);
         this.title.setUnderLineColor(Color.parseColor(color));
@@ -319,6 +299,39 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     @Override
     public void onDelete(int position) {
-        stateModel.remove(position);
+        stateModel.removePage(position);
+    }
+
+    @Override
+    public void notifyAddPage() {
+        setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
+    }
+
+    @Override
+    public void notifyRemovePage(int index) {
+        if(stateModel.getTotalPage()>0) {
+            supply_btn.setVisibility(View.VISIBLE);
+            notifyNoPage.setVisibility(View.GONE);
+        }else{
+            supply_btn.setVisibility(View.GONE);
+            notifyNoPage.setVisibility(View.VISIBLE);
+        }
+        setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
+    }
+
+    @Override
+    public void notifyCurrentPage(int page) {
+        setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
+    }
+
+    @Override
+    public void bind(PageStateModel pageStateModel) {
+        setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
+    }
+
+    @Override
+    public void unbind() {
+        stateModel=null;
+        setPageState(0, 0);
     }
 }

@@ -7,6 +7,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModelImpl;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
@@ -32,7 +33,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
             @Override
             public void onSuccess(Page data) {
                 Log.d("Page",data.getImageurl());
-                stateModel.add(data);
+                stateModel.addPage(data);
             }
 
             @Override

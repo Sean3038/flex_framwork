@@ -7,7 +7,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
+import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -23,13 +25,13 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static final int TYPE_FOOT=1;
     public static final int TYPE_VIEW=0;
 
-    List<String> list;
+    PageStateModel model;
     boolean isEditor;
 
     OnAddPageListener listener;
     OnSelectItemListener selectItemListener;
+
     public PageListAdapter(OnSelectItemListener listener){
-        list=new ArrayList<>();
         isEditor=false;
         this.selectItemListener=listener;
     }
@@ -55,24 +57,32 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return list.size()+1;
+        return model.getTotalPage()+1;
     }
 
     @Override
-    public void add(String pageurl) {
-        list.add(pageurl);
-        notifyItemInserted(getItemCount()-1);
+    public void notifyAddPage() {
+        notifyItemInserted(model.getTotalPage()-1);
     }
 
     @Override
-    public void remove(int index) {
-        list.remove(index);
+    public void notifyRemovePage(int index) {
         notifyItemRemoved(index);
     }
 
     @Override
-    public void setCurrentPage(int page) {
+    public void notifyCurrentPage(int page) {
 
+    }
+
+    @Override
+    public void bind(PageStateModel pageStateModel) {
+        model=pageStateModel;
+    }
+
+    @Override
+    public void unbind() {
+        model=null;
     }
 
 
@@ -95,8 +105,8 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void viewBindValue(final ViewHolder vh, int position){
-        final String page=list.get(position);
-        Picasso.with(vh.itemView.getContext()).load(page).into(vh.pageImage);
+        final Page page=model.getPage(position);
+        Picasso.with(vh.itemView.getContext()).load(page.getImageurl()).into(vh.pageImage);
         if(isEditor){
             vh.delete.setVisibility(View.VISIBLE);
         }else{
@@ -129,12 +139,6 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void setEditor(boolean editor) {
         isEditor = editor;
-        notifyDataSetChanged();
-    }
-
-    public void setPageList(List<String> pageurls){
-        this.list.clear();
-        this.list.addAll(pageurls);
         notifyDataSetChanged();
     }
 
