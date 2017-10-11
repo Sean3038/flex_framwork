@@ -2,6 +2,8 @@ package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
 import android.content.Intent;
 import android.database.DataSetObserver;
+import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -19,23 +21,16 @@ import android.widget.Toast;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.PageListAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPresenter;
-import com.example.ffes.flex_framwork.noteview.data.KeyWord;
-import com.example.ffes.flex_framwork.noteview.data.Page;
-import com.example.ffes.flex_framwork.noteview.data.PageContent;
-import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.example.ffes.flex_framwork.noteview.widget.UnderlinedTextView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NoteEditorActivity extends AppCompatActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
@@ -222,9 +217,15 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         });
     }
 
-    public void showTitleEditor(String title,int color){
-        FragmentManager fragmentManager=getSupportFragmentManager();
-        NoteTitleDialogFragment.newInstance(title,color,this).show(fragmentManager,"dialog");
+    public void showTitleEditor(String title,String color){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("Dialog");
+        if (prev != null) {
+            ft.remove(prev);
+            Log.d("FT","Delete");
+        }
+        ft.addToBackStack(null);
+        NoteTitleDialogFragment.newInstance(title,color,this).show(ft,"Dialog");
     }
 
 
@@ -299,14 +300,14 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
     }
 
     @Override
-    public void setTitleDetail(String title,int color) {
+    public void setTitleDetail(String title,String color) {
         this.title.setText(title);
-        this.title.setUnderLineColor(color);
+        this.title.setUnderLineColor(Color.parseColor(color));
     }
 
     @Override
-    public void onConfirm(String title, int color) {
-        presenter.updataTitleDetail("sdf4K5df6a",title,color);
+    public void onConfirm(String title, String color) {
+        presenter.updateTitleDetail("sdf4K5df6a",title,color);
     }
 
     @Override

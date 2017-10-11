@@ -1,21 +1,23 @@
 package com.example.ffes.flex_framwork.noteview.data;
 
+import android.graphics.Color;
+
 /**
  * Created by Ffes on 2017/10/10.
  */
 
 public class TitleDetail {
-    int color;
+    String color;
     String title;
 
-    TitleDetail(){}
+    public TitleDetail(){}
 
-    TitleDetail(int color,String title){
+    public TitleDetail(String color, String title){
         this.color=color;
         this.title=title;
     }
 
-    public void setColor(int color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
@@ -23,7 +25,7 @@ public class TitleDetail {
         this.title = title;
     }
 
-    public int getColor() {
+    public String getColor() {
         return color;
     }
 

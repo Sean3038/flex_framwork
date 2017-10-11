@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.OnImageClick;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
-import com.example.ffes.flex_framwork.noteview.data.PageContent;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

@@ -33,7 +33,7 @@ public class PageStateModel{
     public void add(Page page){
         pagelist.add(page);
         for(PageDataModel model:models){
-            model.add(page.getPageNoteUrl());
+            model.add(page.getImageurl());
         }
         if(currentPage==0){
             currentPage=1;

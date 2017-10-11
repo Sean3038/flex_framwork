@@ -8,8 +8,6 @@ import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
-import com.example.ffes.flex_framwork.noteview.data.Page;
-import com.example.ffes.flex_framwork.noteview.data.PageContent;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

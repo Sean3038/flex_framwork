@@ -1,12 +1,16 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
 
+import android.util.Log;
+
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageContentModel;
 import com.example.ffes.flex_framwork.noteview.data.Note;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -14,6 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,29 +60,15 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     @Override
     public void getShowPages(String url, final OnGetDataCallBack<List<Integer>> callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/pagelist").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-            }
+        ref.child("note/"+url+"/pagelist").addValueEventListener(new ValueEventListener() {
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                List<Integer> pages=new ArrayList<Integer>();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Integer> pages=new ArrayList<>();
                 for(DataSnapshot childSnapshot: dataSnapshot.getChildren()){
                     pages.add(Integer.valueOf(childSnapshot.getKey()));
                 }
                 callback.onSuccess(pages);
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
@@ -111,24 +102,16 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
             @Override
             public void onSuccess(List<Integer> data) {
                 for(Integer i:data){
-                    getPageContent(url, i, new OnGetDataCallBack<Page>() {
-                        @Override
-                        public void onSuccess(Page page) {
-
-                        }
-
-                        @Override
-                        public void onFailure() {
-
-                        }
-                    });
+                    getPageContent(url, i,callBack);
                 }
+
             }
 
             @Override
             public void onFailure() {
 
             }
+
         });
     }
 
@@ -145,6 +128,18 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+    }
+
+    @Override
+    public void updateTitleDetial(String url, String title, String color, final OnUpLoadDataCallback callback) {
+        DatabaseReference ref=firebaseDatabase.getReference();
+        TitleDetail titleDetail=new TitleDetail(color,title);
+        ref.child("note/"+url+"/titledetail").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess();
             }
         });
     }

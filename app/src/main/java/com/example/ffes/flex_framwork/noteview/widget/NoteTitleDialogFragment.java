@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.widget;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -28,11 +29,11 @@ public class NoteTitleDialogFragment extends DialogFragment implements View.OnCl
     Button cancel;
     Callback callback;
 
-    public static NoteTitleDialogFragment newInstance(String title,int color,Callback callback){
+    public static NoteTitleDialogFragment newInstance(String title,String color,Callback callback){
         NoteTitleDialogFragment fragment=new NoteTitleDialogFragment();
         Bundle bundle=new Bundle();
         bundle.putString(TITLE_KEY,title);
-        bundle.putInt(COLOR_KEY,color);
+        bundle.putString(COLOR_KEY,color);
         fragment.setArguments(bundle);
         fragment.setCallback(callback);
         return fragment;
@@ -66,7 +67,7 @@ public class NoteTitleDialogFragment extends DialogFragment implements View.OnCl
     private void init(){
         Bundle bundle=getArguments();
         setTitle(bundle.getString(TITLE_KEY));
-        setCurrentColor(bundle.getInt(COLOR_KEY));
+        setCurrentColor(Color.parseColor(bundle.getString(COLOR_KEY)));
     }
 
     public void setCurrentColor(int color){
@@ -80,7 +81,7 @@ public class NoteTitleDialogFragment extends DialogFragment implements View.OnCl
     @Override
     public void onResume() {
         super.onResume();
-        setCurrentColor(getArguments().getInt(COLOR_KEY));
+        setCurrentColor(Color.parseColor(getArguments().getString(COLOR_KEY)));
     }
 
     @Override
@@ -88,7 +89,7 @@ public class NoteTitleDialogFragment extends DialogFragment implements View.OnCl
         switch (v.getId()){
             case R.id.confirm:
                 if(callback!=null){
-                    callback.onConfirm(title.getText().toString(),pickerGroup.getCurrentColor());
+                    callback.onConfirm(title.getText().toString(),String.format("#%06X", (0xFFFFFF & pickerGroup.getCurrentColor())));
                 }
                 dismiss();
                 break;
@@ -99,6 +100,6 @@ public class NoteTitleDialogFragment extends DialogFragment implements View.OnCl
     }
 
     public interface Callback{
-        void onConfirm(String title,int color);
+        void onConfirm(String title,String color);
     }
 }
