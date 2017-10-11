@@ -59,7 +59,6 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     PageListAdapter pageListAdapter;
 
-
     SupplyEditorFragment supplyEditorFragment;
     KeyEditorFragment keyEditorFragment;
     NoteViewAdapter noteViewAdapter;
@@ -201,6 +200,11 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
             }
         });
+        if(stateModel!=null){
+            if(stateModel.getTotalPage()==0) {
+                supply_btn.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void showTitleEditor(String title,String color){
@@ -304,15 +308,13 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     @Override
     public void notifyAddPage() {
+        if(stateModel.getTotalPage()>0)supply_btn.setVisibility(View.VISIBLE);
         setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
     }
 
     @Override
     public void notifyRemovePage(int index) {
-        if(stateModel.getTotalPage()>0) {
-            supply_btn.setVisibility(View.VISIBLE);
-            notifyNoPage.setVisibility(View.GONE);
-        }else{
+        if(stateModel.getTotalPage()==0) {
             supply_btn.setVisibility(View.GONE);
             notifyNoPage.setVisibility(View.VISIBLE);
         }
