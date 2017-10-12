@@ -11,36 +11,22 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.SupplyShowContract;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.SupplyShowPresenter;
-import com.example.ffes.flex_framwork.noteview.data.Supply;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-
-import java.util.List;
 
 /**
  * Created by Ffes on 2017/8/29.
  */
 
-public class SupplyFragment extends Fragment implements SupplyShowContract.View{
-    public static final String URL_KEY="NoteURL";
-    public static final String PAGE_KEY="Page";
+public class SupplyFragment extends Fragment{
     public static final String Editor_Key="Editor";
 
     ProgressBar progressBar;
     RecyclerView recyclerView;
     SupplyAdapter listAdapter;
 
-    SupplyShowContract.Presenter presenter;
-
     public static SupplyFragment newInstance(String noteUrl,int page,boolean isEditor){
         SupplyFragment supplyFragment=new SupplyFragment();
         Bundle bundle=new Bundle();
-        bundle.putString(URL_KEY,noteUrl);
-        bundle.putInt(PAGE_KEY,page);
         bundle.putBoolean(Editor_Key,isEditor);
         supplyFragment.setArguments(bundle);
         return supplyFragment;
@@ -50,12 +36,6 @@ public class SupplyFragment extends Fragment implements SupplyShowContract.View{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.supplyfragment,container,false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        presenter.loadSupply(getArguments().getString(URL_KEY),getArguments().getInt(PAGE_KEY));
     }
 
     @Override
@@ -81,15 +61,5 @@ public class SupplyFragment extends Fragment implements SupplyShowContract.View{
                 recyclerView.scrollToPosition(listAdapter.getItemCount());
             }
         });
-        presenter=new SupplyShowPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
-    }
-
-    @Override
-    public void setSupplyList(List<Supply> supply) {
-        listAdapter.loadList(supply);
-    }
-
-    public void addSupply(Supply supply){
-        listAdapter.add(supply);
     }
 }

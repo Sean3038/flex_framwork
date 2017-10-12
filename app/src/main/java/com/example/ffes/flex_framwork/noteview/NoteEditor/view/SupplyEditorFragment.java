@@ -22,7 +22,9 @@ import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyPageAda
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.SupplyFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.SupplyEditPresenter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.SupplyView;
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,12 +51,15 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
 
     ScrollView scroll;
 
-    public static SupplyEditorFragment newInstance(String noteUrl,int page){
+    SupplyStateModel stateModel;
+
+    public static SupplyEditorFragment newInstance(String noteUrl, int page, SupplyStateModel model){
         SupplyEditorFragment fragment=new SupplyEditorFragment();
         Bundle bundle=new Bundle();
         bundle.putString(URL_KEY,noteUrl);
         bundle.putInt(PAGE_KEY,page);
         fragment.setArguments(bundle);
+        fragment.setDataModel(model);
         return fragment;
     }
 
@@ -88,7 +93,7 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
         enter_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.addMessage(getArguments().getString(URL_KEY),getArguments().getInt(PAGE_KEY),editText.getText().toString());
+                presenter.addMessage(editText.getText().toString());
             }
         });
         save_btn.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +104,7 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
             }
         });
         init();
-        presenter=new SupplyEditPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
+        presenter=new SupplyEditPresenter(this, stateModel);
     }
 
     public void init(){
@@ -115,8 +120,7 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
         editText.setText("");
     }
 
-    @Override
-    public void addSupply(Supply supply) {
-        supplyFragment.addSupply(supply);
+    public void setDataModel(SupplyStateModel model){
+        stateModel=model;
     }
 }

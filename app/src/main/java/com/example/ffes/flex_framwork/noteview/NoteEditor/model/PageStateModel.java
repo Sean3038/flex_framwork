@@ -8,7 +8,7 @@ import com.example.ffes.flex_framwork.noteview.data.Page;
  * Created by Ffes on 2017/10/11.
  */
 
-public interface PageStateModel {
+public interface PageStateModel extends SupplyStateModel{
 
     void addModel(PageDataModel model);
     void removeModel(PageDataModel model);

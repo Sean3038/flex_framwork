@@ -1,7 +1,8 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 
 /**
@@ -10,23 +11,25 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
 
 public class SupplyEditPresenter implements SupplyEditorContract.Presenter{
     SupplyEditorContract.View view;
-    NoteRepository repository;
-
-    public SupplyEditPresenter(SupplyEditorContract.View view, NoteRepository repository){
+    SupplyStateModel supplyStateModel;
+    public SupplyEditPresenter(SupplyEditorContract.View view,SupplyStateModel supplyStateModel){
         this.view=view;
-        this.repository=repository;
+        this.supplyStateModel=supplyStateModel;
     }
 
 
     @Override
-    public void addPhoto(String noteUrl, int page, final String photeUrl) {
-        //view.addSupply(supply);
+    public void addPhoto(String photeUrl) {
+        Supply supply=new Supply(supplyStateModel.getSupplyCount(),2,photeUrl);
+        supplyStateModel.addSupply(supply);
     }
 
     @Override
-    public void addMessage(String noteUrl, int page, final String message) {
-//        if(!message.equals("")) {
-//            view.clearInput();
-//            view.addSupply(supply);
+    public void addMessage(String message) {
+        if(!message.equals("")){
+            view.clearInput();
+            Supply supply=new Supply(supplyStateModel.getSupplyCount(),1,message);
+            supplyStateModel.addSupply(supply);
+        }
     }
 }

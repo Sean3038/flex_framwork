@@ -12,10 +12,9 @@ import java.util.List;
 public interface SupplyEditorContract {
     interface View{
         void clearInput();
-        void addSupply(Supply photoUrl);
     }
     interface Presenter{
-        void addPhoto(String noteUrl,int page,String photeUrl);
-        void addMessage(String noteUrl,int page,String message);
+        void addPhoto(String photeUrl);
+        void addMessage(String message);
     }
 }

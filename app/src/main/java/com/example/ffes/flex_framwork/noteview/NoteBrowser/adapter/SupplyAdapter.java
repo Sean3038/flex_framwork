@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.squareup.picasso.Picasso;
 
@@ -19,7 +21,7 @@ import java.util.List;
  * Created by Ffes on 2017/8/30.
  */
 
-public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements SupplyDataModel{
 
 
     public static final int SUPPLYITEM_TEXT=1;
@@ -29,9 +31,29 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static final int DISPLAY_WIDTH=1000;
 
 
-    List<Supply> list;
+    SupplyStateModel model;
     Context context;
     boolean isEditor;
+
+    @Override
+    public void notifyAddSupply() {
+        notifyItemInserted(model.getSupplyCount());
+    }
+
+    @Override
+    public void notifyRemoveSupply(int index) {
+        notifyItemRemoved(index);
+    }
+
+    @Override
+    public void bind(SupplyStateModel supplyStateModel) {
+        model=supplyStateModel;
+    }
+
+    @Override
+    public void unbind() {
+        model=null;
+    }
 
 
     public class ImageViewHolder extends  RecyclerView.ViewHolder{
@@ -56,7 +78,6 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public SupplyAdapter(Context context,boolean isEditor){
         this.context=context;
-        list=new ArrayList<>();
         this.isEditor=isEditor;
     }
 
@@ -86,43 +107,23 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return model.getSupplyCount();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return list.get(position).getType();
+        return model.getSupply(position).getType();
     }
 
     private void bindTextViewHolder(RecyclerView.ViewHolder vh,int position){
         TextViewHolder tvh=(TextViewHolder)vh;
-        Supply item=list.get(position);
+        Supply item=model.getSupply(position);
         tvh.textView.setText(item.getContent());
     }
 
     private void bindImageViewHolder(RecyclerView.ViewHolder vh,int position){
         ImageViewHolder tvh=(ImageViewHolder)vh;
-        Supply item=list.get(position);
+        Supply item=model.getSupply(position);
         Picasso.with(context).load(item.getContent()).resize(DISPLAY_WIDTH,DISPLAY_HEIHT).centerInside().into(tvh.imageView);
-    }
-
-    public void loadList(List<Supply> list){
-        this.list.clear();
-        this.list.addAll(list);
-        notifyDataSetChanged();
-    }
-
-    public void add(Supply item){
-        list.add(item);
-        notifyItemInserted(list.size());
-    }
-
-    public void remove(Supply item) {
-        notifyItemRemoved(list.indexOf(item));
-        list.remove(item);
-    }
-
-    public void update() {
-
     }
 }

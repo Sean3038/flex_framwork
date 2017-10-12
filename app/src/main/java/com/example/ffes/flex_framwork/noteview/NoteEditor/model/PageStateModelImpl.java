@@ -1,7 +1,10 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.TitleDetailDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,12 +15,14 @@ import java.util.List;
 
 public class PageStateModelImpl implements PageStateModel{
     List<PageDataModel> models;
+    List<SupplyDataModel> supplyModels;
     List<Page> pagelist;
     int currentPage;
 
     public PageStateModelImpl(){
         models=new ArrayList<>();
         pagelist=new ArrayList<>();
+        supplyModels=new ArrayList<>();
         currentPage=-1;
     }
 
@@ -47,8 +52,8 @@ public class PageStateModelImpl implements PageStateModel{
     @Override
     public void removePage(int index) {
         pagelist.remove(index);
-        if(currentPage==0){
-            setCurrentPage(-1);
+        if(getCurrentPage() > getTotalPage()){
+            setCurrentPage(getTotalPage()-1);
         }
         for(PageDataModel model:models){
             model.notifyRemovePage(index);
@@ -77,5 +82,45 @@ public class PageStateModelImpl implements PageStateModel{
     @Override
     public int getTotalPage(){
      return pagelist.size();
+    }
+
+    @Override
+    public void addModel(SupplyDataModel model) {
+        supplyModels.add(model);
+        model.bind(this);
+    }
+
+    @Override
+    public void removeModel(SupplyDataModel model) {
+        supplyModels.remove(model);
+        model.unbind();
+    }
+
+    @Override
+    public void addSupply(Supply supply) {
+        Page p=pagelist.get(currentPage);
+        p.getSupply().add(supply);
+        for (SupplyDataModel model:supplyModels){
+            model.notifyAddSupply();
+        }
+    }
+
+    @Override
+    public void removeSupply(int index) {
+        Page p=pagelist.get(currentPage);
+        p.getSupply().remove(index);
+        for (SupplyDataModel model:supplyModels){
+            model.notifyRemoveSupply(index);
+        }
+    }
+
+    @Override
+    public Supply getSupply(int index) {
+        return pagelist.get(currentPage).getSupply().get(index);
+    }
+
+    @Override
+    public int getSupplyCount() {
+        return pagelist.get(currentPage).getSupply().size();
     }
 }

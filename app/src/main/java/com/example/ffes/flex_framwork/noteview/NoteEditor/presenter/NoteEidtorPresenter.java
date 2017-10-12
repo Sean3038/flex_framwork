@@ -7,7 +7,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModelImpl;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
@@ -20,11 +20,13 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     NoteEditorContract.View view;
     NoteLoadModel model;
     PageStateModel stateModel;
+    TitleDetailStateModel titleDetailStateModel;
 
-    public NoteEidtorPresenter(NoteEditorContract.View view, NoteLoadModel model,PageStateModel stateModel){
+    public NoteEidtorPresenter(NoteEditorContract.View view, NoteLoadModel model, PageStateModel stateModel, TitleDetailStateModel titleDetailStateModel){
         this.view=view;
         this.model=model;
         this.stateModel=stateModel;
+        this.titleDetailStateModel=titleDetailStateModel;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
         model.getTitleDetail(noteUrl, new OnGetDataCallBack<TitleDetail>() {
             @Override
             public void onSuccess(TitleDetail data) {
-                view.setTitleDetail(data.getTitle(),data.getColor());
+                titleDetailStateModel.setTitleDetail(data);
             }
 
             @Override
@@ -67,33 +69,13 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
     @Override
     public void updateTitleDetail(String noteurl, String title, String color) {
-        model.updateTitleDetial(noteurl, title, color, new OnUpLoadDataCallback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onFailure() {
-
-            }
-        });
-        view.setTitleDetail(title,color);
+        TitleDetail titleDetail=new TitleDetail(color,title);
+        titleDetailStateModel.setTitleDetail(titleDetail);
     }
 
     @Override
     public void getTitleDetail(String noteUrl) {
-        model.getTitleDetail(noteUrl, new OnGetDataCallBack<TitleDetail>() {
-            @Override
-            public void onSuccess(TitleDetail data) {
-                view.showTitleEditor(data.getTitle(),data.getColor());
-            }
-
-            @Override
-            public void onFailure() {
-
-            }
-        });
+        view.showTitleEditor(titleDetailStateModel.getTitleDetail().getTitle(),titleDetailStateModel.getTitleDetail().getColor());
     }
 
 }

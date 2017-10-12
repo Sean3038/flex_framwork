@@ -26,8 +26,11 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapte
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.PageListAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModelImpl;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModelImpl;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPresenter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.TitleDetailDataModel;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.example.ffes.flex_framwork.noteview.widget.UnderlinedTextView;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,7 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import java.util.List;
 
 public class NoteEditorActivity extends AppCompatActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
-        PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick,PageDataModel{
+        PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick,PageDataModel,TitleDetailDataModel{
 
     public static final String URL_KEY="NoteURL";
 
@@ -69,7 +72,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     String noteUrl;
 
-    PageStateModelImpl stateModel;
+    PageStateModel stateModel;
+    TitleDetailStateModel titleDetailStateModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +86,11 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
             noteUrl=intent.getStringExtra(URL_KEY);
         }
         initUI();
-        initAdapter();
         initToolBar();
+        initAdapter();
         init();
 
-        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),stateModel);
+        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
         presenter.loadData("sdf4K5df6a");
     }
 
@@ -173,6 +177,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         stateModel.addModel(this);
         stateModel.addModel(pageListAdapter);
         stateModel.addModel(noteViewAdapter);
+        titleDetailStateModel=new TitleDetailStateModelImpl();
+        titleDetailStateModel.addModel(this);
     }
 
     private void initToolBar(){
@@ -228,7 +234,7 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
     }
 
     public void openSupplyEdit(int page){
-        supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",page);
+        supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",page,stateModel);
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction ft=fragmentManager.beginTransaction();
         ft.replace(R.id.supplyfragment,supplyEditorFragment,"SupplyFragment");
@@ -302,6 +308,15 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
     }
 
     @Override
+    protected void onDestroy() {
+        stateModel.removeModel(this);
+        stateModel.removeModel(pageListAdapter);
+        stateModel.removeModel(noteViewAdapter);
+        titleDetailStateModel.removeModel(this);
+        super.onDestroy();
+    }
+
+    @Override
     public void onDelete(int position) {
         stateModel.removePage(position);
     }
@@ -332,8 +347,19 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
     }
 
     @Override
+    public void notifyChange() {
+        setTitleDetail(titleDetailStateModel.getTitleDetail().getTitle(),titleDetailStateModel.getTitleDetail().getColor());
+    }
+
+    @Override
+    public void bind(TitleDetailStateModel pageStateModel) {
+        setTitleDetail(pageStateModel.getTitleDetail().getTitle(),pageStateModel.getTitleDetail().getColor());
+    }
+
+    @Override
     public void unbind() {
         stateModel=null;
+        titleDetailStateModel=null;
         setPageState(0, 0);
     }
 }
