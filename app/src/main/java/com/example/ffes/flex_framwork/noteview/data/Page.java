@@ -8,48 +8,48 @@ import java.util.List;
 
 public class Page {
     String imageurl;
-    List<Supply> supplyLiist;
-    List<KeyWord> keyWordList;
-    List<QA> qaList;
+    List<Supply> supplylist;
+    List<KeyWord> keywordlist;
+    List<QA> qalist;
 
     public Page(){}
 
-    public Page(String imageurl,List<Supply> supply,List<KeyWord> keyWordList,List<QA> qaList){
+    public Page(String imageurl,List<Supply> supplylist,List<KeyWord> keywordlist,List<QA> qalist){
         this.imageurl=imageurl;
-        this.keyWordList=keyWordList;
-        this.supplyLiist=supply;
-        this.qaList=qaList;
+        this.keywordlist =keywordlist;
+        this.supplylist=supplylist;
+        this.qalist=qalist;
     }
 
-    public void setImageurl(String imageurl) {
+    public void setimageurl(String imageurl) {
         this.imageurl = imageurl;
     }
 
-    public String getImageurl() {
+    public String getimageurl() {
         return imageurl;
     }
 
-    public void setKeyWordList(List<KeyWord> keyWordList) {
-        this.keyWordList = keyWordList;
+    public void setkeywordlist(List<KeyWord> keywordlist) {
+        this.keywordlist = keywordlist;
     }
 
-    public void setSupplyList(List<Supply> supplyLiist) {
-        this.supplyLiist = supplyLiist;
+    public void setsupplylist(List<Supply> supplylist) {
+        this.supplylist = supplylist;
     }
 
-    public void setQaList(List<QA> qaList) {
-        this.qaList = qaList;
+    public void setqalist(List<QA> qalist) {
+        this.qalist = qalist;
     }
 
-    public List<KeyWord> getKeyWordList() {
-        return keyWordList;
+    public List<KeyWord> getkeywordlist() {
+        return keywordlist;
     }
 
-    public List<QA> getQaList() {
-        return qaList;
+    public List<QA> getqalist() {
+        return qalist;
     }
 
-    public  List<Supply> getSupply() {
-        return supplyLiist;
+    public  List<Supply> getsupplylist() {
+        return supplylist;
     }
 }

@@ -38,7 +38,6 @@ import java.util.List;
 
 public class SupplyEditorFragment extends Fragment implements SupplyEditorContract.View{
     public static final String URL_KEY="NoteURL";
-    public static final String PAGE_KEY="Page_key";
 
     SupplyEditorContract.Presenter presenter;
 
@@ -53,11 +52,10 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
 
     SupplyStateModel stateModel;
 
-    public static SupplyEditorFragment newInstance(String noteUrl, int page, SupplyStateModel model){
+    public static SupplyEditorFragment newInstance(String noteUrl, SupplyStateModel model){
         SupplyEditorFragment fragment=new SupplyEditorFragment();
         Bundle bundle=new Bundle();
         bundle.putString(URL_KEY,noteUrl);
-        bundle.putInt(PAGE_KEY,page);
         fragment.setArguments(bundle);
         fragment.setDataModel(model);
         return fragment;
@@ -108,7 +106,7 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
     }
 
     public void init(){
-        supplyFragment=SupplyFragment.newInstance(getArguments().getString(URL_KEY),getArguments().getInt(PAGE_KEY),true);
+        supplyFragment=SupplyFragment.newInstance(stateModel,true);
         FragmentManager fm= getChildFragmentManager();
         FragmentTransaction ft=fm.beginTransaction();
         ft.replace(R.id.supply,supplyFragment,"SupplyContent");

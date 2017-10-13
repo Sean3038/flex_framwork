@@ -33,10 +33,6 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     FirebaseStorage firebaseStorage;
 
     public  NoteRepository(FirebaseDatabase firebaseDatabase,FirebaseStorage firebaseStorage){
-//        data=new Note("dsaf", Arrays.asList(
-//                new Page("http://i.imgur.com/DvpvklR.png",Arrays.asList(new Supply(1,1,"I'm data")),Arrays.asList(new KeyWord("Strategy",new RectF(0,0,200,200),Color.parseColor("#cc66ee99")),new KeyWord("Memento",new RectF(250,250,400,400), Color.parseColor("#ccffeeee")),new KeyWord("Observer",new RectF(600,600,900,900),Color.parseColor("#cc00eeff")),new KeyWord("Iterator",new RectF(0,0,60,60), Color.parseColor("#cc55eeee"))),null),
-//                new Page("https://i.imgur.com/tGbaZCY.jpg",Arrays.asList(new Supply(1,1,"I'm data2"),new Supply(2,2,"https://i.imgur.com/ME4ewjl.jpg"),new Supply(3,2,"https://i.imgur.com/tGbaZCY.jpg"),new Supply(4,1,"this is test 3")),Arrays.asList(new KeyWord("State",new RectF(300,250,600,700),Color.parseColor("#aa000eff"))),null)
-//        ),"coverurl","Pattern","#f6b9b9","authorID","20171029","20170648");
         this.firebaseDatabase=firebaseDatabase;
         this.firebaseStorage=firebaseStorage;
     }
@@ -136,7 +132,7 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     public void updateTitleDetial(String url, String title, String color, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
         TitleDetail titleDetail=new TitleDetail(color,title);
-        ref.child("note/"+url+"/titledetail").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("note/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 callback.onSuccess();

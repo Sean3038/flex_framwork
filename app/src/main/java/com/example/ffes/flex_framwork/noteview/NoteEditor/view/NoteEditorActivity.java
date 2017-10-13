@@ -107,17 +107,11 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
                 if(isPageEditorOpened){
                     isPageEditorOpened=false;
                     btn.setText("編輯");
-
-                    //關閉編輯
-
                     pageListAdapter.setEditor(isPageEditorOpened);
 
                 }else{
                     isPageEditorOpened=true;
                     btn.setText("完成");
-
-                    //開啟編輯
-
                     pageListAdapter.setEditor(isPageEditorOpened);
                 }
             }
@@ -203,7 +197,7 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         supply_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                openSupplyEdit();
             }
         });
         if(stateModel!=null){
@@ -233,8 +227,8 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         editor_layout.setVisibility(View.GONE);
     }
 
-    public void openSupplyEdit(int page){
-        supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",page,stateModel);
+    public void openSupplyEdit(){
+        supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",stateModel);
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction ft=fragmentManager.beginTransaction();
         ft.replace(R.id.supplyfragment,supplyEditorFragment,"SupplyFragment");

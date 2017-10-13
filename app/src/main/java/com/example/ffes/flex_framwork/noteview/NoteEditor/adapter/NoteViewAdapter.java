@@ -45,7 +45,7 @@ public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
     public Object instantiateItem(ViewGroup container, final int position) {
         ImageView imageView=new ImageView(context);
         final Page page=model.getPage(position);
-        loadImage(imageView,page.getImageurl());
+        loadImage(imageView,page.getimageurl());
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

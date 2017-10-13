@@ -29,7 +29,7 @@ public class SupplyPageAdapter extends FragmentStatePagerAdapter{
 
     @Override
     public Fragment getItem(int position) {
-        return SupplyFragment.newInstance(noteUrl,supplyList.get(position),false);
+        return SupplyFragment.newInstance(null,false);
     }
 
     @Override

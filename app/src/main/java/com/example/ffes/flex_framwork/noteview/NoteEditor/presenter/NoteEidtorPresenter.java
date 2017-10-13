@@ -9,6 +9,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCall
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
 /**
@@ -34,8 +35,10 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
         model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
             @Override
             public void onSuccess(Page data) {
-                Log.d("Page",data.getImageurl());
+
                 stateModel.addPage(data);
+
+                Log.d("Supply",data.getsupplylist().get(1).getContent());
             }
 
             @Override
@@ -70,6 +73,17 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     @Override
     public void updateTitleDetail(String noteurl, String title, String color) {
         TitleDetail titleDetail=new TitleDetail(color,title);
+        model.updateTitleDetial(noteurl, title, color, new OnUpLoadDataCallback() {
+            @Override
+            public void onSuccess() {
+
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
         titleDetailStateModel.setTitleDetail(titleDetail);
     }
 

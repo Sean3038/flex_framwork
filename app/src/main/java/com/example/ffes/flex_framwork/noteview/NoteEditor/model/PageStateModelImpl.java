@@ -99,7 +99,7 @@ public class PageStateModelImpl implements PageStateModel{
     @Override
     public void addSupply(Supply supply) {
         Page p=pagelist.get(currentPage);
-        p.getSupply().add(supply);
+        p.getsupplylist().add(supply);
         for (SupplyDataModel model:supplyModels){
             model.notifyAddSupply();
         }
@@ -108,7 +108,7 @@ public class PageStateModelImpl implements PageStateModel{
     @Override
     public void removeSupply(int index) {
         Page p=pagelist.get(currentPage);
-        p.getSupply().remove(index);
+        p.getsupplylist().remove(index);
         for (SupplyDataModel model:supplyModels){
             model.notifyRemoveSupply(index);
         }
@@ -116,11 +116,11 @@ public class PageStateModelImpl implements PageStateModel{
 
     @Override
     public Supply getSupply(int index) {
-        return pagelist.get(currentPage).getSupply().get(index);
+        return pagelist.get(currentPage).getsupplylist().get(index);
     }
 
     @Override
     public int getSupplyCount() {
-        return pagelist.get(currentPage).getSupply().size();
+        return pagelist.get(currentPage).getsupplylist().size();
     }
 }

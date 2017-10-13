@@ -12,6 +12,7 @@ import android.widget.ProgressBar;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyAdapter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
 
 /**
  * Created by Ffes on 2017/8/29.
@@ -24,11 +25,14 @@ public class SupplyFragment extends Fragment{
     RecyclerView recyclerView;
     SupplyAdapter listAdapter;
 
-    public static SupplyFragment newInstance(String noteUrl,int page,boolean isEditor){
+    SupplyStateModel stateModel;
+
+    public static SupplyFragment newInstance(SupplyStateModel statemodel, boolean isEditor){
         SupplyFragment supplyFragment=new SupplyFragment();
         Bundle bundle=new Bundle();
         bundle.putBoolean(Editor_Key,isEditor);
         supplyFragment.setArguments(bundle);
+        supplyFragment.setSupplyStateModel(statemodel);
         return supplyFragment;
     }
 
@@ -48,6 +52,7 @@ public class SupplyFragment extends Fragment{
         LinearLayoutManager manager=new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
         recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(manager);
+        stateModel.addModel(listAdapter);
         listAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -61,5 +66,9 @@ public class SupplyFragment extends Fragment{
                 recyclerView.scrollToPosition(listAdapter.getItemCount());
             }
         });
+    }
+
+    public void setSupplyStateModel(SupplyStateModel model){
+        stateModel=model;
     }
 }

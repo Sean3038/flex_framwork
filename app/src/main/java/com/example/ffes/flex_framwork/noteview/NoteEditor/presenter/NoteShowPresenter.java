@@ -28,7 +28,7 @@ public class NoteShowPresenter implements NoteShowContract.Presenter{
         model.getPageContent(noteUrl, page, new OnGetDataCallBack<Page>() {
             @Override
             public void onSuccess(Page page) {
-                view.setKeyData(page.getImageurl(),page.getKeyWordList());
+                view.setKeyData(page.getimageurl(),page.getkeywordlist());
             }
 
             @Override
