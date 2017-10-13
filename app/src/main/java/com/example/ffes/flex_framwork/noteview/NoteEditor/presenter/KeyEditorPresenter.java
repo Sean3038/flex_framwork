@@ -26,6 +26,7 @@ public class KeyEditorPresenter implements KeyEditorContract.Presenter {
             @Override
             public void onSuccess(List<Integer> pages) {
 //                view.setNoteList(pages);
+
             }
 
             @Override
