@@ -1,7 +1,5 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
-import android.util.Log;
-
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
@@ -9,7 +7,6 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCall
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
-import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
 /**
@@ -32,13 +29,12 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
     @Override
     public void loadData(String noteUrl) {
+        view.showprogress("讀取頁面");
         model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
             @Override
             public void onSuccess(Page data) {
-
                 stateModel.addPage(data);
-
-                Log.d("Supply",data.getsupplylist().get(1).getContent());
+                view.closeprogress();
             }
 
             @Override
@@ -46,10 +42,13 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
             }
         });
+
+        view.showprogress("讀取標題資訊");
         model.getTitleDetail(noteUrl, new OnGetDataCallBack<TitleDetail>() {
             @Override
             public void onSuccess(TitleDetail data) {
                 titleDetailStateModel.setTitleDetail(data);
+                view.closeprogress();
             }
 
             @Override
@@ -57,16 +56,6 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
             }
         });
-    }
-
-    @Override
-    public void removePage(String noteUrl, int page) {
-
-    }
-
-
-    @Override
-    public void addPage(String noteUrl, int page) {
 
     }
 

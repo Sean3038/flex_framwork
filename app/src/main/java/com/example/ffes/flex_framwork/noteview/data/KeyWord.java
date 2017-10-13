@@ -17,6 +17,8 @@ public class KeyWord implements Parcelable {
     int color;
     RectF rect;
 
+    public KeyWord(){}
+
     public KeyWord(String keyword,RectF rect,int color){
         this.keyword=keyword;
         this.rect=rect;

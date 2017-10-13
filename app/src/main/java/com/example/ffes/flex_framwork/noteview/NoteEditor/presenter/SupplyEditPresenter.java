@@ -20,7 +20,7 @@ public class SupplyEditPresenter implements SupplyEditorContract.Presenter{
 
     @Override
     public void addPhoto(String photeUrl) {
-        Supply supply=new Supply(supplyStateModel.getSupplyCount(),2,photeUrl);
+        Supply supply=new Supply(2,photeUrl);
         supplyStateModel.addSupply(supply);
     }
 
@@ -28,7 +28,7 @@ public class SupplyEditPresenter implements SupplyEditorContract.Presenter{
     public void addMessage(String message) {
         if(!message.equals("")){
             view.clearInput();
-            Supply supply=new Supply(supplyStateModel.getSupplyCount(),1,message);
+            Supply supply=new Supply(1,message);
             supplyStateModel.addSupply(supply);
         }
     }

@@ -7,8 +7,11 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageContentModel;
+import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.Note;
 import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.example.ffes.flex_framwork.noteview.data.QA;
+import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -20,7 +23,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
+import java.security.Key;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -37,18 +42,109 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         this.firebaseStorage=firebaseStorage;
     }
 
-    public void getPage(String url, String pageurl, final OnGetDataCallBack<Page> callback){
+    public void getPage(final String url, final String pageurl, final OnGetDataCallBack<Page> callback){
         DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl).addValueEventListener(new ValueEventListener() {
+        ncref.child("note/"+url+"/notecontent/"+pageurl).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Page page=dataSnapshot.getValue(Page.class);
-                callback.onSuccess(page);
+                final Page page=new Page();
+                page.setimageurl(dataSnapshot.child("imageurl").getValue(String.class));
+                getKeyWord(url, pageurl, new OnGetDataCallBack<List<KeyWord>>() {
+                    @Override
+                    public void onSuccess(List<KeyWord> data) {
+                        page.setkeywordlist(data);
+                        getSupply(url, pageurl, new OnGetDataCallBack<List<Supply>>() {
+                            @Override
+                            public void onSuccess(List<Supply> data) {
+                                page.setsupplylist(data);
+                                getQAList(url, pageurl, new OnGetDataCallBack<List<QA>>() {
+                                    @Override
+                                    public void onSuccess(List<QA> data) {
+                                        page.setqalist(data);
+                                        callback.onSuccess(page);
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        callback.onFailure();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                callback.onFailure();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        callback.onFailure();
+                    }
+                });
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 callback.onFailure();
+            }
+        });
+    }
+
+    public void getSupply(String url, String pageurl, final OnGetDataCallBack<List<Supply>> callBack){
+        DatabaseReference ncref=firebaseDatabase.getReference();
+        ncref.child("note/"+url+"/notecontent/"+pageurl+"/supplylist").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Supply> supplyList=new ArrayList<>();
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    supplyList.add(child.getValue(Supply.class));
+                }
+                callBack.onSuccess(supplyList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
+            }
+        });
+    }
+
+    public void getKeyWord(String url, String pageurl, final OnGetDataCallBack<List<KeyWord>> callBack){
+        DatabaseReference ncref=firebaseDatabase.getReference();
+        ncref.child("note/"+url+"/notecontent/"+pageurl+"/keywordlist").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<KeyWord> keyWordList=new ArrayList<>();
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    keyWordList.add(child.getValue(KeyWord.class));
+                }
+                callBack.onSuccess(keyWordList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
+            }
+        });
+    }
+
+    public void getQAList(String url, String pageurl, final OnGetDataCallBack<List<QA>> callBack){
+        DatabaseReference ncref=firebaseDatabase.getReference();
+        ncref.child("note/"+url+"/notecontent/"+pageurl+"/qalist").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<QA> qaList=new ArrayList<>();
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    qaList.add(child.getValue(QA.class));
+                }
+                callBack.onSuccess(qaList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
             }
         });
     }

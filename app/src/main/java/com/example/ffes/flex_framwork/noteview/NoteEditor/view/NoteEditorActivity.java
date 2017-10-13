@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.BaseActivity;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapter;
@@ -38,7 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
-public class NoteEditorActivity extends AppCompatActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
+public class NoteEditorActivity extends BaseActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
         PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick,PageDataModel,TitleDetailDataModel{
 
     public static final String URL_KEY="NoteURL";
@@ -204,6 +205,7 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
             if(stateModel.getTotalPage()==0) {
                 supply_btn.setVisibility(View.GONE);
             }
+            setTitleDetail(titleDetailStateModel.getTitleDetail().getTitle(),titleDetailStateModel.getTitleDetail().getColor());
         }
     }
 
@@ -216,6 +218,16 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
         }
         ft.addToBackStack(null);
         NoteTitleDialogFragment.newInstance(title,color,this).show(ft,"Dialog");
+    }
+
+    @Override
+    public void showprogress(String message) {
+        showProgress(message);
+    }
+
+    @Override
+    public void closeprogress() {
+        dismissProgress();
     }
 
 
@@ -303,9 +315,9 @@ public class NoteEditorActivity extends AppCompatActivity implements NoteEditorC
 
     @Override
     protected void onDestroy() {
-        stateModel.removeModel(this);
         stateModel.removeModel(pageListAdapter);
         stateModel.removeModel(noteViewAdapter);
+        stateModel.removeModel(this);
         titleDetailStateModel.removeModel(this);
         super.onDestroy();
     }

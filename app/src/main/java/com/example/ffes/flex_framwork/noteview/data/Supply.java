@@ -8,24 +8,14 @@ import java.util.List;
  */
 
 public class Supply implements Serializable {
-    int supplyId;
     int type;
     String content;
 
     public Supply(){}
 
-    public Supply(int supplyId,int type, String content){
-        this.supplyId=supplyId;
+    public Supply(int type, String content){
         this.type=type;
         this.content=content;
-    }
-
-    public int getSupplyId() {
-        return supplyId;
-    }
-
-    public void setSupplyId(int supplyId) {
-        this.supplyId = supplyId;
     }
 
     public String getContent() {

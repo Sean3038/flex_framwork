@@ -11,12 +11,12 @@ public interface NoteEditorContract {
         void setPageState(int currentpage,int totalpage);
         void setTitleDetail(String title,String color);
         void showTitleEditor(String title,String color);
+        void showprogress(String message);
+        void closeprogress();
     }
 
     interface Presenter{
         void loadData(String noteUrl);
-        void removePage(String noteUrl,int page);
-        void addPage(String noteUrl,int page);
         void updateTitleDetail(String noteurl,String title,String color);
         void getTitleDetail(String noteUrl);
     }
