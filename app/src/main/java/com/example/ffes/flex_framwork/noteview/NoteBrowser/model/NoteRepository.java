@@ -1,31 +1,24 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
 
-import android.util.Log;
-
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageContentModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
-import com.example.ffes.flex_framwork.noteview.data.Note;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.UploadTask;
 
-import java.security.Key;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

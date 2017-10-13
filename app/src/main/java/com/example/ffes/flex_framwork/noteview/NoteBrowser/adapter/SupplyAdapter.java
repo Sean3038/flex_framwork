@@ -9,13 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ffes on 2017/8/30.

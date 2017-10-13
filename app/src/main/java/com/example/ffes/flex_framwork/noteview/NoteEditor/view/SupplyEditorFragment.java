@@ -11,26 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
-import android.widget.Scroller;
 import android.widget.Toast;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyPageAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.SupplyFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.SupplyEditPresenter;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
-import com.example.ffes.flex_framwork.noteview.data.Supply;
-import com.example.ffes.flex_framwork.noteview.widget.SupplyView;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-
-import java.util.List;
 
 /**
  * Created by Ffes on 2017/9/18.

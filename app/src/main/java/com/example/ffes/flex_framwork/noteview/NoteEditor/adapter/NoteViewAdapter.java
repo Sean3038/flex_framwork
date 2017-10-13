@@ -7,14 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.OnImageClick;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ffes on 2017/10/2.

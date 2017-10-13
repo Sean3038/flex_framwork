@@ -2,7 +2,7 @@ package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.KeyEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.OnGetDataCallBack;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class KeyEditorPresenter implements KeyEditorContract.Presenter {
         model.getShowPages(noteUrl, new OnGetDataCallBack<List<Integer>>() {
             @Override
             public void onSuccess(List<Integer> pages) {
-                view.setNoteList(pages);
+//                view.setNoteList(pages);
             }
 
             @Override

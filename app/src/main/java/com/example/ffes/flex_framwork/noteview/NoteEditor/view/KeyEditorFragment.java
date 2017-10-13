@@ -28,10 +28,8 @@ import java.util.List;
 public class KeyEditorFragment extends Fragment implements KeyEditorContract.View{
     public static final String URL_KEY="NoteURL";
 
-    ViewPager viewpager;
     ImageView save_btn;
     ImageView add_btn;
-    NotePageAdapter adapter;
 
     KeyEditorContract.Presenter presenter;
 
@@ -56,7 +54,6 @@ public class KeyEditorFragment extends Fragment implements KeyEditorContract.Vie
         ((AppCompatActivity)getActivity()).getSupportActionBar().setCustomView(R.layout.editor_detail_toolbar);
         save_btn=(ImageView) getActivity().findViewById(R.id.save_btn);
         add_btn=(ImageView) getActivity().findViewById(R.id.add_btn);
-        viewpager=(ViewPager)view.findViewById(R.id.notepager);
         add_btn.setVisibility(View.VISIBLE);
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,10 +67,6 @@ public class KeyEditorFragment extends Fragment implements KeyEditorContract.Vie
                 presenter.clickAdd();
             }
         });
-        adapter=new NotePageAdapter(getChildFragmentManager());
-        adapter.setEdit(true);
-        viewpager.setAdapter(adapter);
-        viewpager.addOnPageChangeListener(adapter);
     }
 
     @Override
@@ -102,11 +95,6 @@ public class KeyEditorFragment extends Fragment implements KeyEditorContract.Vie
 
     @Override
     public void setAddKey(String key) {
-        adapter.addKey(key);
-    }
 
-    @Override
-    public void setNoteList(List<Integer> pages) {
-        adapter.setNoteList(pages);
     }
 }

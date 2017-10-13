@@ -6,38 +6,27 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyWordAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteShowContract;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageContentModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteShowPresenter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.QAStateModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.widget.NoteView;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 
-import org.w3c.dom.Text;
-
-import java.util.List;
 import java.util.Random;
 
 /**
  * Created by Ffes on 2017/9/1.
  */
 
-public class NoteFragment extends Fragment implements NoteShowContract.View, KeyWordAdapter.OnKeyClick,KeyWordAdapter.OnDeleteKeyClick,NoteView.AddRemoveCallback{
+public class NoteFragment extends Fragment implements KeyWordAdapter.OnKeyClick,KeyWordAdapter.OnDeleteKeyClick,NoteView.AddRemoveCallback{
 
-    public static final String URL_KEY="NoteURL";
-    public static final String PAGE_KEY="Page";
     public static final String EDIT_STATE_KEY="IsEdit";
 
     NoteView noteView;
@@ -47,15 +36,16 @@ public class NoteFragment extends Fragment implements NoteShowContract.View, Key
 
     KeyWordAdapter keyWordAdapter;
 
-    NoteShowContract.Presenter presenter;
+    KeyWordStateModel stateModel;
+    QAStateModel qaStateModel;
 
-    public static NoteFragment newInstance(String noteURL,int page,boolean isEdit){
+    public static NoteFragment newInstance(KeyWordStateModel keyWordStateModel, QAStateModel qaStateModel, boolean isEdit){
         NoteFragment fragment=new NoteFragment();
         Bundle bundle=new Bundle();
-        bundle.putString(URL_KEY,noteURL);
-        bundle.putInt(PAGE_KEY,page);
         bundle.putBoolean(EDIT_STATE_KEY,isEdit);
         fragment.setArguments(bundle);
+        fragment.setQaStateModel(qaStateModel);
+        fragment.setKeyWordStateModel(keyWordStateModel);
         return fragment;
     }
 
@@ -79,21 +69,8 @@ public class NoteFragment extends Fragment implements NoteShowContract.View, Key
         keyWordAdapter.setDeleteKeyClick(this);
         keyWordAdapter.setKeyClick(this);
         noteView.setAddNoteListener(this);
-        presenter=new NoteShowPresenter(this,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
 
         addkeynotify.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-                presenter.LoadData(getArguments().getString(URL_KEY),getArguments().getInt(PAGE_KEY));
-    }
-
-    @Override
-    public void onPause() {
-        presenter.saveAllKeyWord((int)getArguments().get(PAGE_KEY),noteView.getKeyWordList());
-        super.onPause();
     }
 
     public void setEdit(boolean isEdit){
@@ -105,8 +82,10 @@ public class NoteFragment extends Fragment implements NoteShowContract.View, Key
         if(!noteView.isNewItem()) {
             Random random = new Random();
             int color = Color.argb(100, random.nextInt(100) + 100, random.nextInt(100) + 100, random.nextInt(100) + 100);
-            noteView.add(key, color);
-            keyWordAdapter.add(key, color);
+            KeyWord keyWord=new KeyWord(key,null,color);
+            stateModel.addKeyWord(keyWord);
+//            noteView.add(key, color);
+//            keyWordAdapter.add(key, color);
         }
     }
 
@@ -115,45 +94,17 @@ public class NoteFragment extends Fragment implements NoteShowContract.View, Key
         noteView.show(key);
     }
 
-    @Override
-    public void setKeyData(String noteImageUrl,List<KeyWord> keyData) {
-        noteView.load(noteImageUrl, keyData, new NoteView.OnLoadingNoteListener() {
-            @Override
-            public void onLoad() {
-                progressBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoaded() {
-                progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
-        keyWordAdapter.setKeylist(keyData);
-    }
-
-    @Override
     public void showAddKeyNotify() {
         addkeynotify.setVisibility(View.VISIBLE);
     }
 
-    @Override
     public void hideAddKeyNotify() {
         addkeynotify.setVisibility(View.GONE);
     }
 
     @Override
     public void onDeleteKeyClick(String key) {
-        keyWordAdapter.remove(key);
-        noteView.remove(key);
-    }
-
-    public void reload(){
-        presenter.LoadData(getArguments().getString(URL_KEY),getArguments().getInt(PAGE_KEY));
+        stateModel.removeKeyWord(key);
     }
 
     @Override
@@ -168,11 +119,19 @@ public class NoteFragment extends Fragment implements NoteShowContract.View, Key
 
     @Override
     public void onAdded(KeyWord keyword) {
-        presenter.addKeyWordFrame(getArguments().getInt(PAGE_KEY),keyword);
+        stateModel.addKeyWord(keyword);
     }
 
     @Override
     public void onRemoved(String key) {
-        presenter.removeKeyWordFrame(getArguments().getInt(PAGE_KEY),key);
+        stateModel.removeKeyWord(key);
+    }
+
+    public void setQaStateModel(QAStateModel qaStateModel) {
+        this.qaStateModel = qaStateModel;
+    }
+
+    public void setKeyWordStateModel(KeyWordStateModel stateModel) {
+        this.stateModel = stateModel;
     }
 }

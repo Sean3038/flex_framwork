@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyWordDataModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.List;
  * Created by Ffes on 2017/9/13.
  */
 
-public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHolder>{
+public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHolder>implements KeyWordDataModel{
 
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView delete;
@@ -69,13 +71,14 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
         }
     }
 
-    List<Item> keylist;
     OnKeyClick keyClick;
     OnDeleteKeyClick deleteKeyClick;
+
+    KeyWordStateModel keyWordStateModel;
+
     boolean isEdit;
 
     public KeyWordAdapter(){
-        keylist=new ArrayList<>();
         isEdit=false;
     }
 
@@ -86,50 +89,21 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Item item=keylist.get(position);
         if(isEdit){
             holder.showDeleteButton();
         }else{
             holder.hideDeleteButton();
         }
-        holder.setKeyWord(item.getKey(),item.getColor());
+        holder.setKeyWord(keyWordStateModel.getKeyWord(position).getKeyword(),keyWordStateModel.getKeyWord(position).getColor());
         holder.setKeyClick(keyClick);
         holder.setDeleteKeyClick(deleteKeyClick);
     }
 
-    public void add(String key,int color){
-        Item item=new Item(key,color);
-        keylist.add(item);
-        notifyItemInserted(keylist.indexOf(item));
-    }
-
-    public void remove(String key){
-        Item i=null;
-        for(Item item:keylist){
-            if(item.getKey().equals(key)){
-                i=item;
-            }
-        }
-        if(i !=null) {
-            int index = keylist.indexOf(i);
-            keylist.remove(index);
-            notifyItemRemoved(index);
-        }
-    }
-
     @Override
     public int getItemCount() {
-        return keylist.size();
+        return keyWordStateModel.getKeyCount();
     }
 
-    public void setKeylist(final List<KeyWord> list){
-        keylist.clear();
-        for(KeyWord k:list){
-            Item item=new Item(k.getKeyword(),k.getColor());
-            keylist.add(item);
-        }
-        notifyDataSetChanged();
-    }
 
     public void setEdit(boolean edit) {
         isEdit = edit;
@@ -146,34 +120,24 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    private class Item{
-        String key;
-        int color;
+    @Override
+    public void bind(KeyWordStateModel stateModel) {
+        keyWordStateModel=stateModel;
+    }
 
-        Item(){
+    @Override
+    public void unbind() {
+        keyWordStateModel=null;
+    }
 
-        }
+    @Override
+    public void notifyAddKeyWord() {
+        notifyItemInserted(keyWordStateModel.getKeyCount());
+    }
 
-        Item(String key,int color){
-            this.key=key;
-            this.color=color;
-        }
-
-        public int getColor() {
-            return color;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public void setColor(int color) {
-            this.color = color;
-        }
-
-        public void setKey(String key) {
-            this.key = key;
-        }
+    @Override
+    public void notifyRemoveKeyWord(int index) {
+        notifyItemRemoved(index);
     }
 
     public interface OnKeyClick{

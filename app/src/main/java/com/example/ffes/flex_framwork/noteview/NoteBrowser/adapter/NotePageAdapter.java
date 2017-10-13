@@ -55,7 +55,7 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPa
 
     @Override
     public NoteFragment getItem(int position) {
-        return NoteFragment.newInstance(noteUrl,pagelist.get(position),isEdit);
+        return NoteFragment.newInstance(null,null,isEdit);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPa
 
     @Override
     public void onPageSelected(int position) {
-        currentfragment.reload();
+//        currentfragment.reload();
     }
 
     @Override

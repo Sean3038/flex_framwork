@@ -10,7 +10,6 @@ public interface KeyEditorContract {
     interface View{
         void showAddKeyDialog();
         void setAddKey(String key);
-        void setNoteList(List<Integer> pages);
     }
     interface Presenter{
         void loadData(String noteUrl);

@@ -7,13 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -104,7 +101,7 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private void viewBindValue(final ViewHolder vh, int position){
+    private void viewBindValue(final ViewHolder vh, final int position){
         final Page page=model.getPage(position);
         Picasso.with(vh.itemView.getContext()).load(page.getimageurl()).into(vh.pageImage);
         if(isEditor){

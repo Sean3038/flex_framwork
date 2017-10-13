@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
 
 /**
  * Created by Ffes on 2017/8/29.
@@ -40,6 +40,12 @@ public class SupplyFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.supplyfragment,container,false);
+    }
+
+    @Override
+    public void onDestroy() {
+        stateModel.removeModel(listAdapter);
+        super.onDestroy();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 
@@ -12,6 +12,7 @@ import com.example.ffes.flex_framwork.noteview.data.Supply;
 public class SupplyEditPresenter implements SupplyEditorContract.Presenter{
     SupplyEditorContract.View view;
     SupplyStateModel supplyStateModel;
+
     public SupplyEditPresenter(SupplyEditorContract.View view,SupplyStateModel supplyStateModel){
         this.view=view;
         this.supplyStateModel=supplyStateModel;

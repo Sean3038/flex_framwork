@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.TitleDetailDataModel;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * Created by Ffes on 2017/10/12.
  */
 
-public class TitleDetailStateModelImpl implements TitleDetailStateModel{
+public class TitleDetailStateModelImpl implements TitleDetailStateModel {
 
     List<TitleDetailDataModel> models;
     TitleDetail titleDetail;
