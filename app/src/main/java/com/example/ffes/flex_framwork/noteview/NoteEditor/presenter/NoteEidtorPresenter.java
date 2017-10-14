@@ -1,12 +1,20 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
+import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailModel;
+import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.example.ffes.flex_framwork.noteview.data.QA;
+import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Ffes on 2017/9/18.
@@ -16,13 +24,15 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
     NoteEditorContract.View view;
     NoteLoadModel model;
-    PageStateModel stateModel;
-    TitleDetailStateModel titleDetailStateModel;
+    ImageRepository imageRepository;
+    PageModel stateModel;
+    TitleDetailModel titleDetailStateModel;
 
-    public NoteEidtorPresenter(NoteEditorContract.View view, NoteLoadModel model, PageStateModel stateModel, TitleDetailStateModel titleDetailStateModel){
+    public NoteEidtorPresenter(NoteEditorContract.View view, NoteLoadModel model,ImageRepository imageRepository, PageModel stateModel, TitleDetailModel titleDetailStateModel){
         this.view=view;
         this.model=model;
         this.stateModel=stateModel;
+        this.imageRepository=imageRepository;
         this.titleDetailStateModel=titleDetailStateModel;
     }
 
@@ -55,7 +65,6 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
             }
         });
-
     }
 
     @Override
@@ -67,6 +76,43 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     @Override
     public void getTitleDetail(String noteUrl) {
         view.showTitleEditor(titleDetailStateModel.getTitleDetail().getTitle(),titleDetailStateModel.getTitleDetail().getColor());
+    }
+
+    @Override
+    public void addPage(final String noteUrl, String photurl) {
+        imageRepository.addPagePhoto(noteUrl, photurl, new OnUpLoadDataCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                Page p=new Page();
+                p.setqalist(new ArrayList<QA>());
+                p.setsupplylist(new ArrayList<Supply>());
+                p.setkeywordlist(new HashMap<String, KeyWord>());
+                p.setimageurl(s);
+                stateModel.addPage(p);
+                model.addPage(noteUrl, p, new OnUpLoadDataCallback<String>() {
+
+                    @Override
+                    public void onSuccess(String s) {
+
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+    }
+
+    @Override
+    public void saveNote(String noteUrl) {
+
     }
 
 }

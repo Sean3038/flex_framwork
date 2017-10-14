@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,7 +23,7 @@ public class AddKeyDialogFragment extends DialogFragment{
     Button confirm;
     OnConfirmListener listener;
 
-    interface OnConfirmListener{
+    public interface OnConfirmListener{
         void onConfirm(String key);
     }
 

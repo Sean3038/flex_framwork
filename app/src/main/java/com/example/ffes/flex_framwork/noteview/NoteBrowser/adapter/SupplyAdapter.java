@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.squareup.picasso.Picasso;
@@ -28,7 +28,7 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static final int DISPLAY_WIDTH=1000;
 
 
-    SupplyStateModel model;
+    SupplyModel model;
     Context context;
     boolean isEditor;
 
@@ -43,7 +43,7 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     @Override
-    public void bind(SupplyStateModel supplyStateModel) {
+    public void bind(SupplyModel supplyStateModel) {
         model=supplyStateModel;
     }
 

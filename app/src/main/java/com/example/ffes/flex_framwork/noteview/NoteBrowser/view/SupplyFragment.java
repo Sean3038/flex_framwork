@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
 
 /**
  * Created by Ffes on 2017/8/29.

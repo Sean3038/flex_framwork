@@ -9,7 +9,7 @@ public interface SupplyEditorContract {
         void clearInput();
     }
     interface Presenter{
-        void addPhoto(String photeUrl);
+        void addPhoto(String noteurl,String photeUrl);
         void addMessage(String message);
     }
 }

@@ -1,12 +1,12 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel;
 
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailModel;
 
 /**
  * Created by Ffes on 2017/10/12.
  */
 
-public interface TitleDetailDataModel extends DataModel<TitleDetailStateModel>{
+public interface TitleDetailDataModel extends DataModel<TitleDetailModel>{
     void notifyChange();
 }

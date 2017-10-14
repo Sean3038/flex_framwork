@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
 
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
+import com.example.ffes.flex_framwork.noteview.data.Page;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPa
 
     @Override
     public NoteFragment getItem(int position) {
-        return NoteFragment.newInstance(null,null,isEdit);
+        return NoteFragment.newInstance(null,null,null,isEdit);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPa
 
     @Override
     public void onPageSelected(int position) {
-//        currentfragment.reload();
+
     }
 
     @Override

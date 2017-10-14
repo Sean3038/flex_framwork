@@ -7,7 +7,6 @@ import android.support.v4.view.PagerAdapter;
 import android.view.ViewGroup;
 
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.SupplyFragment;
-import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 import java.util.ArrayList;
 import java.util.List;

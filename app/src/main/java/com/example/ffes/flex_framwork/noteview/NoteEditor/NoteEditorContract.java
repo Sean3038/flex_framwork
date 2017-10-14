@@ -17,5 +17,7 @@ public interface NoteEditorContract {
         void loadData(String noteUrl);
         void updateTitleDetail(String noteurl,String title,String color);
         void getTitleDetail(String noteUrl);
+        void addPage(String noteUrl,String photurl);
+        void saveNote(String noteUrl);
     }
 }

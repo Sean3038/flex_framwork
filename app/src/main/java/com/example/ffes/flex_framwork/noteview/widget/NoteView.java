@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -16,11 +14,12 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyWordDataModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +28,8 @@ import java.util.List;
  * Created by Ffes on 2017/9/11.
  */
 
-public class NoteView extends CustomPhotoView implements OnCustomEvent {
+public class NoteView extends CustomPhotoView implements OnCustomEvent ,KeyWordDataModel{
+
     public static final int NONE=0;
     public static final int SELECTED=1;
     public static final int DRAG=2;
@@ -38,11 +38,15 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
     public static final int KEYFRAME=0;
     public static final int QAFRAME=1;
 
+    List<KeyFrame> keyrect;
 
-    LinkedList<KeyFrame> keyrect;
     boolean isEdit =false;
     boolean isNewItem=false;
+
     int ViewerType=KEYFRAME;
+
+    KeyWordModel keyWordStateModel;
+
     Frame edititem;
 
     int currentMode;
@@ -132,47 +136,6 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
         for(KeyFrame k:keyrect){
             k.setEdit(false);
         }
-    }
-
-    public void add(String key,int color){
-        if(isEdit){
-            hideAll();
-            KeyFrame keyFrame=new KeyFrame();
-            KeyWord keyWord=new KeyWord(key,new RectF(),color);
-            keyFrame.setKeyWord(keyWord);
-            keyFrame.setShow(true);
-            keyFrame.setEdit(true);
-            keyrect.addLast(keyFrame);
-            edititem=keyFrame;
-            isNewItem=true;
-            callback.preAdd();
-        }
-    }
-
-    public void remove(String key){
-        KeyFrame i=null;
-        edititem=null;
-        currentMode=NONE;
-        for(KeyFrame item:keyrect){
-            if(item.getKeyWord().getKeyword().equals(key)){
-                i=item;
-            }
-        }
-        if(i!=null){
-            if(callback!=null) {
-                callback.onRemoved(key);
-            }
-            keyrect.remove(i);
-        }
-        invalidate();
-    }
-
-    public List<KeyWord> getKeyWordList(){
-        List<KeyWord> keyWordList=new ArrayList<>();
-        for(KeyFrame item:keyrect){
-            keyWordList.add(item.getKeyWord());
-        }
-        return keyWordList;
     }
 
     private boolean checkTouchOnRect(Frame item,float x,float y){
@@ -272,14 +235,14 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
     private boolean selectItem(MotionEvent event){
         float x=event.getX();
         float y=event.getY();
-
+        float[] p= caculateActualPonit(x,y);
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 if(ViewerType==QAFRAME){
 
                 }else if(ViewerType==KEYFRAME){
                     for(KeyFrame keyFrame:keyrect){
-                        if(checkTouchOnRect(keyFrame,x,y) && keyFrame.isShow()){
+                        if(checkTouchOnRect(keyFrame,p[0],p[1]) && keyFrame.isShow()){
                             cancelAllEdit();
                             edititem=keyFrame;
                             edititem.setEdit(true);
@@ -376,14 +339,13 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
         cp.offsetTo(src.right-cp.width()/2,src.bottom-cp.height()/2);
     }
 
-    public void load(String noteUrl, final List<KeyWord> itemList, final OnLoadingNoteListener listener){
+    public void load(String imageurl, final OnLoadingNoteListener listener){
         if(listener!=null){
             listener.onLoad();
         }
-        Picasso.with(getContext()).load(noteUrl).resize(1500,1500).centerInside().into(this, new Callback() {
+        Picasso.with(getContext()).load(imageurl).resize(1500,1500).centerInside().into(this, new Callback() {
             @Override
             public void onSuccess() {
-               setKeyrect(itemList);
                 if(listener!=null){
                     listener.onLoaded();
                 }
@@ -398,23 +360,18 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
         });
     }
 
-    public void setKeyrect(final List<KeyWord> itemList){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+    public void setKeyrect(){
                 keyrect.clear();
                 edititem=null;
                 invalidate();
-                for(KeyWord keyWord:itemList){
+                for(int i=0;i<keyWordStateModel.getKeyCount();i++){
                     KeyFrame item=new KeyFrame();
                     item.setShow(false);
                     item.setEdit(false);
-                    item.setKeyWord(keyWord);
+                    item.setKeyWord(keyWordStateModel.getKeyWord(i));
                     keyrect.add(item);
                 }
                 invalidate();
-            }
-        }).start();
     }
 
     @Override
@@ -452,6 +409,41 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
         return isNewItem;
     }
 
+    @Override
+    public void bind(KeyWordModel stateModel) {
+        keyWordStateModel=stateModel;
+        setKeyrect();
+    }
+
+    @Override
+    public void unbind() {
+        keyWordStateModel=null;
+        setKeyrect();
+    }
+
+    @Override
+    public void notifyAddKeyWord() {
+        if(isEdit){
+            hideAll();
+            KeyFrame keyFrame=new KeyFrame();
+            keyFrame.setKeyWord(keyWordStateModel.getKeyWord(keyWordStateModel.getKeyCount()-1));
+            keyFrame.setShow(true);
+            keyFrame.setEdit(true);
+            keyrect.add(keyFrame);
+            edititem=keyFrame;
+            isNewItem=true;
+            callback.preAdd();
+        }
+    }
+
+    @Override
+    public void notifyRemoveKeyWord(int index) {
+        String s=keyrect.remove(index).getKeyWord().getKeyword();
+        edititem=null;
+        Log.d("KeyWord",s);
+        invalidate();
+    }
+
     public interface OnLoadingNoteListener{
         void onLoad();
         void onLoaded();
@@ -462,6 +454,5 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent {
         void preAdd();
         void onAdd();
         void onAdded(KeyWord keyword);
-        void onRemoved(String key);
     }
 }

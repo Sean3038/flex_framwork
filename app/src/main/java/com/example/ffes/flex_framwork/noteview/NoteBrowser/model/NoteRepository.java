@@ -15,11 +15,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ffes on 2017/8/27.
@@ -42,9 +45,9 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Page page=new Page();
                 page.setimageurl(dataSnapshot.child("imageurl").getValue(String.class));
-                getKeyWord(url, pageurl, new OnGetDataCallBack<List<KeyWord>>() {
+                getKeyWord(url, pageurl, new OnGetDataCallBack<Map<String,KeyWord>>() {
                     @Override
-                    public void onSuccess(List<KeyWord> data) {
+                    public void onSuccess(Map<String,KeyWord> data) {
                         page.setkeywordlist(data);
                         getSupply(url, pageurl, new OnGetDataCallBack<List<Supply>>() {
                             @Override
@@ -87,7 +90,7 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
 
     public void getSupply(String url, String pageurl, final OnGetDataCallBack<List<Supply>> callBack){
         DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl+"/supplylist").addValueEventListener(new ValueEventListener() {
+        ncref.child("note/"+url+"/notecontent/"+pageurl+"/supplylist").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Supply> supplyList=new ArrayList<>();
@@ -104,15 +107,13 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         });
     }
 
-    public void getKeyWord(String url, String pageurl, final OnGetDataCallBack<List<KeyWord>> callBack){
+    public void getKeyWord(String url, String pageurl, final OnGetDataCallBack<Map<String,KeyWord>> callBack){
         DatabaseReference ncref=firebaseDatabase.getReference();
         ncref.child("note/"+url+"/notecontent/"+pageurl+"/keywordlist").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<KeyWord> keyWordList=new ArrayList<>();
-                for(DataSnapshot child:dataSnapshot.getChildren()){
-                    keyWordList.add(child.getValue(KeyWord.class));
-                }
+                GenericTypeIndicator<Map<String,KeyWord>> t=new GenericTypeIndicator<Map<String,KeyWord>>() {};
+                Map<String,KeyWord> keyWordList=dataSnapshot.getValue(t);
                 callBack.onSuccess(keyWordList);
             }
 
@@ -125,7 +126,7 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
 
     public void getQAList(String url, String pageurl, final OnGetDataCallBack<List<QA>> callBack){
         DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl+"/qalist").addValueEventListener(new ValueEventListener() {
+        ncref.child("note/"+url+"/notecontent/"+pageurl+"/qalist").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<QA> qaList=new ArrayList<>();
@@ -145,7 +146,7 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     @Override
     public void getShowPages(String url, final OnGetDataCallBack<List<Integer>> callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/pagelist").addValueEventListener(new ValueEventListener() {
+        ref.child("note/"+url+"/pagelist").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -224,9 +225,59 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         ref.child("note/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                callback.onSuccess();
+                callback.onSuccess(null);
             }
         });
+    }
+
+    @Override
+    public void addPage(final String url, Page page, final OnUpLoadDataCallback callback) {
+        addPageContent(url, page, new OnUpLoadDataCallback<String>() {
+
+            @Override
+            public void onSuccess(final String s) {
+                DatabaseReference ref=firebaseDatabase.getReference();
+                ref.child("note/"+url+"/pagelist/").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        DatabaseReference nref=firebaseDatabase.getReference();
+                        long c=dataSnapshot.getChildrenCount()+1;
+                        nref.child("note/"+url+"/pagelist/"+c).setValue(s).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                callback.onSuccess(null);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+    }
+
+    public void addPageContent(String url, Page page, final OnUpLoadDataCallback<String> callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        final String uid=ref.child("note/"+url+"/notecontent/").push().getKey();
+        ref.child("note/"+url+"/notecontent/").push().setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess(uid);
+            }
+        });
+    }
+
+    public void updataNote(String url,List<Page> pages){
+
     }
 
 }

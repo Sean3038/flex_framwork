@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.OnImageClick;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
@@ -21,7 +21,7 @@ public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
 
     Context context;
     OnImageClick listener;
-    PageStateModel model;
+    PageModel model;
     public  NoteViewAdapter(Context context,OnImageClick listener){
         this.context=context;
         this.listener=listener;
@@ -87,7 +87,7 @@ public class NoteViewAdapter extends PagerAdapter implements PageDataModel{
     }
 
     @Override
-    public void bind(PageStateModel pageStateModel) {
+    public void bind(PageModel pageStateModel) {
         model=pageStateModel;
     }
 

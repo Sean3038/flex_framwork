@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.TitleDetailDataModel;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
@@ -11,12 +12,12 @@ import java.util.List;
  * Created by Ffes on 2017/10/12.
  */
 
-public class TitleDetailStateModelImpl implements TitleDetailStateModel {
+public class TitleDetailStateModel implements TitleDetailModel,StateModel<TitleDetailDataModel> {
 
     List<TitleDetailDataModel> models;
     TitleDetail titleDetail;
 
-    public TitleDetailStateModelImpl(){
+    public TitleDetailStateModel(){
         models=new ArrayList<>();
         titleDetail=new TitleDetail("#000000","");
     }

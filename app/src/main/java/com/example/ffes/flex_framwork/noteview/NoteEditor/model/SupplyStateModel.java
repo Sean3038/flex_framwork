@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 
@@ -11,16 +12,16 @@ import java.util.List;
  * Created by Ffes on 2017/10/13.
  */
 
-public class SupplyStateModelImpl implements SupplyStateModel {
+public class SupplyStateModel implements SupplyModel,StateModel<SupplyDataModel> {
     List<SupplyDataModel> supplyModels;
     List<Supply> supplyList;
 
-    public SupplyStateModelImpl(List<Supply> supplies){
+    public SupplyStateModel(List<Supply> supplies){
         supplyModels=new ArrayList<>();
         supplyList=supplies;
     }
 
-    public SupplyStateModelImpl(){
+    public SupplyStateModel(){
         supplyModels=new ArrayList<>();
         supplyList=new ArrayList<>();
     }

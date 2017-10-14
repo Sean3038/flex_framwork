@@ -1,25 +1,21 @@
 package com.example.ffes.flex_framwork.noteview.data;
 
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Parcel;
-import android.os.Parcelable;
 
 /**
  * Created by Ffes on 2017/8/28.
  */
 
-//parcelable unimplement
-public class KeyWord implements Parcelable {
+public class KeyWord{
     String keyword;
-    int color;
+    String color;
     RectF rect;
 
     public KeyWord(){}
 
-    public KeyWord(String keyword,RectF rect,int color){
+    public KeyWord(String keyword,RectF rect,String color){
         this.keyword=keyword;
         this.rect=rect;
         this.color=color;
@@ -28,27 +24,14 @@ public class KeyWord implements Parcelable {
     protected KeyWord(Parcel in) {
         keyword = in.readString();
         rect=in.readParcelable(Rect.class.getClassLoader());
-        color=in.readInt();
+        color=in.readString();
     }
 
-
-    public static final Creator<KeyWord> CREATOR = new Creator<KeyWord>() {
-        @Override
-        public KeyWord createFromParcel(Parcel in) {
-            return new KeyWord(in);
-        }
-
-        @Override
-        public KeyWord[] newArray(int size) {
-            return new KeyWord[size];
-        }
-    };
-
-    public int getColor() {
+    public String getColor() {
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
@@ -66,17 +49,5 @@ public class KeyWord implements Parcelable {
 
     public void setRect(RectF rect) {
         this.rect = rect;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(keyword);
-        dest.writeParcelable(rect, flags);
-        dest.writeInt(color);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +17,29 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.SupplyFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.SupplyEditPresenter;
+import com.google.firebase.storage.FirebaseStorage;
+
+import java.util.ArrayList;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Ffes on 2017/9/18.
  */
 
 public class SupplyEditorFragment extends Fragment implements SupplyEditorContract.View{
+
     public static final String URL_KEY="NoteURL";
+
+    public static final int REQUEST_GETPHOTO=100;
 
     SupplyEditorContract.Presenter presenter;
 
@@ -66,6 +79,13 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
         getphoto_btn=(ImageView)view.findViewById(R.id.getphoto_btn);
         scroll=(ScrollView)view.findViewById(R.id.scroll);
         enter_btn=(ImageView)view.findViewById(R.id.enter_btn);
+        getphoto_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getPhoto();
+            }
+        });
+
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +111,7 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
             }
         });
         init();
-        presenter=new SupplyEditPresenter(this, stateModel);
+        presenter=new SupplyEditPresenter(this, stateModel,new ImageRepository(FirebaseStorage.getInstance()));
     }
 
     public void init(){
@@ -105,6 +125,29 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
     @Override
     public void clearInput() {
         editText.setText("");
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==REQUEST_GETPHOTO && resultCode==RESULT_OK){
+            ArrayList<Image> images = (ArrayList<Image>) ImagePicker.getImages(data);
+            for(Image i:images){
+                presenter.addPhoto(getArguments().getString(URL_KEY),i.getPath());
+                Log.d("Sad",i.getPath());
+            }
+
+        }
+
+    }
+
+    public void getPhoto(){
+        ImagePicker.create(this)
+                .returnAfterFirst(true)
+                .showCamera(true)
+                .imageTitle("選擇補充照片")
+                .single()
+                .start(REQUEST_GETPHOTO);
     }
 
     public void setDataModel(SupplyStateModel model){

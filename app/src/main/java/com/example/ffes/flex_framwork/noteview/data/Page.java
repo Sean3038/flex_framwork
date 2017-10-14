@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ffes on 2017/8/28.
@@ -9,12 +10,12 @@ import java.util.List;
 public class Page {
     String imageurl;
     List<Supply> supplylist;
-    List<KeyWord> keywordlist;
+    Map<String,KeyWord> keywordlist;
     List<QA> qalist;
 
     public Page(){}
 
-    public Page(String imageurl,List<Supply> supplylist,List<KeyWord> keywordlist,List<QA> qalist){
+    public Page(String imageurl,List<Supply> supplylist,Map<String,KeyWord>  keywordlist,List<QA> qalist){
         this.imageurl=imageurl;
         this.keywordlist =keywordlist;
         this.supplylist=supplylist;
@@ -29,7 +30,7 @@ public class Page {
         return imageurl;
     }
 
-    public void setkeywordlist(List<KeyWord> keywordlist) {
+    public void setkeywordlist(Map<String,KeyWord>  keywordlist) {
         this.keywordlist = keywordlist;
     }
 
@@ -41,7 +42,7 @@ public class Page {
         this.qalist = qalist;
     }
 
-    public List<KeyWord> getkeywordlist() {
+    public Map<String,KeyWord>  getkeywordlist() {
         return keywordlist;
     }
 

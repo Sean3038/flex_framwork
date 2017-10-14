@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.TitleDetailDataModel;
 import com.example.ffes.flex_framwork.noteview.widget.UnderlinedTextView;
 
@@ -20,7 +20,7 @@ public class TitleToolBar implements TitleDetailDataModel{
     ImageView supply_btn;
     UnderlinedTextView title;
 
-    TitleDetailStateModel titleDetailStateModel;
+    TitleDetailModel titleDetailStateModel;
 
     TitleToolBar(ViewGroup viewGroup, View.OnClickListener titleclick, View.OnClickListener saveclick, View.OnClickListener supplyclick){
         save_btn=(ImageView)viewGroup.findViewById(R.id.save_btn);
@@ -32,7 +32,7 @@ public class TitleToolBar implements TitleDetailDataModel{
     }
 
     @Override
-    public void bind(TitleDetailStateModel stateModel) {
+    public void bind(TitleDetailModel stateModel) {
         titleDetailStateModel=stateModel;
     }
 

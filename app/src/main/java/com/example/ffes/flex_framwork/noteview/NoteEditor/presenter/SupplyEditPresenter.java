@@ -1,7 +1,11 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
+import android.util.Log;
+
+import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 
@@ -10,19 +14,33 @@ import com.example.ffes.flex_framwork.noteview.data.Supply;
  */
 
 public class SupplyEditPresenter implements SupplyEditorContract.Presenter{
-    SupplyEditorContract.View view;
-    SupplyStateModel supplyStateModel;
 
-    public SupplyEditPresenter(SupplyEditorContract.View view,SupplyStateModel supplyStateModel){
+    SupplyEditorContract.View view;
+    SupplyModel supplyStateModel;
+    ImageRepository imageRepository;
+
+    public SupplyEditPresenter(SupplyEditorContract.View view, SupplyModel supplyStateModel, ImageRepository imageRepository){
         this.view=view;
         this.supplyStateModel=supplyStateModel;
+        this.imageRepository=imageRepository;
     }
 
 
     @Override
-    public void addPhoto(String photeUrl) {
-        Supply supply=new Supply(2,photeUrl);
-        supplyStateModel.addSupply(supply);
+    public void addPhoto(String noteurl,String photoUrl) {
+        imageRepository.addSupplyPhoto(noteurl,photoUrl, new OnUpLoadDataCallback<String>() {
+
+            @Override
+            public void onSuccess(String s) {
+                Supply supply=new Supply(2,s);
+                supplyStateModel.addSupply(supply);
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
     }
 
     @Override

@@ -4,7 +4,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 
 /**
@@ -16,7 +16,7 @@ public class PageIndicator implements PageDataModel {
     TextView currentpage;
     TextView totalpage;
 
-    PageStateModel stateModel;
+    PageModel stateModel;
 
     PageIndicator(ViewGroup viewGroup){
         currentpage=(TextView)viewGroup.findViewById(R.id.currentpage);
@@ -43,7 +43,7 @@ public class PageIndicator implements PageDataModel {
     }
 
     @Override
-    public void bind(PageStateModel pageStateModel) {
+    public void bind(PageModel pageStateModel) {
         stateModel=pageStateModel;
         setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
     }

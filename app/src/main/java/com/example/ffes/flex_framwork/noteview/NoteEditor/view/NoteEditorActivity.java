@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,38 +10,47 @@ import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
+import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.PageListAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModelImpl;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModelImpl;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModelImpl;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyWordStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.QAStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPresenter;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
+import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class NoteEditorActivity extends BaseActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
         PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick{
 
     public static final String URL_KEY="NoteURL";
+    private static final int REQUEST_GETPHOTO = 100;
 
     LinearLayout editor_layout;
     TextView editor_btn;
@@ -77,7 +87,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         initAdapter();
         init();
 
-        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
+        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
         presenter.loadData("sdf4K5df6a");
     }
 
@@ -152,11 +162,11 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         pageListAdapter=new PageListAdapter(this);
         pageListAdapter.setListener(this);
 
-        stateModel=new PageStateModelImpl();
+        stateModel=new PageStateModel();
         stateModel.addModel(pageIndicator);
         stateModel.addModel(pageListAdapter);
         stateModel.addModel(noteViewAdapter);
-        titleDetailStateModel=new TitleDetailStateModelImpl();
+        titleDetailStateModel=new TitleDetailStateModel();
         titleDetailStateModel.addModel(titleToolBar);
     }
 
@@ -218,7 +228,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     }
 
     public void openSupplyEdit(List<Supply> supplies){
-        SupplyEditorFragment supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",new SupplyStateModelImpl(supplies));
+        SupplyEditorFragment supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",new SupplyStateModel(supplies));
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction ft=fragmentManager.beginTransaction();
         ft.replace(R.id.supplyfragment,supplyEditorFragment,"SupplyFragment");
@@ -236,12 +246,12 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         ft.commit();
     }
 
-    public void openKeyEdit(List<KeyWord> keyWords,List<QA> qaList){
-        KeyEditorFragment keyEditorFragment=KeyEditorFragment.newInstance("dsaf");
+    public void openKeyEdit(String imageurl,Map<String,KeyWord> keyWords, List<QA> qaList){
+        NoteFragment noteFragment=NoteFragment.newInstance(imageurl,new KeyWordStateModel(keyWords),new QAStateModel(qaList),true);
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction ft=fragmentManager.beginTransaction();
-        ft.replace(R.id.supplyfragment,keyEditorFragment,"KeyEditorFragment");
-        ft.addToBackStack("KeyEditorFragment");
+        ft.replace(R.id.supplyfragment,noteFragment,"NoteFragment");
+        ft.addToBackStack("NoteFragment");
         fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
@@ -256,17 +266,32 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     }
 
     @Override
-    public void onAddPage() {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if(stateModel.getTotalPage()>0){
             titleToolBar.showSupplyButton();
             notifyNoPage.setVisibility(View.GONE);
         }
+        if(requestCode==REQUEST_GETPHOTO && resultCode==RESULT_OK){
+            ArrayList<Image> images = (ArrayList<Image>) ImagePicker.getImages(data);
+            for(Image i:images){
+                presenter.addPage("sdf4K5df6a",i.getPath());
+            }
+
+        }
+
+    }
+
+
+    @Override
+    public void onAddPage() {
+        getPhoto();
         Toast.makeText(this,"add page",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onClickImage(int page) {
-        openKeyEdit(stateModel.getPage(page).getkeywordlist(),stateModel.getPage(page).getqalist());
+        openKeyEdit(stateModel.getPage(page).getimageurl(),stateModel.getPage(page).getkeywordlist(),stateModel.getPage(page).getqalist());
     }
 
     @Override
@@ -302,5 +327,14 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
             titleToolBar.hideSupplyButton();
             notifyNoPage.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void getPhoto(){
+        ImagePicker.create(this)
+                .returnAfterFirst(true)
+                .showCamera(true)
+                .imageTitle("選擇補充照片")
+                .single()
+                .start(REQUEST_GETPHOTO);
     }
 }

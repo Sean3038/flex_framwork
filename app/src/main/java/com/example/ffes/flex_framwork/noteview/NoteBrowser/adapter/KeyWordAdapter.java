@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyWordDataModel;
-import com.example.ffes.flex_framwork.noteview.data.KeyWord;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Ffes on 2017/9/13.
@@ -43,15 +40,15 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
                 @Override
                 public void onClick(View v) {
                     if(deleteKeyClick!=null) {
-                        deleteKeyClick.onDeleteKeyClick(content.getText().toString());
+                        deleteKeyClick.onDeleteKeyClick(getAdapterPosition());
                     }
                 }
             });
         }
 
-        public void setKeyWord(String key,int color){
+        public void setKeyWord(String key,String color){
             content.setText(key);
-            content.setTextColor(color);
+            content.setTextColor(Color.parseColor(color));
         }
 
         public void showDeleteButton(){
@@ -74,7 +71,7 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
     OnKeyClick keyClick;
     OnDeleteKeyClick deleteKeyClick;
 
-    KeyWordStateModel keyWordStateModel;
+    KeyWordModel keyWordStateModel;
 
     boolean isEdit;
 
@@ -121,7 +118,7 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
     }
 
     @Override
-    public void bind(KeyWordStateModel stateModel) {
+    public void bind(KeyWordModel stateModel) {
         keyWordStateModel=stateModel;
     }
 
@@ -144,6 +141,6 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
         void onKeyClick(String key);
     }
     public interface OnDeleteKeyClick{
-        void onDeleteKeyClick(String key);
+        void onDeleteKeyClick(int key);
     }
 }

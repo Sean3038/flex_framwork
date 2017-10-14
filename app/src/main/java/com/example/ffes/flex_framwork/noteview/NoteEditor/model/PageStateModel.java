@@ -1,7 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.CurrentPageModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 
@@ -12,13 +12,13 @@ import java.util.List;
  * Created by Ffes on 2017/10/10.
  */
 
-public class PageStateModelImpl implements PageStateModel,CurrentPageModel {
+public class PageStateModel implements PageModel,StateModel<PageDataModel> {
     List<PageDataModel> models;
     List<Page> pagelist;
 
     int currentPage;
 
-    public PageStateModelImpl(){
+    public PageStateModel(){
         models=new ArrayList<>();
         pagelist=new ArrayList<>();
         currentPage=-1;
@@ -80,5 +80,10 @@ public class PageStateModelImpl implements PageStateModel,CurrentPageModel {
     @Override
     public int getTotalPage(){
      return pagelist.size();
+    }
+
+    @Override
+    public List<Page> getAllPage() {
+        return pagelist;
     }
 }

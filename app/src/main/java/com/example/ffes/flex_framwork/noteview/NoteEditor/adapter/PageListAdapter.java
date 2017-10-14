@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.squareup.picasso.Picasso;
@@ -22,7 +22,7 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static final int TYPE_FOOT=1;
     public static final int TYPE_VIEW=0;
 
-    PageStateModel model;
+    PageModel model;
     boolean isEditor;
 
     OnAddPageListener listener;
@@ -73,7 +73,7 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public void bind(PageStateModel pageStateModel) {
+    public void bind(PageModel pageStateModel) {
         model=pageStateModel;
     }
 
@@ -97,7 +97,7 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         ImageView add_btn;
         public FootHolder(View itemView) {
             super(itemView);
-            add_btn=(ImageView)itemView.findViewById(R.id.add_btn);
+            add_btn=(ImageView)itemView.findViewById(R.id.add_page_btn);
         }
     }
 

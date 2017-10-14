@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.widget;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
@@ -11,6 +12,7 @@ import com.example.ffes.flex_framwork.noteview.data.KeyWord;
  */
 
 public class KeyFrame implements Frame {
+
     KeyWord keyWord;
     boolean isShow;
     boolean isEdit;
@@ -42,7 +44,8 @@ public class KeyFrame implements Frame {
     public void draw(Canvas canvas){
         if(isShow) {
             Paint p = new Paint();
-            p.setColor(keyWord.getColor());
+            p.setColor(Color.parseColor(keyWord.getColor()));
+            p.setAlpha(50);
             canvas.drawRect(keyWord.getRect(), p);
         }
     }

@@ -7,7 +7,7 @@ import com.example.ffes.flex_framwork.noteview.data.Supply;
  * Created by Ffes on 2017/10/12.
  */
 
-public interface SupplyStateModel extends StateModel<SupplyDataModel>{
+public interface SupplyModel {
     void addSupply(Supply page);
     void removeSupply(int index);
     Supply getSupply(int index);
