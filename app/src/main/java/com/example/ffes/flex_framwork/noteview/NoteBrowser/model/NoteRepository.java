@@ -1,5 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
 
+import android.util.Log;
+
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
@@ -44,34 +46,48 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final Page page=new Page();
+                final int[] count = {0};
                 page.setimageurl(dataSnapshot.child("imageurl").getValue(String.class));
+                page.setId(dataSnapshot.child("id").getValue(String.class));
                 getKeyWord(url, pageurl, new OnGetDataCallBack<Map<String,KeyWord>>() {
                     @Override
                     public void onSuccess(Map<String,KeyWord> data) {
                         page.setkeywordlist(data);
-                        getSupply(url, pageurl, new OnGetDataCallBack<List<Supply>>() {
-                            @Override
-                            public void onSuccess(List<Supply> data) {
-                                page.setsupplylist(data);
-                                getQAList(url, pageurl, new OnGetDataCallBack<List<QA>>() {
-                                    @Override
-                                    public void onSuccess(List<QA> data) {
-                                        page.setqalist(data);
-                                        callback.onSuccess(page);
-                                    }
+                        count[0]++;
+                        if(count[0]==3){
+                            callback.onSuccess(page);
+                        }
+                    }
 
-                                    @Override
-                                    public void onFailure() {
-                                        callback.onFailure();
-                                    }
-                                });
-                            }
+                    @Override
+                    public void onFailure() {
+                        callback.onFailure();
+                    }
+                });
+                getSupply(url, pageurl, new OnGetDataCallBack<List<Supply>>() {
+                    @Override
+                    public void onSuccess(List<Supply> data) {
+                        page.setsupplylist(data);
+                        count[0]++;
+                        if(count[0]==3){
+                            callback.onSuccess(page);
+                        }
 
-                            @Override
-                            public void onFailure() {
-                                callback.onFailure();
-                            }
-                        });
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        callback.onFailure();
+                    }
+                });
+                getQAList(url, pageurl, new OnGetDataCallBack<List<QA>>() {
+                    @Override
+                    public void onSuccess(List<QA> data) {
+                        page.setqalist(data);
+                        count[0]++;
+                        if(count[0]==3){
+                            callback.onSuccess(page);
+                        }
                     }
 
                     @Override
@@ -114,6 +130,9 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
             public void onDataChange(DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<Map<String,KeyWord>> t=new GenericTypeIndicator<Map<String,KeyWord>>() {};
                 Map<String,KeyWord> keyWordList=dataSnapshot.getValue(t);
+                if(keyWordList==null){
+                    keyWordList=new HashMap<>();
+                }
                 callBack.onSuccess(keyWordList);
             }
 
@@ -219,9 +238,8 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     }
 
     @Override
-    public void updateTitleDetial(String url, String title, String color, final OnUpLoadDataCallback callback) {
+    public void updateTitleDetial(String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        TitleDetail titleDetail=new TitleDetail(color,title);
         ref.child("note/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -265,10 +283,47 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         });
     }
 
+    @Override
+    public void updateNoteContent(final String url, Map<String,Object> p, final TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
+        Log.d("MAP",p.toString());
+        updatePageContents(url, p, new OnUpLoadDataCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                updateTitleDetial(url, titleDetail, new OnUpLoadDataCallback() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        callback.onSuccess(null);
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+    }
+
+    public void updatePageContents(String url, Map<String,Object>  page, final OnUpLoadDataCallback<String> callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        Log.d("map",page.toString());
+        ref.child("note/"+url+"/notecontent/").setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess(null);
+            }
+        });
+    }
+
     public void addPageContent(String url, Page page, final OnUpLoadDataCallback<String> callback){
         DatabaseReference ref=firebaseDatabase.getReference();
         final String uid=ref.child("note/"+url+"/notecontent/").push().getKey();
-        ref.child("note/"+url+"/notecontent/").push().setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("note/"+url+"/notecontent/"+uid).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 callback.onSuccess(uid);
@@ -276,8 +331,18 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         });
     }
 
-    public void updataNote(String url,List<Page> pages){
+    public void updatePageLink(String url,String pageurl,OnUpLoadDataCallback callback){
 
+    }
+
+    public void updatePage(String url, Page page, final OnUpLoadDataCallback callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+url+"/notecontent/"+page.getId()).setValue(page.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess(null);
+            }
+        });
     }
 
 }

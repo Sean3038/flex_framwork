@@ -6,13 +6,16 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataMode
 import com.example.ffes.flex_framwork.noteview.data.Page;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ffes on 2017/10/10.
  */
 
 public class PageStateModel implements PageModel,StateModel<PageDataModel> {
+
     List<PageDataModel> models;
     List<Page> pagelist;
 
@@ -83,7 +86,11 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
     }
 
     @Override
-    public List<Page> getAllPage() {
-        return pagelist;
+    public Map toMap(){
+        Map<String,Object> map=new HashMap<>();
+        for(Page p:pagelist){
+            map.put(p.getId(),p.toMap());
+        }
+        return map;
     }
 }

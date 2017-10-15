@@ -1,9 +1,10 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -19,5 +20,5 @@ public interface PageModel {
     int  getCurrentPage();
     int getTotalPage();
 
-    List<Page> getAllPage();
+    Map<String,Object> toMap();
 }

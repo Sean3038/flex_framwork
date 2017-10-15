@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +38,7 @@ public class ImageRepository {
 
     public void addPagePhoto(String noteurl, String filepath, final OnUpLoadDataCallback<String> callback){
         File file=new File(filepath);
-        storage.getReference("images").child(noteurl+"/page/"+filepath.substring(filepath.lastIndexOf("/")+1))
+        storage.getReference("images").child(noteurl+"/page/"+file.getName())
                 .putFile(Uri.fromFile(file))
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override

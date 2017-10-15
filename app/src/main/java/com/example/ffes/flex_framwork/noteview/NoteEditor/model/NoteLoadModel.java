@@ -5,6 +5,9 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoa
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * Created by Ffes on 2017/10/10.
@@ -13,6 +16,7 @@ import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 public interface NoteLoadModel {
     void getPages(String url,OnGetDataCallBack<Page> callBack);
     void getTitleDetail(String url, OnGetDataCallBack<TitleDetail> callBack);
-    void updateTitleDetial(String url,String title,String color,OnUpLoadDataCallback callback);
+    void updateTitleDetial(String url,TitleDetail titleDetail,OnUpLoadDataCallback callback);
     void addPage(String url,Page page,OnUpLoadDataCallback callback);
+    void updateNoteContent(String url, Map<String,Object> p, TitleDetail titleDetail, OnUpLoadDataCallback callback);
 }

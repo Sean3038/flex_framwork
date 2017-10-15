@@ -40,6 +40,7 @@ import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,13 +88,9 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         initAdapter();
         init();
 
+
         presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
         presenter.loadData("sdf4K5df6a");
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 
     private void init(){
@@ -182,7 +179,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
                 ,new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        finish();
+                        presenter.saveNote("sdf4K5df6a");
                     }
                 }
                 ,new View.OnClickListener() {
@@ -213,9 +210,21 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         showProgress(message);
     }
 
+
     @Override
     public void closeprogress() {
         dismissProgress();
+    }
+
+    @Override
+    public void hidenotify() {
+            titleToolBar.showSupplyButton();
+            notifyNoPage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void end() {
+        finish();
     }
 
 
@@ -268,10 +277,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(stateModel.getTotalPage()>0){
-            titleToolBar.showSupplyButton();
-            notifyNoPage.setVisibility(View.GONE);
-        }
         if(requestCode==REQUEST_GETPHOTO && resultCode==RESULT_OK){
             ArrayList<Image> images = (ArrayList<Image>) ImagePicker.getImages(data);
             for(Image i:images){

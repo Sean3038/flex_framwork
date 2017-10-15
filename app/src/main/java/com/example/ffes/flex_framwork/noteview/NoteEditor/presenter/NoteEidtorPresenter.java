@@ -101,6 +101,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
                     }
                 });
+                view.hidenotify();
             }
 
             @Override
@@ -112,7 +113,19 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
     @Override
     public void saveNote(String noteUrl) {
+        view.showprogress("儲存筆記");
+        model.updateNoteContent(noteUrl, stateModel.toMap(), titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
+            @Override
+            public void onSuccess(Object o) {
+                view.closeprogress();
+                view.end();
+            }
 
+            @Override
+            public void onFailure() {
+
+            }
+        });
     }
 
 }

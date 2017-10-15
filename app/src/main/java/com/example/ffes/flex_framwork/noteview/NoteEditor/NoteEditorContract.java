@@ -11,6 +11,8 @@ public interface NoteEditorContract {
         void showTitleEditor(String title,String color);
         void showprogress(String message);
         void closeprogress();
+        void hidenotify();
+        void end();
     }
 
     interface Presenter{
