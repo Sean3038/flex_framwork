@@ -24,16 +24,10 @@ public interface NoteBrowserContract {
         void setKeyList(List<String> list);
 
         void setTitle(String title);
-
-        void setNotePage(List<Integer> list);
-
-        void setCurrentPage(int page);
-
-        void setTotalPage(int page);
     }
     interface Presenter{
 
-        void loadNote();
+        void loadNote(String noteurl);
 
         void onOpenKeyList();
 

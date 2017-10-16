@@ -19,4 +19,5 @@ public interface NoteLoadModel {
     void updateTitleDetial(String url,TitleDetail titleDetail,OnUpLoadDataCallback callback);
     void addPage(String url,Page page,OnUpLoadDataCallback callback);
     void updateNoteContent(String url, Map<String,Object> p, TitleDetail titleDetail, OnUpLoadDataCallback callback);
+    void updatePageLink(String url,Map<String,Object> link,OnUpLoadDataCallback callback);
 }

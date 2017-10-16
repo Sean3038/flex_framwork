@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -76,6 +78,8 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     PageStateModel stateModel;
     TitleDetailStateModel titleDetailStateModel;
 
+    String noteUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,9 +92,9 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         initAdapter();
         init();
 
-
+        noteUrl="sdf4K5df6a";
         presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
-        presenter.loadData("sdf4K5df6a");
+        presenter.loadData(noteUrl);
     }
 
     private void init(){
@@ -172,14 +176,14 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
                 ,new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        presenter.getTitleDetail("sdf4K5df6a");
+                        presenter.getTitleDetail(noteUrl);
                         Toast.makeText(v.getContext(),"click", Toast.LENGTH_SHORT).show();
                     }
                 }
                 ,new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        presenter.saveNote("sdf4K5df6a");
+                        presenter.saveNote(noteUrl);
                     }
                 }
                 ,new View.OnClickListener() {
@@ -210,7 +214,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         showProgress(message);
     }
 
-
     @Override
     public void closeprogress() {
         dismissProgress();
@@ -227,7 +230,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         finish();
     }
 
-
     public void openPageEditor(){
         editor_layout.setVisibility(View.VISIBLE);
     }
@@ -237,7 +239,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     }
 
     public void openSupplyEdit(List<Supply> supplies){
-        SupplyEditorFragment supplyEditorFragment = SupplyEditorFragment.newInstance("sdf4K5df6a",new SupplyStateModel(supplies));
+        SupplyEditorFragment supplyEditorFragment = SupplyEditorFragment.newInstance(noteUrl,new SupplyStateModel(supplies));
         FragmentManager fragmentManager=getSupportFragmentManager();
         FragmentTransaction ft=fragmentManager.beginTransaction();
         ft.replace(R.id.supplyfragment,supplyEditorFragment,"SupplyFragment");
@@ -280,18 +282,16 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         if(requestCode==REQUEST_GETPHOTO && resultCode==RESULT_OK){
             ArrayList<Image> images = (ArrayList<Image>) ImagePicker.getImages(data);
             for(Image i:images){
-                presenter.addPage("sdf4K5df6a",i.getPath());
+                presenter.addPage(noteUrl,i.getPath());
             }
 
         }
 
     }
 
-
     @Override
     public void onAddPage() {
         getPhoto();
-        Toast.makeText(this,"add page",Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -307,7 +307,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
 
     @Override
     public void onConfirm(String title, String color) {
-        presenter.updateTitleDetail("sdf4K5df6a",title,color);
+        presenter.updateTitleDetail(noteUrl,title,color);
     }
 
     @Override
@@ -323,6 +323,29 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         stateModel.removeModel(pageIndicator);
         titleDetailStateModel.removeModel(titleToolBar);
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getSupportFragmentManager().getBackStackEntryCount()==0){
+            AlertDialog.Builder builder=new AlertDialog.Builder(this);
+            builder.setTitle("退出編輯")
+                    .setMessage("點選確認保存筆記")
+                    .setPositiveButton("確認", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            presenter.saveNote(noteUrl);
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    }).show();
+        }else {
+            super.onBackPressed();
+        }
     }
 
     @Override

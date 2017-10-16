@@ -87,10 +87,18 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
 
     @Override
     public Map toMap(){
+
+        Map<String,Object> result=new HashMap<>();
         Map<String,Object> map=new HashMap<>();
+        Map<String,Object> linkmap=new HashMap<>();
+        int c=0;
         for(Page p:pagelist){
             map.put(p.getId(),p.toMap());
+            linkmap.put(""+c,p.getId());
+            c++;
         }
-        return map;
+        result.put("map",map);
+        result.put("link",linkmap);
+        return result;
     }
 }

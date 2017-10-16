@@ -18,7 +18,7 @@ public class PageIndicator implements PageDataModel {
 
     PageModel stateModel;
 
-    PageIndicator(ViewGroup viewGroup){
+    public PageIndicator(ViewGroup viewGroup){
         currentpage=(TextView)viewGroup.findViewById(R.id.currentpage);
         totalpage=(TextView)viewGroup.findViewById(R.id.totalpage);
     }
@@ -30,10 +30,6 @@ public class PageIndicator implements PageDataModel {
 
     @Override
     public void notifyRemovePage(int index) {
-//        if(stateModel.getTotalPage()==0) {
-//            supply_btn.setVisibility(View.GONE);
-//            notifyNoPage.setVisibility(View.VISIBLE);
-//        }
         setPageState(stateModel.getCurrentPage(), stateModel.getTotalPage());
     }
 

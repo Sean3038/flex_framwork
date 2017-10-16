@@ -3,6 +3,7 @@ package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
 import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteBrowserModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
@@ -30,7 +31,7 @@ import java.util.Map;
  * Created by Ffes on 2017/8/27.
  */
 
-public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoadModel{
+public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoadModel,NoteBrowserModel{
 
     FirebaseDatabase firebaseDatabase;
     FirebaseStorage firebaseStorage;
@@ -221,6 +222,15 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     }
 
     @Override
+    public void getNoteName(String noteurl, OnUpLoadDataCallback<String> callBack) {
+
+    }
+
+    @Override
+    public void getKeyList(String url, OnGetDataCallBack<List<String>> callBack) {
+    }
+
+    @Override
     public void getTitleDetail(String url, final OnGetDataCallBack<TitleDetail> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("note/"+url+"/titledetail").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -323,6 +333,7 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     public void addPageContent(String url, Page page, final OnUpLoadDataCallback<String> callback){
         DatabaseReference ref=firebaseDatabase.getReference();
         final String uid=ref.child("note/"+url+"/notecontent/").push().getKey();
+        page.setId(uid);
         ref.child("note/"+url+"/notecontent/"+uid).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -331,8 +342,15 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         });
     }
 
-    public void updatePageLink(String url,String pageurl,OnUpLoadDataCallback callback){
-
+    @Override
+    public void updatePageLink(String url, Map<String,Object> link, final OnUpLoadDataCallback callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+url+"/pagelist/").setValue(link).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess(null);
+            }
+        });
     }
 
     public void updatePage(String url, Page page, final OnUpLoadDataCallback callback){

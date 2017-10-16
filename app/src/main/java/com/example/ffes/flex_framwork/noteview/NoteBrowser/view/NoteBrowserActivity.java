@@ -8,17 +8,20 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.BaseActivity;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.NoteBrowserContract;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.NotePageAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyPageAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.NoteBrowserPresenter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyFilterAdapter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.view.PageIndicator;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.HackyViewPager;
 import com.example.ffes.flex_framwork.noteview.widget.LottieButton;
@@ -28,16 +31,13 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.List;
 
-public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowserContract.View,View.OnClickListener {
+public class NoteBrowserActivity extends BaseActivity implements NoteBrowserContract.View,View.OnClickListener {
 
-    LottieButton keylisttoggle;
-    ImageView supplytoggle;
-    TextView titleview;
-    TextView currentpage;
-    TextView totalpage;
+    FilterToolBar filterToolBar;
+    PageIndicator pageIndicator;
+
     SupplyView supplyView;
 
-    PopupWindow keylistwindow;
     RecyclerView keylistcontent;
     KeyFilterAdapter keyFilterAdapter;
 
@@ -54,7 +54,7 @@ public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowse
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        noteBrowserPresenter=new NoteBrowserPresenter(this,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
+        noteBrowserPresenter=new NoteBrowserPresenter(this,null,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
     }
 
     @Override
@@ -72,23 +72,8 @@ public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowse
         getSupportActionBar().setCustomView(R.layout.function_toolbar);
 
         //UI綁定
-        keylisttoggle=(LottieButton)findViewById(R.id.keylisttoggle);
-        titleview=(TextView)findViewById(R.id.title);
-        supplytoggle=(ImageView)findViewById(R.id.supplytoggle);
-        currentpage=(TextView)findViewById(R.id.currentpage);
-        totalpage=(TextView)findViewById(R.id.totalpage);
-        supplyView=(SupplyView)findViewById(R.id.supplyview);
-        notewindow=(HackyViewPager)findViewById(R.id.notestage);
 
-        keylistcontent=new RecyclerView(this);
-        keyFilterAdapter =new KeyFilterAdapter();
-
-        keylistwindow=new PopupWindow();
-
-        notePageAdapter=new NotePageAdapter(getSupportFragmentManager());
-
-        //關鍵字列表開關設定
-        keylisttoggle.setOnCallbackListener(new LottieButton.Callback() {
+        filterToolBar=new FilterToolBar(getActionBar().getCustomView(),new LottieButton.Callback() {
             @Override
             public void onOpen() {
                 showKeyList();
@@ -98,11 +83,18 @@ public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowse
             public void onClose() {
                 hideKeyList();
             }
-        });
-        //補充頁開關設定
-        supplytoggle.setOnClickListener(this);
-        //標題編輯開關設定
-        titleview.setOnClickListener(this);
+        },this,this);
+        pageIndicator=new PageIndicator((ViewGroup)findViewById(R.id.pageindicator));
+        supplyView=(SupplyView)findViewById(R.id.supplyview);
+        notewindow=(HackyViewPager)findViewById(R.id.notestage);
+
+        keylistcontent=new RecyclerView(this);
+        keyFilterAdapter =new KeyFilterAdapter();
+
+
+
+        notePageAdapter=new NotePageAdapter(getSupportFragmentManager());
+
         //關鍵字列表設定
         keylistcontent.setBackgroundColor(ContextCompat.getColor(this, R.color.keyListBackgroundColor));
         keylistcontent.setAdapter(keyFilterAdapter);
@@ -110,46 +102,25 @@ public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowse
         //補充內容設定
         supplyView.setSupplyPageAdapter(new SupplyPageAdapter(getSupportFragmentManager()));
         //關鍵字視窗設定
+        PopupWindow keylistwindow=new PopupWindow();
         keylistwindow.setContentView(keylistcontent);
         keylistwindow.setElevation(10f);
         keylistwindow.setWidth(400);
         keylistwindow.setHeight(600);
+        filterToolBar.setPopupWindow(keylistwindow);
         //補充視窗設定
 
         //筆記內容
         notewindow.setAdapter(notePageAdapter);
-        notewindow.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                setCurrentPage(position+1);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
-    private void initVariable(){
-
-    }
-
-    private void loadata(){
-
-    }
     @Override
     public void showKeyList() {
-        keylistwindow.showAsDropDown(keylisttoggle,0,84);
+        filterToolBar.showKeyList();
     }
     @Override
     public void hideKeyList(){
-        keylistwindow.dismiss();
+        filterToolBar.hideKeyList();
     }
 
     @Override
@@ -184,23 +155,7 @@ public class NoteBrowserActivity extends AppCompatActivity implements NoteBrowse
 
     @Override
     public void setTitle(String title) {
-         titleview.setText(title);
-    }
-
-    @Override
-    public void setNotePage(List<Integer> list) {
-        notePageAdapter.setNoteList(list);
-        setTotalPage(list.size());
-    }
-
-    @Override
-    public void setCurrentPage(int page) {
-        currentpage.setText(""+page);
-    }
-
-    @Override
-    public void setTotalPage(int page) {
-        totalpage.setText(""+page);
+        filterToolBar.setTitle(title);
     }
 
 

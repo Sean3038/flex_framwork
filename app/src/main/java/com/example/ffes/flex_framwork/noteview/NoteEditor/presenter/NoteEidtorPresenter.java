@@ -15,6 +15,7 @@ import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Ffes on 2017/9/18.
@@ -112,13 +113,24 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     }
 
     @Override
-    public void saveNote(String noteUrl) {
+    public void saveNote(final String noteUrl) {
         view.showprogress("儲存筆記");
-        model.updateNoteContent(noteUrl, stateModel.toMap(), titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
+        final Map<String,Object> map=stateModel.toMap();
+        model.updateNoteContent(noteUrl,(Map<String,Object>) map.get("map"), titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
             @Override
             public void onSuccess(Object o) {
-                view.closeprogress();
-                view.end();
+                model.updatePageLink(noteUrl, (Map<String,Object>)map.get("link"), new OnUpLoadDataCallback() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        view.closeprogress();
+                        view.end();
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
             }
 
             @Override

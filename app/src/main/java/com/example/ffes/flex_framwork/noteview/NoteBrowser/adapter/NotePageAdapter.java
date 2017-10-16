@@ -7,6 +7,9 @@ import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
 
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 
 import java.util.ArrayList;
@@ -16,9 +19,10 @@ import java.util.List;
  * Created by Ffes on 2017/9/12.
  */
 
-public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPager.OnPageChangeListener{
+public class NotePageAdapter extends FragmentStatePagerAdapter implements PageDataModel{
 
     List<Integer> pagelist;
+    PageModel stateModel;
     String noteUrl;
     boolean isEdit;
 
@@ -41,19 +45,6 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPa
         isEdit=false;
     }
 
-    public void setNoteList(List<Integer> list){
-        pagelist.clear();
-        for(Integer i:list){
-            pagelist.add(i);
-        }
-        notifyDataSetChanged();
-    }
-
-    public void setEdit(boolean isEdit){
-        this.isEdit=isEdit;
-        notifyDataSetChanged();
-    }
-
     @Override
     public NoteFragment getItem(int position) {
         return NoteFragment.newInstance(null,null,null,isEdit);
@@ -64,24 +55,27 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements ViewPa
         return pagelist.size();
     }
 
-    public void addKey(String key){
-        if(key!=null) {
-            currentfragment.addKeyWord(key);
-        }
+    @Override
+    public void bind(PageModel stateModel) {
+        this.stateModel=stateModel;
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+    public void unbind() {
+        stateModel=null;
     }
 
     @Override
-    public void onPageSelected(int position) {
-
+    public void notifyAddPage() {
+        notifyDataSetChanged();
     }
 
     @Override
-    public void onPageScrollStateChanged(int state) {
+    public void notifyRemovePage(int index) {
+        notifyDataSetChanged();
+    }
 
+    @Override
+    public void notifyCurrentPage(int page) {
     }
 }

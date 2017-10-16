@@ -45,7 +45,7 @@ public class KeyFrame implements Frame {
         if(isShow) {
             Paint p = new Paint();
             p.setColor(Color.parseColor(keyWord.getColor()));
-            p.setAlpha(50);
+            p.setAlpha(80);
             canvas.drawRect(keyWord.getRect(), p);
         }
     }

@@ -1,7 +1,14 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter;
 
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.NoteBrowserContract;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteBrowserModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
+
 import java.util.List;
 
 
@@ -13,23 +20,41 @@ import java.util.List;
 public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
 
     NoteBrowserContract.View view;
-    NoteLoadModel model;
+    NoteBrowserModel model;
+    PageStateModel pageStateModel;
 
-    public NoteBrowserPresenter(NoteBrowserContract.View view, NoteLoadModel model){
+    public NoteBrowserPresenter(NoteBrowserContract.View view, PageStateModel pageStateModel, NoteBrowserModel model){
         this.view=view;
         this.model=model;
-        loadNote();
+        this.pageStateModel=pageStateModel;
     }
 
     @Override
-    public void loadNote() {
-//                        view.setKeyList(NoteDecomposeUtil.getKeyWordList(note));
-//                        for(Page p:pages) {
-//                            pagelist.add(p.getPageContent().getPage());
-//                        }
-//                        view.setNotePage(pagelist);
-//                        view.setTitle(note.getTitle());
-//                        view.setTotalPage(NoteDecomposeUtil.getPages(note).size());
+    public void loadNote(final String noteUrl) {
+
+        model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
+            @Override
+            public void onSuccess(Page data) {
+                pageStateModel.addPage(data);
+                model.getNoteName(noteUrl, new OnUpLoadDataCallback<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        view.setTitle(s);
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
     }
 
     @Override

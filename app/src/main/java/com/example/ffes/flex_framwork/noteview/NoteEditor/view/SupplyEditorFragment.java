@@ -134,7 +134,6 @@ public class SupplyEditorFragment extends Fragment implements SupplyEditorContra
             ArrayList<Image> images = (ArrayList<Image>) ImagePicker.getImages(data);
             for(Image i:images){
                 presenter.addPhoto(getArguments().getString(URL_KEY),i.getPath());
-                Log.d("Sad",i.getPath());
             }
 
         }
