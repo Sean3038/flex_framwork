@@ -1,14 +1,11 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.view;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyFilterAdapter;
 import com.example.ffes.flex_framwork.noteview.widget.LottieButton;
 
 /**

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,7 +22,10 @@ import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyPageAda
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.NoteBrowserPresenter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyFilterAdapter;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageFilterStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.PageIndicator;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.view.SupplyWindow;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.HackyViewPager;
 import com.example.ffes.flex_framwork.noteview.widget.LottieButton;
@@ -35,8 +39,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
 
     FilterToolBar filterToolBar;
     PageIndicator pageIndicator;
-
-    SupplyView supplyView;
+    SupplyWindow supplyView;
 
     RecyclerView keylistcontent;
     KeyFilterAdapter keyFilterAdapter;
@@ -44,26 +47,39 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
     HackyViewPager notewindow;
     NotePageAdapter notePageAdapter;
 
-
-
     NoteBrowserContract.Presenter noteBrowserPresenter;
 
-    boolean isSupplyOpened=false;
+    PageFilterStateModel pageFilterStateModel;
+
+    String noteurl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initAdapter();
         initView();
-        noteBrowserPresenter=new NoteBrowserPresenter(this,null,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
+
+
+        noteurl="sdf4K5df6a";
+        noteBrowserPresenter=new NoteBrowserPresenter(this,pageFilterStateModel,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
+        noteBrowserPresenter.loadNote(noteurl);
     }
 
     @Override
     public void onBackPressed() {
-        if(supplyView.getVisibility()==View.VISIBLE){
-            closeSupply();
+        if(supplyView.isOpened()==true){
+            supplyView.hideSupplyWindow();
         }else{
             super.onBackPressed();
         }
+    }
+
+    private void initAdapter(){
+        pageFilterStateModel=new PageFilterStateModel();
+        keyFilterAdapter =new KeyFilterAdapter();
+        notePageAdapter=new NotePageAdapter(getSupportFragmentManager());
+        pageFilterStateModel.addModel(keyFilterAdapter);
+        pageFilterStateModel.addModel(notePageAdapter);
     }
 
     private void initView(){
@@ -73,7 +89,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
 
         //UI綁定
 
-        filterToolBar=new FilterToolBar(getActionBar().getCustomView(),new LottieButton.Callback() {
+        filterToolBar=new FilterToolBar(getSupportActionBar().getCustomView(),new LottieButton.Callback() {
             @Override
             public void onOpen() {
                 showKeyList();
@@ -82,25 +98,36 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
             @Override
             public void onClose() {
                 hideKeyList();
+                keyFilterAdapter.getSelectedKeyList();
             }
         },this,this);
         pageIndicator=new PageIndicator((ViewGroup)findViewById(R.id.pageindicator));
-        supplyView=(SupplyView)findViewById(R.id.supplyview);
+        pageFilterStateModel.addModel(pageIndicator);
+        supplyView=new SupplyWindow((ViewGroup)findViewById(R.id.supplylayout));
         notewindow=(HackyViewPager)findViewById(R.id.notestage);
+        notewindow.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                pageFilterStateModel.setCurrentPage(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         keylistcontent=new RecyclerView(this);
-        keyFilterAdapter =new KeyFilterAdapter();
-
-
-
-        notePageAdapter=new NotePageAdapter(getSupportFragmentManager());
 
         //關鍵字列表設定
         keylistcontent.setBackgroundColor(ContextCompat.getColor(this, R.color.keyListBackgroundColor));
         keylistcontent.setAdapter(keyFilterAdapter);
         keylistcontent.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-        //補充內容設定
-        supplyView.setSupplyPageAdapter(new SupplyPageAdapter(getSupportFragmentManager()));
+
         //關鍵字視窗設定
         PopupWindow keylistwindow=new PopupWindow();
         keylistwindow.setContentView(keylistcontent);
@@ -118,6 +145,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
     public void showKeyList() {
         filterToolBar.showKeyList();
     }
+
     @Override
     public void hideKeyList(){
         filterToolBar.hideKeyList();
@@ -129,28 +157,8 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
     }
 
     @Override
-    public void showSupply(String noteUrl,List<Integer> page) {
-        supplyView.changeData(noteUrl,page);
-        supplyView.setVisibility(View.VISIBLE);
-    }
-
-    public void closeSupply(){
-        supplyView.setVisibility(View.GONE);
-    }
-
-    @Override
     public void showQA() {
 
-    }
-
-    @Override
-    public void hideSupply() {
-
-    }
-
-    @Override
-    public void setKeyList(List<String> list) {
-        keyFilterAdapter.add(list);
     }
 
     @Override
@@ -164,17 +172,15 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         switch(v.getId()){
             case R.id.supplytoggle:
                 //按下補充開關
-                if(!isSupplyOpened){
-                    noteBrowserPresenter.onOpenSupply(keyFilterAdapter.getSelectedKeyList());
-                    isSupplyOpened=true;
+                if(!supplyView.isOpened()){
+                    supplyView.showSuupplyWindow(pageFilterStateModel.getPage(pageFilterStateModel.getCurrentPage()-1).getsupplylist(),getSupportFragmentManager());
                 }else{
-                    closeSupply();
-                    isSupplyOpened=false;
+                    supplyView.hideSupplyWindow();
                 }
                 break;
             case R.id.title:
                 //按下標題時
-                noteBrowserPresenter.onOpenQA();
+
                 break;
         }
     }

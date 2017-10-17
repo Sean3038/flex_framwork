@@ -4,10 +4,13 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyWordStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.QAStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
@@ -23,20 +26,12 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements PageDa
 
     List<Integer> pagelist;
     PageModel stateModel;
-    String noteUrl;
     boolean isEdit;
 
 
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
 
-    }
-
-    NoteFragment currentfragment;
-
-    @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
-       currentfragment=(NoteFragment) object;
     }
 
     public NotePageAdapter(FragmentManager fm) {
@@ -47,12 +42,13 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements PageDa
 
     @Override
     public NoteFragment getItem(int position) {
-        return NoteFragment.newInstance(null,null,null,isEdit);
+        return NoteFragment.newInstance(stateModel.getPage(position).getimageurl(),new KeyWordStateModel(stateModel.getPage(position).getkeywordlist()),new QAStateModel(stateModel.getPage(position).getqalist()),isEdit);
     }
 
     @Override
     public int getCount() {
-        return pagelist.size();
+        Log.d("NoteFragment",""+stateModel.getTotalPage());
+        return stateModel.getTotalPage();
     }
 
     @Override

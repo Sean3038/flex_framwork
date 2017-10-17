@@ -6,6 +6,8 @@ import java.util.List;
  * Created by Ffes on 2017/10/16.
  */
 
-public interface KeyFilterModel {
+public interface KeyFilterModel extends PageModel{
     void setfilterkey(List<String> filter);
+    int getFilterCount();
+    List<String> getAllfilterkey();
 }

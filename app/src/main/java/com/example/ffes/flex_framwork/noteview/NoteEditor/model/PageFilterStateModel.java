@@ -1,13 +1,17 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
 
+import android.util.Log;
+
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.DataModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyFilterDataModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,27 +20,35 @@ import java.util.Map;
  * Created by Ffes on 2017/10/16.
  */
 
-public class PageFilterStateModel implements StateModel<KeyFilterDataModel> , KeyFilterModel,PageModel {
+public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterModel,PageModel {
 
     List<Page> pageList;
-    List<String> keylist;
+    List<String> allkey;
+    List<String> fiterkey;
     List<Page> showlist;
 
-    List<KeyFilterDataModel> models;
+    List<DataModel> models;
 
     int currentPage;
 
-    PageFilterStateModel(){
+    public PageFilterStateModel(){
         pageList=new ArrayList<>();
-        keylist=new ArrayList<>();
+        fiterkey =new ArrayList<>();
         models=new ArrayList<>();
+        showlist=new ArrayList<>();
+        allkey=new ArrayList<>();
         currentPage=-1;
     }
 
     PageFilterStateModel(List<Page> pageList){
         this.pageList=pageList;
-        keylist=new ArrayList<>();
+        allkey=new ArrayList<>();
+        for(Page p:pageList){
+            allkey.addAll(p.getkeywordlist().keySet());
+        }
+        fiterkey =new ArrayList<>();
         models=new ArrayList<>();
+        showlist=new ArrayList<>();
         currentPage=-1;
     }
 
@@ -44,7 +56,21 @@ public class PageFilterStateModel implements StateModel<KeyFilterDataModel> , Ke
     @Override
     public void addPage(Page page) {
         pageList.add(page);
-        keylist.retainAll(page.getkeywordlist().keySet());
+        allkey.addAll(page.getkeywordlist().keySet());
+        showlist.add(page);
+        if(currentPage==-1){
+            setCurrentPage(0);
+        }
+        for(DataModel model:models){
+            if(model instanceof PageDataModel){
+                ((PageDataModel) model).notifyAddPage();
+            }
+        }
+        for(DataModel model:models){
+            if(model instanceof KeyFilterModel){
+                ((KeyFilterDataModel) model).notifyFilterChange();
+            }
+        }
     }
 
     @Override
@@ -60,16 +86,21 @@ public class PageFilterStateModel implements StateModel<KeyFilterDataModel> , Ke
     @Override
     public void setCurrentPage(int index) {
         currentPage=index;
+        for(DataModel model:models){
+            if(model instanceof PageDataModel){
+                ((PageDataModel) model).notifyCurrentPage(index);
+            }
+        }
     }
 
     @Override
     public int getCurrentPage() {
-        return showlist.size();
+        return currentPage+1;
     }
 
     @Override
     public int getTotalPage() {
-        return currentPage+1;
+        return showlist.size();
     }
 
     @Override
@@ -79,21 +110,40 @@ public class PageFilterStateModel implements StateModel<KeyFilterDataModel> , Ke
 
     @Override
     public void setfilterkey(List<String> filter) {
-        keylist.retainAll(filter);
+        fiterkey.clear();
+        fiterkey.addAll(filter);
+        showlist.clear();
         for(Page p:pageList){
-            //交集
-
+            if(p.getkeywordlist().keySet().retainAll(fiterkey)){
+                showlist.add(p);
+                for(DataModel model:models){
+                    if(model instanceof PageDataModel)((PageDataModel) model).notifyAddPage();
+                }
+            }
+        }
+        for(DataModel model:models){
+            if(model instanceof KeyFilterDataModel)((KeyFilterDataModel) model).notifyFilterChange();
         }
     }
 
     @Override
-    public void addModel(KeyFilterDataModel model) {
+    public int getFilterCount() {
+        return allkey.size();
+    }
+
+    @Override
+    public List<String> getAllfilterkey() {
+        return allkey;
+    }
+
+    @Override
+    public void addModel(DataModel model) {
         models.add(model);
         model.bind(this);
     }
 
     @Override
-    public void removeModel(KeyFilterDataModel model) {
+    public void removeModel(DataModel model) {
         models.remove(model);
         model.unbind();
     }

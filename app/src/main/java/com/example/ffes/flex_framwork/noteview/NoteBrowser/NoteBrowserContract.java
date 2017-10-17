@@ -15,26 +15,12 @@ public interface NoteBrowserContract {
 
         void hideQA();
 
-        void showSupply(String noteUrl, List<Integer> page);
-
         void showQA();
 
-        void hideSupply();
-
-        void setKeyList(List<String> list);
 
         void setTitle(String title);
     }
     interface Presenter{
-
         void loadNote(String noteurl);
-
-        void onOpenKeyList();
-
-        void onOpenSupply(List<String> keyList);
-
-        void onOpenQA();
-
-        void onSelectKeyWord(List<String> keyList);
     }
 }

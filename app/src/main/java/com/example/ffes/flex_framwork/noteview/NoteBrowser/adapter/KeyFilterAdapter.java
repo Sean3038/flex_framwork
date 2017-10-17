@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyFilterDataModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +19,31 @@ import java.util.List;
  * Created by Ffes on 2017/8/27.
  */
 
-public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.ViewHolder>{
+public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.ViewHolder> implements KeyFilterDataModel{
 
     List<Item> list;
 
+    KeyFilterModel keyFilterModel;
+
     public KeyFilterAdapter(){
         list=new ArrayList<>();
+    }
+
+    @Override
+    public void bind(KeyFilterModel stateModel) {
+        this.keyFilterModel=stateModel;
+        add(stateModel.getAllfilterkey());
+    }
+
+    @Override
+    public void unbind() {
+        keyFilterModel=null;
+        add(new ArrayList<String>());
+    }
+
+    @Override
+    public void notifyFilterChange() {
+        add(keyFilterModel.getAllfilterkey());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -73,24 +95,14 @@ public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.View
         notifyDataSetChanged();
     }
 
-    public void remove(int position) {
-        list.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    public String get(int position) {
-        Item item=list.get(position);
-        return item.getKeyword();
-    }
-
-    public List<String> getSelectedKeyList(){
+    public void getSelectedKeyList(){
         List<String> keyList=new ArrayList<>();
         for(Item item:list){
             if(item.isCheck()){
                 keyList.add(item.getKeyword());
             }
         }
-        return keyList;
+        keyFilterModel.setfilterkey(keyList);
     }
 
     private class Item{

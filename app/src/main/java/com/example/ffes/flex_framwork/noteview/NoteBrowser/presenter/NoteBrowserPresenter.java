@@ -6,6 +6,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
@@ -21,12 +22,12 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
 
     NoteBrowserContract.View view;
     NoteBrowserModel model;
-    PageStateModel pageStateModel;
+    PageModel pageModel;
 
-    public NoteBrowserPresenter(NoteBrowserContract.View view, PageStateModel pageStateModel, NoteBrowserModel model){
+    public NoteBrowserPresenter(NoteBrowserContract.View view, PageModel pageModel, NoteBrowserModel model){
         this.view=view;
         this.model=model;
-        this.pageStateModel=pageStateModel;
+        this.pageModel=pageModel;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
         model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
             @Override
             public void onSuccess(Page data) {
-                pageStateModel.addPage(data);
+                pageModel.addPage(data);
                 model.getNoteName(noteUrl, new OnUpLoadDataCallback<String>() {
                     @Override
                     public void onSuccess(String s) {
@@ -55,26 +56,5 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
 
             }
         });
-    }
-
-    @Override
-    public void onOpenKeyList() {
-        view.showKeyList();
-    }
-
-    @Override
-    public void onOpenSupply(final List<String> keyList) {
-        //view.showSupply("dsfa",NoteDecomposeUtil.getPageByKeyWord(note,keyList));
-    }
-
-    @Override
-    public void onOpenQA() {
-        view.showQA();
-    }
-
-    @Override
-    public void onSelectKeyWord(final List<String> keyList) {
-
-        //view.setNotePage(NoteDecomposeUtil.getPageByKeyWord(note,keyList));
     }
 }
