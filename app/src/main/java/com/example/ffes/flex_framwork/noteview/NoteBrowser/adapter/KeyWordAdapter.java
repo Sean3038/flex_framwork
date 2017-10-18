@@ -2,6 +2,7 @@ package com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
                 public void onClick(View v) {
                     if(keyClick!=null) {
                         keyClick.onKeyClick(content.getText().toString());
+                        Log.d("KeyWordAdapter","click");
                     }
                 }
             });
@@ -94,6 +96,7 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
         holder.setKeyWord(keyWordStateModel.getKeyWord(position).getKeyword(),keyWordStateModel.getKeyWord(position).getColor());
         holder.setKeyClick(keyClick);
         holder.setDeleteKeyClick(deleteKeyClick);
+        Log.d("KeyWordAdapter","set");
     }
 
     @Override

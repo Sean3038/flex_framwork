@@ -99,6 +99,7 @@ public class NoteFragment extends Fragment implements KeyWordAdapter.OnKeyClick,
         progressBar=(ProgressBar)view.findViewById(R.id.progressBar2);
         listview=(RecyclerView)view.findViewById(R.id.keywordlist);
         addkeynotify=(FrameLayout)view.findViewById(R.id.addkeynotify);
+
         keyWordAdapter=new KeyWordAdapter();
         listview.setAdapter(keyWordAdapter);
         listview.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));

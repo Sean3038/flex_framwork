@@ -10,4 +10,5 @@ public interface KeyFilterModel extends PageModel{
     void setfilterkey(List<String> filter);
     int getFilterCount();
     List<String> getAllfilterkey();
+    List<String> getfilterkey();
 }

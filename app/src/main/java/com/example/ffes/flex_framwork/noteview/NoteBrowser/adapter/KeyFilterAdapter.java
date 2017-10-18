@@ -1,7 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +32,14 @@ public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.View
     public void bind(KeyFilterModel stateModel) {
         this.keyFilterModel=stateModel;
         add(stateModel.getAllfilterkey());
+        List<String> filterlist=stateModel.getfilterkey();
+        for(Item i:list){
+            if(filterlist.contains(i.getKeyword())){
+                i.setCheck(true);
+            }else{
+                i.setCheck(false);
+            }
+        }
     }
 
     @Override
@@ -43,6 +50,18 @@ public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.View
 
     @Override
     public void notifyFilterChange() {
+        List<String> filterlist=keyFilterModel.getfilterkey();
+        for(Item i:list){
+            if(filterlist.contains(i.getKeyword())){
+                i.setCheck(true);
+            }else{
+                i.setCheck(false);
+            }
+        }
+    }
+
+    @Override
+    public void notifyAddFilterChange() {
         add(keyFilterModel.getAllfilterkey());
     }
 
@@ -74,6 +93,7 @@ public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.View
                 boolean b=((CheckBox) v).isChecked();
                 holder.checkBox.setChecked(b);
                 list.get(position).setCheck(b);
+                updateSelectedKeyList();
             }
         });
     }
@@ -88,14 +108,14 @@ public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.View
         list.clear();
         for(String k:keylist){
             Item item=new Item();
-            item.setCheck(true);
+            item.setCheck(false);
             item.setKeyword(k);
             list.add(item);
         }
         notifyDataSetChanged();
     }
 
-    public void getSelectedKeyList(){
+    public void updateSelectedKeyList(){
         List<String> keyList=new ArrayList<>();
         for(Item item:list){
             if(item.isCheck()){

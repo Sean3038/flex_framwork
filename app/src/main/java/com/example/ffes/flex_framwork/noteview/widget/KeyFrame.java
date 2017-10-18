@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 
@@ -47,6 +48,7 @@ public class KeyFrame implements Frame {
             p.setColor(Color.parseColor(keyWord.getColor()));
             p.setAlpha(80);
             canvas.drawRect(keyWord.getRect(), p);
+
         }
     }
 

@@ -44,6 +44,22 @@
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/notifynokey"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#22000000"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="請選擇關鍵字"
+            android:textColor="@color/titleColor"
+            android:textSize="30sp" />
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/supplylayout"
         android:layout_width="match_parent"

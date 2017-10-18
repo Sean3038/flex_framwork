@@ -24,6 +24,7 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
 
     List<Page> pageList;
     List<String> allkey;
+
     List<String> fiterkey;
     List<Page> showlist;
 
@@ -67,8 +68,9 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
             }
         }
         for(DataModel model:models){
-            if(model instanceof KeyFilterModel){
-                ((KeyFilterDataModel) model).notifyFilterChange();
+            if(model instanceof KeyFilterDataModel){
+                ((KeyFilterDataModel) model).notifyAddFilterChange();
+                Log.d("KeyFilterAdapter",".............");
             }
         }
     }
@@ -113,13 +115,22 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
         fiterkey.clear();
         fiterkey.addAll(filter);
         showlist.clear();
+        Log.d("Filter",filter.size()+"");
         for(Page p:pageList){
-            if(p.getkeywordlist().keySet().retainAll(fiterkey)){
+            List<String> temp=new ArrayList<>();
+            temp.addAll(p.getkeywordlist().keySet());
+            temp.retainAll(fiterkey);
+            if(temp.size()>0){
                 showlist.add(p);
-                for(DataModel model:models){
-                    if(model instanceof PageDataModel)((PageDataModel) model).notifyAddPage();
-                }
             }
+        }
+        if(currentPage==0 && showlist.size()==0){
+            setCurrentPage(-1);
+        }else if(currentPage==-1 && showlist.size()>0){
+            setCurrentPage(0);
+        }
+        for(DataModel model:models){
+            if(model instanceof PageDataModel)((PageDataModel) model).notifyAddPage();
         }
         for(DataModel model:models){
             if(model instanceof KeyFilterDataModel)((KeyFilterDataModel) model).notifyFilterChange();
@@ -128,12 +139,17 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
 
     @Override
     public int getFilterCount() {
-        return allkey.size();
+        return fiterkey.size();
     }
 
     @Override
     public List<String> getAllfilterkey() {
         return allkey;
+    }
+
+    @Override
+    public List<String> getfilterkey() {
+        return fiterkey;
     }
 
     @Override

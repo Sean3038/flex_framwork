@@ -46,8 +46,12 @@ public class NotePageAdapter extends FragmentStatePagerAdapter implements PageDa
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public int getCount() {
-        Log.d("NoteFragment",""+stateModel.getTotalPage());
         return stateModel.getTotalPage();
     }
 

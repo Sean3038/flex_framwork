@@ -32,23 +32,31 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
 
     @Override
     public void loadNote(final String noteUrl) {
-
+        view.showMessageProgress("讀取筆記資料");
+        final int[] c = {0};
         model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
             @Override
             public void onSuccess(Page data) {
                 pageModel.addPage(data);
-                model.getNoteName(noteUrl, new OnUpLoadDataCallback<String>() {
-                    @Override
-                    public void onSuccess(String s) {
-                        view.setTitle(s);
-                    }
+                c[0]++;
+                if(c[0] ==2){
+                   view.closeMessageProgress();
+                }
+            }
 
-                    @Override
-                    public void onFailure() {
+            @Override
+            public void onFailure() {
 
-                    }
-                });
-
+            }
+        });
+        model.getNoteName(noteUrl, new OnUpLoadDataCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                view.setTitle(s);
+                c[0]++;
+                if(c[0] ==2){
+                    view.closeMessageProgress();
+                }
             }
 
             @Override

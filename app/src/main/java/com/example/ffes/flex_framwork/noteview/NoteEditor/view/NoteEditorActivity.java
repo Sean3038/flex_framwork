@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -92,7 +93,10 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         initAdapter();
         init();
 
-        noteUrl="sdf4K5df6a";
+        Bundle bundle=this.getIntent().getExtras();
+        if(bundle!=null){
+            noteUrl=bundle.getString(URL_KEY);
+        }
         presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
         presenter.loadData(noteUrl);
     }
@@ -364,5 +368,14 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
                 .imageTitle("選擇補充照片")
                 .single()
                 .start(REQUEST_GETPHOTO);
+    }
+
+    public static void start(Context context, String noteUrl){
+        Intent intent=new Intent();
+        intent.setClass(context,NoteEditorActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString(URL_KEY,noteUrl);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
     }
 }

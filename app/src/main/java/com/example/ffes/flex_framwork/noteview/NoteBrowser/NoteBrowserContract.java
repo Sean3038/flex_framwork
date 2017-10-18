@@ -17,6 +17,9 @@ public interface NoteBrowserContract {
 
         void showQA();
 
+        void showMessageProgress(String s);
+
+        void closeMessageProgress();
 
         void setTitle(String title);
     }

@@ -222,8 +222,19 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     }
 
     @Override
-    public void getNoteName(String noteurl, OnUpLoadDataCallback<String> callBack) {
+    public void getNoteName(final String noteurl, final OnUpLoadDataCallback<String> callBack) {
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl+"/titledetail/title").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                callBack.onSuccess(dataSnapshot.getValue(String.class));
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
+            }
+        });
     }
 
     @Override

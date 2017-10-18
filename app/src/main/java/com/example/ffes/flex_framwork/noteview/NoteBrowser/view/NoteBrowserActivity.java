@@ -1,41 +1,38 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.view;
 
+import android.content.Context;
+import android.content.Intent;
+import android.database.DataSetObserver;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.NoteBrowserContract;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.NotePageAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.SupplyPageAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.NoteBrowserPresenter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyFilterAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageFilterStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.view.NoteEditorActivity;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.PageIndicator;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.SupplyWindow;
-import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.HackyViewPager;
 import com.example.ffes.flex_framwork.noteview.widget.LottieButton;
-import com.example.ffes.flex_framwork.noteview.widget.SupplyView;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.util.List;
-
 public class NoteBrowserActivity extends BaseActivity implements NoteBrowserContract.View,View.OnClickListener {
+    public static final String URL_KEY="NoteURL";
 
     FilterToolBar filterToolBar;
     PageIndicator pageIndicator;
@@ -46,6 +43,8 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
 
     HackyViewPager notewindow;
     NotePageAdapter notePageAdapter;
+
+    FrameLayout notifynokey;
 
     NoteBrowserContract.Presenter noteBrowserPresenter;
 
@@ -59,8 +58,10 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         initAdapter();
         initView();
 
-
-        noteurl="sdf4K5df6a";
+        Bundle bundle=this.getIntent().getExtras();
+        if(bundle!=null){
+            noteurl=bundle.getString(URL_KEY);
+        }
         noteBrowserPresenter=new NoteBrowserPresenter(this,pageFilterStateModel,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
         noteBrowserPresenter.loadNote(noteurl);
     }
@@ -69,6 +70,8 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
     public void onBackPressed() {
         if(supplyView.isOpened()==true){
             supplyView.hideSupplyWindow();
+            filterToolBar.setToggleEnable(true);
+            filterToolBar.hideKeyList();
         }else{
             super.onBackPressed();
         }
@@ -78,6 +81,20 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         pageFilterStateModel=new PageFilterStateModel();
         keyFilterAdapter =new KeyFilterAdapter();
         notePageAdapter=new NotePageAdapter(getSupportFragmentManager());
+        notePageAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                Log.d("PageFilter",""+pageFilterStateModel.getFilterCount());
+                if(pageFilterStateModel.getTotalPage()==0){
+                    showFilterNotify();
+                    filterToolBar.hideSupplyToggle();
+                }else{
+                    hideFilterNotfiy();
+                    filterToolBar.showSupplyToggle();
+                }
+            }
+        });
         pageFilterStateModel.addModel(keyFilterAdapter);
         pageFilterStateModel.addModel(notePageAdapter);
     }
@@ -98,13 +115,13 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
             @Override
             public void onClose() {
                 hideKeyList();
-                keyFilterAdapter.getSelectedKeyList();
             }
         },this,this);
         pageIndicator=new PageIndicator((ViewGroup)findViewById(R.id.pageindicator));
         pageFilterStateModel.addModel(pageIndicator);
         supplyView=new SupplyWindow((ViewGroup)findViewById(R.id.supplylayout));
         notewindow=(HackyViewPager)findViewById(R.id.notestage);
+        notifynokey=(FrameLayout)findViewById(R.id.notifynokey);
         notewindow.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -166,6 +183,13 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         filterToolBar.setTitle(title);
     }
 
+    public void showFilterNotify(){
+        notifynokey.setVisibility(View.VISIBLE);
+    }
+
+    public void hideFilterNotfiy(){
+        notifynokey.setVisibility(View.GONE);
+    }
 
     @Override
     public void onClick(View v) {
@@ -174,8 +198,10 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
                 //按下補充開關
                 if(!supplyView.isOpened()){
                     supplyView.showSuupplyWindow(pageFilterStateModel.getPage(pageFilterStateModel.getCurrentPage()-1).getsupplylist(),getSupportFragmentManager());
+                    filterToolBar.setToggleEnable(false);
                 }else{
                     supplyView.hideSupplyWindow();
+                    filterToolBar.setToggleEnable(true);
                 }
                 break;
             case R.id.title:
@@ -183,5 +209,22 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
 
                 break;
         }
+    }
+
+    public void showMessageProgress(String message){
+        showProgress(message);
+    }
+
+    public void closeMessageProgress(){
+        dismissProgress();
+    }
+
+    public static void start(Context context, String noteUrl){
+        Intent intent=new Intent();
+        intent.setClass(context,NoteBrowserActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString(URL_KEY,noteUrl);
+        intent.putExtras(bundle);
+        context.startActivity(intent);
     }
 }

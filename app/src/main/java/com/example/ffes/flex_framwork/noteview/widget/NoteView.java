@@ -107,17 +107,22 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent ,KeyWordD
 
 
     public void show(String key){
-        hideAll();
         for(KeyFrame item:keyrect){
             if(item.getKeyWord().getKeyword().equals(key)){
+                edititem=item;
                 if(isEdit){
-                    edititem=item;
                     edititem.setEdit(true);
                     rectCP(edititem);
                 }
-                item.setShow(true);
+                if(item.isShow()){
+                    item.setShow(false);
+                }else{
+                    item.setShow(true);
+                }
+
             }
         }
+//        hideAll();
         currentMode=SELECTED;
         invalidate();
     }
@@ -440,7 +445,6 @@ public class NoteView extends CustomPhotoView implements OnCustomEvent ,KeyWordD
     public void notifyRemoveKeyWord(int index) {
         String s=keyrect.remove(index).getKeyWord().getKeyword();
         edititem=null;
-        Log.d("KeyWord",s);
         invalidate();
     }
 

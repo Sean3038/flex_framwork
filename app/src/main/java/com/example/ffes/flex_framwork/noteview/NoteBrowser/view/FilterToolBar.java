@@ -37,12 +37,28 @@ public class FilterToolBar {
         keylistwindow.showAsDropDown(keylisttoggle,0,84);
     }
 
-
     public void hideKeyList() {
         keylistwindow.dismiss();
     }
 
     public void setTitle(String title) {
         titleview.setText(title);
+    }
+
+    public void setToggleEnable(boolean v){
+        if(v){
+            keylisttoggle.setVisibility(View.VISIBLE);
+        }else{
+            hideKeyList();
+            keylisttoggle.setVisibility(View.GONE);
+        }
+    }
+
+    public void hideSupplyToggle(){
+        supplytoggle.setVisibility(View.GONE);
+    }
+
+    public void showSupplyToggle(){
+        supplytoggle.setVisibility(View.VISIBLE);
     }
 }

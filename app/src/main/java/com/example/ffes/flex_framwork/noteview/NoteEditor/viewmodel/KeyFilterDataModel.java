@@ -7,4 +7,5 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFi
 
 public interface KeyFilterDataModel extends DataModel<KeyFilterModel> {
     void notifyFilterChange();
+    void notifyAddFilterChange();
 }
