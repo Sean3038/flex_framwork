@@ -1,6 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
+import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;

@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,8 +23,8 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
+import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
+import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.NoteViewAdapter;
@@ -37,16 +36,13 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.SupplyStateModel
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.TitleDetailStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPresenter;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
-import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

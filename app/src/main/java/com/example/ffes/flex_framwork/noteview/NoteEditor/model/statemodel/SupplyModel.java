@@ -1,6 +1,5 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 /**

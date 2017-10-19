@@ -19,11 +19,10 @@ import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.NoteBrowserContract;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.NotePageAdapter;
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.NoteRepository;
+import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.NoteBrowserPresenter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyFilterAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageFilterStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.view.NoteEditorActivity;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.PageIndicator;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.SupplyWindow;
 import com.example.ffes.flex_framwork.noteview.widget.HackyViewPager;
@@ -144,13 +143,12 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         keylistcontent.setBackgroundColor(ContextCompat.getColor(this, R.color.keyListBackgroundColor));
         keylistcontent.setAdapter(keyFilterAdapter);
         keylistcontent.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-
         //關鍵字視窗設定
-        PopupWindow keylistwindow=new PopupWindow();
+        PopupWindow keylistwindow=new PopupWindow(500,400);
         keylistwindow.setContentView(keylistcontent);
-        keylistwindow.setElevation(10f);
-        keylistwindow.setWidth(400);
-        keylistwindow.setHeight(600);
+
+
+
         filterToolBar.setPopupWindow(keylistwindow);
         //補充視窗設定
 

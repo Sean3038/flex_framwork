@@ -6,12 +6,11 @@ import android.util.Log;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.DataModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyFilterDataModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.DataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.KeyFilterDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

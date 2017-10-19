@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.squareup.picasso.Picasso;
 

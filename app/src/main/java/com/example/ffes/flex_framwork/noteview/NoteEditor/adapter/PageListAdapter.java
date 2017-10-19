@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.squareup.picasso.Picasso;
 

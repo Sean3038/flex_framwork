@@ -1,4 +1,4 @@
-package com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel;
+package com.example.ffes.flex_framwork.noteview.viewmodel;
 
 /**
  * Created by Ffes on 2017/10/13.

@@ -1,10 +1,8 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
-import android.util.Log;
-
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyWordDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.KeyWordDataModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 
 import java.util.ArrayList;

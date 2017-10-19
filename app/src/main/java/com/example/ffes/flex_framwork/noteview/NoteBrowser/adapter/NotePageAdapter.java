@@ -3,17 +3,12 @@ package com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.ViewGroup;
 
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyWordStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.QAStateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
-import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 
 import java.util.ArrayList;
 import java.util.List;

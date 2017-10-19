@@ -1,8 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
-import android.util.Log;
-
-import com.example.ffes.flex_framwork.noteview.NoteBrowser.model.ImageRepository;
+import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.SupplyEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;

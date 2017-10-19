@@ -9,9 +9,10 @@ import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyFilterDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.KeyFilterDataModel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -106,9 +107,10 @@ public class KeyFilterAdapter extends RecyclerView.Adapter<KeyFilterAdapter.View
 
     public void add(List<String> keylist) {
         list.clear();
-        for(String k:keylist){
+        HashSet<String> set=new HashSet<>(keylist);
+        for(String k:set){
             Item item=new Item();
-            item.setCheck(false);
+            item.setCheck(true);
             item.setKeyword(k);
             list.add(item);
         }

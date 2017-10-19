@@ -15,7 +15,7 @@ import android.view.View;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyWordDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.KeyWordDataModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;

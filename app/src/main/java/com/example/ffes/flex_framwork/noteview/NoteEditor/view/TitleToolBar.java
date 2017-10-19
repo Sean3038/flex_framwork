@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.TitleDetailDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.TitleDetailDataModel;
 import com.example.ffes.flex_framwork.noteview.widget.UnderlinedTextView;
 
 /**

@@ -1,7 +1,6 @@
-package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
+package com.example.ffes.flex_framwork.noteview.api;
 
 import android.net.Uri;
-import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -9,7 +8,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
-import java.net.URL;
 
 /**
  * Created by Ffes on 2017/10/14.

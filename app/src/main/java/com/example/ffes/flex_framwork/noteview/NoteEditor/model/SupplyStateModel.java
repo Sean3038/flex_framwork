@@ -2,7 +2,7 @@ package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.SupplyDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 
 import java.util.ArrayList;

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyWordModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyWordDataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.KeyWordDataModel;
 
 /**
  * Created by Ffes on 2017/9/13.
@@ -34,7 +34,6 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
                 public void onClick(View v) {
                     if(keyClick!=null) {
                         keyClick.onKeyClick(content.getText().toString());
-                        Log.d("KeyWordAdapter","click");
                     }
                 }
             });
@@ -96,7 +95,6 @@ public class KeyWordAdapter extends RecyclerView.Adapter<KeyWordAdapter.ViewHold
         holder.setKeyWord(keyWordStateModel.getKeyWord(position).getKeyword(),keyWordStateModel.getKeyWord(position).getColor());
         holder.setKeyClick(keyClick);
         holder.setDeleteKeyClick(deleteKeyClick);
-        Log.d("KeyWordAdapter","set");
     }
 
     @Override

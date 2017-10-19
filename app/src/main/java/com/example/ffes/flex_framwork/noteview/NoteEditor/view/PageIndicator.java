@@ -4,14 +4,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageFilterStateModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.KeyFilterModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.DataModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.KeyFilterDataModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.viewmodel.PageDataModel;
-
-import java.util.List;
+import com.example.ffes.flex_framwork.noteview.viewmodel.DataModel;
+import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 
 /**
  * Created by Ffes on 2017/10/13.

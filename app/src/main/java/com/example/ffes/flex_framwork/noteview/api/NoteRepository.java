@@ -1,4 +1,4 @@
-package com.example.ffes.flex_framwork.noteview.NoteBrowser.model;
+package com.example.ffes.flex_framwork.noteview.api;
 
 import android.util.Log;
 
