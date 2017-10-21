@@ -69,7 +69,6 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
         for(DataModel model:models){
             if(model instanceof KeyFilterDataModel){
                 ((KeyFilterDataModel) model).notifyAddFilterChange();
-                Log.d("KeyFilterAdapter",".............");
             }
         }
     }
@@ -77,6 +76,13 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
     @Override
     public void removePage(int index) {
 
+    }
+
+    @Override
+    public void addPage(List<Page> pages) {
+        for(Page page:pages){
+           addPage(page);
+        }
     }
 
     @Override
@@ -114,7 +120,6 @@ public class PageFilterStateModel implements StateModel<DataModel> , KeyFilterMo
         fiterkey.clear();
         fiterkey.addAll(filter);
         showlist.clear();
-        Log.d("Filter",filter.size()+"");
         for(Page p:pageList){
             List<String> temp=new ArrayList<>();
             temp.addAll(p.getkeywordlist().keySet());

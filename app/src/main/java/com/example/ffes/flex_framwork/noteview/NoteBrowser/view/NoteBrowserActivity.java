@@ -147,8 +147,6 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         PopupWindow keylistwindow=new PopupWindow(500,400);
         keylistwindow.setContentView(keylistcontent);
 
-
-
         filterToolBar.setPopupWindow(keylistwindow);
         //補充視窗設定
 

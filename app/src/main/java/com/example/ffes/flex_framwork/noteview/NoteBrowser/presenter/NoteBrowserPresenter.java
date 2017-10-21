@@ -34,16 +34,15 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
     public void loadNote(final String noteUrl) {
         view.showMessageProgress("讀取筆記資料");
         final int[] c = {0};
-        model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
+        model.getPages(noteUrl, new OnGetDataCallBack<List<Page>>() {
             @Override
-            public void onSuccess(Page data) {
+            public void onSuccess(List<Page> data) {
                 pageModel.addPage(data);
                 c[0]++;
                 if(c[0] ==2){
-                   view.closeMessageProgress();
+                    view.closeMessageProgress();
                 }
             }
-
             @Override
             public void onFailure() {
 
@@ -58,7 +57,6 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
                     view.closeMessageProgress();
                 }
             }
-
             @Override
             public void onFailure() {
 

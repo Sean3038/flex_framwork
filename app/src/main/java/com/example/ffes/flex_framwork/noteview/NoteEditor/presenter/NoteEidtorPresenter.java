@@ -15,6 +15,7 @@ import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,17 +41,16 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     @Override
     public void loadData(final String noteUrl) {
         view.showprogress("讀取頁面");
-        model.getPages(noteUrl, new OnGetDataCallBack<Page>() {
+        model.getPages(noteUrl, new OnGetDataCallBack<List<Page>>() {
+
             @Override
-            public void onSuccess(Page data) {
+            public void onSuccess(List<Page> data) {
                 stateModel.addPage(data);
                 view.closeprogress();
-
                 view.showprogress("讀取標題資訊");
                 model.getTitleDetail(noteUrl, new OnGetDataCallBack<TitleDetail>() {
                     @Override
                     public void onSuccess(TitleDetail data) {
-                        titleDetailStateModel.setTitleDetail(data);
                         view.closeprogress();
                     }
 
@@ -116,10 +116,11 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     public void saveNote(final String noteUrl) {
         view.showprogress("儲存筆記");
         final Map<String,Object> map=stateModel.toMap();
-        model.updateNoteContent(noteUrl,(Map<String,Object>) map.get("map"), titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
+
+        model.updateNoteContent(noteUrl, map, new OnUpLoadDataCallback() {
             @Override
             public void onSuccess(Object o) {
-                model.updatePageLink(noteUrl, (Map<String,Object>)map.get("link"), new OnUpLoadDataCallback() {
+                model.updateTitleDetial(noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
                     @Override
                     public void onSuccess(Object o) {
                         view.closeprogress();
@@ -138,6 +139,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
             }
         });
+
     }
 
 }

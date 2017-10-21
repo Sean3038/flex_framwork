@@ -62,6 +62,13 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
     }
 
     @Override
+    public void addPage(List<Page> pages) {
+        for(Page page:pages){
+            addPage(page);
+        }
+    }
+
+    @Override
     public Page getPage(int index) {
         return pagelist.get(index);
     }
@@ -88,17 +95,12 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
     @Override
     public Map toMap(){
 
-        Map<String,Object> result=new HashMap<>();
         Map<String,Object> map=new HashMap<>();
-        Map<String,Object> linkmap=new HashMap<>();
         int c=0;
         for(Page p:pagelist){
-            map.put(p.getId(),p.toMap());
-            linkmap.put(""+c,p.getId());
+            map.put(""+c,p.toMap());
             c++;
         }
-        result.put("map",map);
-        result.put("link",linkmap);
-        return result;
+        return map;
     }
 }

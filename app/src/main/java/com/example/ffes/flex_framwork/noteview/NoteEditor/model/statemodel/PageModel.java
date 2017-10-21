@@ -14,6 +14,7 @@ import java.util.Map;
 public interface PageModel {
     void addPage(Page page);
     void removePage(int index);
+    void addPage(List<Page> pages);
     Page getPage(int index);
 
     void setCurrentPage(int index);

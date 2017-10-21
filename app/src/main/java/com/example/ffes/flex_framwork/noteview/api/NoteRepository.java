@@ -2,12 +2,10 @@ package com.example.ffes.flex_framwork.noteview.api;
 
 import android.util.Log;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.KeyEditorModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteBrowserModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.PageContentModel;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
@@ -31,7 +29,7 @@ import java.util.Map;
  * Created by Ffes on 2017/8/27.
  */
 
-public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoadModel,NoteBrowserModel{
+public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
 
     FirebaseDatabase firebaseDatabase;
     FirebaseStorage firebaseStorage;
@@ -41,183 +39,60 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
         this.firebaseStorage=firebaseStorage;
     }
 
-    public void getPage(final String url, final String pageurl, final OnGetDataCallBack<Page> callback){
-        DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final Page page=new Page();
-                final int[] count = {0};
-                page.setimageurl(dataSnapshot.child("imageurl").getValue(String.class));
-                page.setId(dataSnapshot.child("id").getValue(String.class));
-                getKeyWord(url, pageurl, new OnGetDataCallBack<Map<String,KeyWord>>() {
-                    @Override
-                    public void onSuccess(Map<String,KeyWord> data) {
-                        page.setkeywordlist(data);
-                        count[0]++;
-                        if(count[0]==3){
-                            callback.onSuccess(page);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        callback.onFailure();
-                    }
-                });
-                getSupply(url, pageurl, new OnGetDataCallBack<List<Supply>>() {
-                    @Override
-                    public void onSuccess(List<Supply> data) {
-                        page.setsupplylist(data);
-                        count[0]++;
-                        if(count[0]==3){
-                            callback.onSuccess(page);
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        callback.onFailure();
-                    }
-                });
-                getQAList(url, pageurl, new OnGetDataCallBack<List<QA>>() {
-                    @Override
-                    public void onSuccess(List<QA> data) {
-                        page.setqalist(data);
-                        count[0]++;
-                        if(count[0]==3){
-                            callback.onSuccess(page);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        callback.onFailure();
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                callback.onFailure();
-            }
-        });
-    }
-
-    public void getSupply(String url, String pageurl, final OnGetDataCallBack<List<Supply>> callBack){
-        DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl+"/supplylist").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Supply> supplyList=new ArrayList<>();
-                for(DataSnapshot child:dataSnapshot.getChildren()){
-                    supplyList.add(child.getValue(Supply.class));
-                }
-                callBack.onSuccess(supplyList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                callBack.onFailure();
-            }
-        });
-    }
-
-    public void getKeyWord(String url, String pageurl, final OnGetDataCallBack<Map<String,KeyWord>> callBack){
-        DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl+"/keywordlist").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<Map<String,KeyWord>> t=new GenericTypeIndicator<Map<String,KeyWord>>() {};
-                Map<String,KeyWord> keyWordList=dataSnapshot.getValue(t);
-                if(keyWordList==null){
-                    keyWordList=new HashMap<>();
-                }
-                callBack.onSuccess(keyWordList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                callBack.onFailure();
-            }
-        });
-    }
-
-    public void getQAList(String url, String pageurl, final OnGetDataCallBack<List<QA>> callBack){
-        DatabaseReference ncref=firebaseDatabase.getReference();
-        ncref.child("note/"+url+"/notecontent/"+pageurl+"/qalist").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<QA> qaList=new ArrayList<>();
-                for(DataSnapshot child:dataSnapshot.getChildren()){
-                    qaList.add(child.getValue(QA.class));
-                }
-                callBack.onSuccess(qaList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                callBack.onFailure();
-            }
-        });
-    }
-
     @Override
-    public void getShowPages(String url, final OnGetDataCallBack<List<Integer>> callback) {
+    public void getPages(final String url, final OnGetDataCallBack<List<Page>> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/pagelist").addListenerForSingleValueEvent(new ValueEventListener() {
-
+        ref.child("note/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Integer> pages=new ArrayList<>();
-                for(DataSnapshot childSnapshot: dataSnapshot.getChildren()){
-                    pages.add(Integer.valueOf(childSnapshot.getKey()));
+                List<Page> pages=new ArrayList<>();
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    Page page=new Page();
+                    page.setId(child.child("id").getValue(String.class));
+                    page.setimageurl(child.child("imageurl").getValue(String.class));
+
+                    if(child.hasChild("keywordlist")){
+                        DataSnapshot keywordchild=child.child("keywordlist");
+                        GenericTypeIndicator<Map<String,KeyWord>> t=new GenericTypeIndicator<Map<String,KeyWord>>() {};
+                        Map<String,KeyWord> keyWordList=keywordchild.getValue(t);
+                        if(keyWordList==null){
+                            keyWordList=new HashMap<>();
+                        }
+                        page.setkeywordlist(keyWordList);
+                    }else{
+                        page.setkeywordlist(new HashMap<String, KeyWord>());
+                    }
+
+                    if(child.hasChild("supplylist")){
+                        DataSnapshot supplylistchild=child.child("supplylist");
+                        List<Supply> supplyList=new ArrayList<>();
+                        for(DataSnapshot supplychild:supplylistchild.getChildren()){
+                            supplyList.add(supplychild.getValue(Supply.class));
+                        }
+                        page.setsupplylist(supplyList);
+                    }else{
+                        page.setsupplylist(new ArrayList<Supply>());
+                    }
+
+                    if(child.hasChild("qalist")){
+                        DataSnapshot qalistchild=child.child("qalist");
+                        List<QA> qaList=new ArrayList<>();
+                        for(DataSnapshot qachild:qalistchild.getChildren()){
+                            qaList.add(qachild.getValue(QA.class));
+                        }
+                        page.setqalist(qaList);
+                    }else{
+                        page.setqalist(new ArrayList<QA>());
+                    }
+                    pages.add(page);
                 }
-                callback.onSuccess(pages);
+                callBack.onSuccess(pages);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                callBack.onFailure();
             }
-        });
-    }
-
-    @Override
-    public void getPageContent(final String url, int page, final OnGetDataCallBack<Page> callback) {
-        DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/pagelist/"+page).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String pageurl=dataSnapshot.getValue(String.class);
-                getPage(url,pageurl,callback);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                callback.onFailure();
-            }
-        });
-    }
-
-    @Override
-    public void getPages(final String url, final OnGetDataCallBack<Page> callBack) {
-        getShowPages(url, new OnGetDataCallBack<List<Integer>>() {
-
-            @Override
-            public void onSuccess(List<Integer> data) {
-                for(Integer i:data){
-                    getPageContent(url, i,callBack);
-                }
-
-            }
-
-            @Override
-            public void onFailure() {
-
-            }
-
         });
     }
 
@@ -239,6 +114,7 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
 
     @Override
     public void getKeyList(String url, OnGetDataCallBack<List<String>> callBack) {
+
     }
 
     @Override
@@ -270,93 +146,40 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
     }
 
     @Override
-    public void addPage(final String url, Page page, final OnUpLoadDataCallback callback) {
-        addPageContent(url, page, new OnUpLoadDataCallback<String>() {
-
+    public void addPage(final String url, final Page page, final OnUpLoadDataCallback callback) {
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onSuccess(final String s) {
-                DatabaseReference ref=firebaseDatabase.getReference();
-                ref.child("note/"+url+"/pagelist/").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        DatabaseReference nref=firebaseDatabase.getReference();
-                        long c=dataSnapshot.getChildrenCount()+1;
-                        nref.child("note/"+url+"/pagelist/"+c).setValue(s).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                callback.onSuccess(null);
-                            }
-                        });
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int c=0;
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    if(c<Integer.parseInt(child.getKey())) {
+                        c = Integer.parseInt(child.getKey());
                     }
+                }
 
+                final String uid=ref.child("note/"+url+"/notecontent/"+c).push().getKey();
+                page.setId(uid);
+                ref.child("note/"+url+"/notecontent/"+c+uid).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure() {
-
-            }
-        });
-    }
-
-    @Override
-    public void updateNoteContent(final String url, Map<String,Object> p, final TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
-        Log.d("MAP",p.toString());
-        updatePageContents(url, p, new OnUpLoadDataCallback<String>() {
-            @Override
-            public void onSuccess(String s) {
-                updateTitleDetial(url, titleDetail, new OnUpLoadDataCallback() {
-                    @Override
-                    public void onSuccess(Object o) {
+                    public void onSuccess(Void aVoid) {
                         callback.onSuccess(null);
                     }
-
-                    @Override
-                    public void onFailure() {
-
-                    }
                 });
+
             }
 
             @Override
-            public void onFailure() {
-
-            }
-        });
-    }
-
-    public void updatePageContents(String url, Map<String,Object>  page, final OnUpLoadDataCallback<String> callback){
-        DatabaseReference ref=firebaseDatabase.getReference();
-        Log.d("map",page.toString());
-        ref.child("note/"+url+"/notecontent/").setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                callback.onSuccess(null);
-            }
-        });
-    }
-
-    public void addPageContent(String url, Page page, final OnUpLoadDataCallback<String> callback){
-        DatabaseReference ref=firebaseDatabase.getReference();
-        final String uid=ref.child("note/"+url+"/notecontent/").push().getKey();
-        page.setId(uid);
-        ref.child("note/"+url+"/notecontent/"+uid).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                callback.onSuccess(uid);
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onFailure();
             }
         });
     }
 
     @Override
-    public void updatePageLink(String url, Map<String,Object> link, final OnUpLoadDataCallback callback){
+    public void updateNoteContent(final String url, Map<String,Object> p, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/pagelist/").setValue(link).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("note/"+url+"/notecontent/").setValue(p).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 callback.onSuccess(null);
@@ -372,6 +195,10 @@ public class NoteRepository implements KeyEditorModel ,PageContentModel,NoteLoad
                 callback.onSuccess(null);
             }
         });
+    }
+
+    public void deletePage(String url,String pageurl,boolean isLink,OnUpLoadDataCallback callback){
+
     }
 
 }

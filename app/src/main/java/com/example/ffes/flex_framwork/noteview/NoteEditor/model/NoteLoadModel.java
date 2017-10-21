@@ -14,10 +14,9 @@ import java.util.Map;
  */
 
 public interface NoteLoadModel {
-    void getPages(String url,OnGetDataCallBack<Page> callBack);
+    void getPages(String url,OnGetDataCallBack<List<Page>> callBack);
     void getTitleDetail(String url, OnGetDataCallBack<TitleDetail> callBack);
     void updateTitleDetial(String url,TitleDetail titleDetail,OnUpLoadDataCallback callback);
     void addPage(String url,Page page,OnUpLoadDataCallback callback);
-    void updateNoteContent(String url, Map<String,Object> p, TitleDetail titleDetail, OnUpLoadDataCallback callback);
-    void updatePageLink(String url,Map<String,Object> link,OnUpLoadDataCallback callback);
+    void updateNoteContent(String url, Map<String,Object> p, OnUpLoadDataCallback callback);
 }
