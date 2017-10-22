@@ -1,9 +1,14 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
+import android.net.Uri;
+
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
+import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
+import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Page;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +23,13 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
 
     List<PageDataModel> models;
     List<Page> pagelist;
-
+    ImageRepository imageRepository;
     int currentPage;
 
     public PageStateModel(){
         models=new ArrayList<>();
         pagelist=new ArrayList<>();
+        imageRepository=new ImageRepository(FirebaseStorage.getInstance());
         currentPage=-1;
     }
 
@@ -52,7 +58,13 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
 
     @Override
     public void removePage(int index) {
-        pagelist.remove(index);
+        Page p=pagelist.remove(index);
+        for(Supply supply:p.getsupplylist()){
+            if(supply.getType()==2) {
+                imageRepository.removeSupplyPhoto(Uri.parse(supply.getContent()));
+            }
+        }
+        imageRepository.removePagePhoto(Uri.parse(p.getimageurl()));
         if(getCurrentPage() > getTotalPage()){
             setCurrentPage(getTotalPage()-1);
         }

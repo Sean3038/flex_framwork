@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.api;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,6 +46,17 @@ public class ImageRepository {
                         callback.onSuccess(uri.toString());
                     }
                 });
+    }
+
+    public void removePagePhoto(Uri imageuri){
+        String path=imageuri.getLastPathSegment();
+       storage.getReference().child(path).delete();
+        Log.d("TEST","Check");
+    }
+
+    public void removeSupplyPhoto(Uri imageuri){
+        String path=imageuri.getLastPathSegment();
+        storage.getReference().child(path).delete();
     }
 
 }

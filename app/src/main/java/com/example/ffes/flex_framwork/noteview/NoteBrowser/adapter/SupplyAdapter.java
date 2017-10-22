@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter;
 
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
 import com.example.ffes.flex_framwork.noteview.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
+import com.example.ffes.flex_framwork.noteview.widget.SupplyZoomDialog;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -30,6 +32,7 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     SupplyModel model;
     Context context;
+    FragmentManager fm;
     boolean isEditor;
 
     @Override
@@ -56,25 +59,57 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public class ImageViewHolder extends  RecyclerView.ViewHolder{
 
         ImageView imageView;
-
+        ImageView deletebtn;
         public ImageViewHolder(View itemView) {
             super(itemView);
             imageView=(ImageView)itemView.findViewById(R.id.imageView);
+            deletebtn=(ImageView)itemView.findViewById(R.id.deleteitembtn);
+            if(isEditor){
+                deletebtn.setVisibility(View.VISIBLE);
+            }else{
+                deletebtn.setVisibility(View.GONE);
+            }
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SupplyZoomDialog dialog=SupplyZoomDialog.newInstance(model.getSupply(getAdapterPosition()).getContent());
+                    dialog.show(fm,"SupplyZoomDialog");
+                }
+            });
+            deletebtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    model.removeSupply(getAdapterPosition());
+                }
+            });
         }
     }
 
     public class TextViewHolder extends  RecyclerView.ViewHolder{
 
         TextView textView;
-
+        ImageView deletebtn;
         public TextViewHolder(View itemView) {
             super(itemView);
             textView=(TextView)itemView.findViewById(R.id.textView);
+            deletebtn=(ImageView)itemView.findViewById(R.id.deleteitembtn);
+            if(isEditor){
+                deletebtn.setVisibility(View.VISIBLE);
+            }else{
+                deletebtn.setVisibility(View.GONE);
+            }
+            deletebtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    model.removeSupply(getAdapterPosition());
+                }
+            });
         }
     }
 
-    public SupplyAdapter(Context context,boolean isEditor){
+    public SupplyAdapter(Context context, FragmentManager fm, boolean isEditor){
         this.context=context;
+        this.fm=fm;
         this.isEditor=isEditor;
     }
 

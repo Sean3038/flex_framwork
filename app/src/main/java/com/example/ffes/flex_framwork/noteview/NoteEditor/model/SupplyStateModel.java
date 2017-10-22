@@ -1,9 +1,13 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.model;
 
+import android.net.Uri;
+
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.StateModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.SupplyModel;
+import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.viewmodel.SupplyDataModel;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +19,11 @@ import java.util.List;
 public class SupplyStateModel implements SupplyModel,StateModel<SupplyDataModel> {
     List<SupplyDataModel> supplyModels;
     List<Supply> supplyList;
+    ImageRepository imageRepository;
 
     public SupplyStateModel(List<Supply> supplies){
         supplyModels=new ArrayList<>();
+        imageRepository=new ImageRepository(FirebaseStorage.getInstance());
         supplyList=supplies;
     }
 
@@ -48,7 +54,10 @@ public class SupplyStateModel implements SupplyModel,StateModel<SupplyDataModel>
 
     @Override
     public void removeSupply(int index) {
-        supplyList.remove(index);
+        Supply supply=supplyList.remove(index);
+        if(supply.getType()==2) {
+            imageRepository.removeSupplyPhoto(Uri.parse(supply.getContent()));
+        }
         for (SupplyDataModel model:supplyModels){
             model.notifyRemoveSupply(index);
         }

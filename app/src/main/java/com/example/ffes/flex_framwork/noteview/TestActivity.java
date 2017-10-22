@@ -14,15 +14,17 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
 
     Button editer;
     Button browser;
-
+    Button addnote;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
         editer= (Button) findViewById(R.id.button3);
         browser= (Button) findViewById(R.id.button2);
+        addnote=(Button)findViewById(R.id.button4);
         editer.setOnClickListener(this);
         browser.setOnClickListener(this);
+        addnote.setOnClickListener(this);
     }
 
     @Override
@@ -34,6 +36,8 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button3:
                 NoteEditorActivity.start(this,"sdf4K5df6a");
                 break;
+            case R.id.button4:
+                NoteEditorActivity.start(this,null);
         }
     }
 }

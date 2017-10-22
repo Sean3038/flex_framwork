@@ -20,7 +20,10 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +32,7 @@ import java.util.Map;
  * Created by Ffes on 2017/8/27.
  */
 
-public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
+public class NoteRepository implements NoteBrowserModel{
 
     FirebaseDatabase firebaseDatabase;
     FirebaseStorage firebaseStorage;
@@ -117,7 +120,6 @@ public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
 
     }
 
-    @Override
     public void getTitleDetail(String url, final OnGetDataCallBack<TitleDetail> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("note/"+url+"/titledetail").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -134,7 +136,6 @@ public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
         });
     }
 
-    @Override
     public void updateTitleDetial(String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("note/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -145,7 +146,21 @@ public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
         });
     }
 
-    @Override
+    public void addNote(String username,final OnUpLoadDataCallback<String> callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        String noteid=ref.child("note/").push().getKey();
+
+        Map<String,Object> map=new HashMap<>();
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
+        Date currentTime = Calendar.getInstance().getTime();
+        map.put("createat",sDateFormat.format(currentTime).toString());
+        map.put("updateat",sDateFormat.format(currentTime).toString());
+        map.put("authorid",username);
+        map.put("isLinked",false);
+        ref.child("note/"+noteid).setValue(map);
+        callback.onSuccess(noteid);
+    }
+
     public void addPage(final String url, final Page page, final OnUpLoadDataCallback callback) {
         final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("note/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -160,7 +175,7 @@ public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
 
                 final String uid=ref.child("note/"+url+"/notecontent/"+c).push().getKey();
                 page.setId(uid);
-                ref.child("note/"+url+"/notecontent/"+c+uid).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
+                ref.child("note/"+url+"/notecontent/"+c).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         callback.onSuccess(null);
@@ -176,12 +191,15 @@ public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
         });
     }
 
-    @Override
     public void updateNoteContent(final String url, Map<String,Object> p, final OnUpLoadDataCallback callback) {
-        DatabaseReference ref=firebaseDatabase.getReference();
+        final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("note/"+url+"/notecontent/").setValue(p).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
+                Date currentTime = Calendar.getInstance().getTime();
+
+                ref.child("note/"+url+"/updateat").setValue(sDateFormat.format(currentTime).toString());
                 callback.onSuccess(null);
             }
         });
@@ -197,8 +215,17 @@ public class NoteRepository implements NoteLoadModel,NoteBrowserModel{
         });
     }
 
-    public void deletePage(String url,String pageurl,boolean isLink,OnUpLoadDataCallback callback){
+    public void deletePage(String url,String pageurl,boolean isLink){
 
     }
 
+    public void deleteNote(String url, final OnUpLoadDataCallback callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+url).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess(null);
+            }
+        });
+    }
 }

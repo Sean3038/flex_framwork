@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -38,11 +39,15 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPr
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
+import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -90,11 +95,15 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         init();
 
         Bundle bundle=this.getIntent().getExtras();
-        if(bundle!=null){
-            noteUrl=bundle.getString(URL_KEY);
+        if(bundle!=null) {
+            noteUrl = bundle.getString(URL_KEY);
         }
         presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
-        presenter.loadData(noteUrl);
+        if(noteUrl==null){
+            presenter.addNote("Sean");
+        }else{
+            presenter.loadData(noteUrl);
+        }
     }
 
     private void init(){
@@ -223,6 +232,17 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     public void hidenotify() {
             titleToolBar.showSupplyButton();
             notifyNoPage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void shownotify() {
+        titleToolBar.hideSupplyButton();
+        notifyNoPage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setNoteId(String noteUrl) {
+        this.noteUrl=noteUrl;
     }
 
     @Override

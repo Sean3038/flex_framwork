@@ -18,5 +18,6 @@ public interface NoteLoadModel {
     void getTitleDetail(String url, OnGetDataCallBack<TitleDetail> callBack);
     void updateTitleDetial(String url,TitleDetail titleDetail,OnUpLoadDataCallback callback);
     void addPage(String url,Page page,OnUpLoadDataCallback callback);
+    void addNote(String username,final OnUpLoadDataCallback callback);
     void updateNoteContent(String url, Map<String,Object> p, OnUpLoadDataCallback callback);
 }

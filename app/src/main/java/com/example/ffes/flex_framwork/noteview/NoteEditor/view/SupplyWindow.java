@@ -32,7 +32,7 @@ public class SupplyWindow {
     public void showSuupplyWindow(List<Supply> supplies,FragmentManager fm){
         isOpened=true;
         root.setVisibility(View.VISIBLE);
-        SupplyFragment supplyFragment= SupplyFragment.newInstance(new SupplyStateModel(supplies),true);
+        SupplyFragment supplyFragment= SupplyFragment.newInstance(new SupplyStateModel(supplies),false);
         FragmentTransaction ft=fm.beginTransaction();
         ft.replace(R.id.supply,supplyFragment,"SupplyContent");
         ft.commit();

@@ -94,6 +94,6 @@
         android:layout_gravity="center"
         android:text="目前沒有筆記頁，請加入筆記"
         android:textSize="24sp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </FrameLayout>

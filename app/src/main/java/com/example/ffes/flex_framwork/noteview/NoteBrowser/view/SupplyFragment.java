@@ -54,7 +54,7 @@ public class SupplyFragment extends Fragment{
         progressBar=(ProgressBar)view.findViewById(R.id.progressBar);
         recyclerView=(RecyclerView)view.findViewById(R.id.supplylist);
 
-        listAdapter=new SupplyAdapter(getContext(),getArguments().getBoolean(Editor_Key));
+        listAdapter=new SupplyAdapter(getContext(),getFragmentManager(),getArguments().getBoolean(Editor_Key));
         LinearLayoutManager manager=new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false);
         recyclerView.setAdapter(listAdapter);
         recyclerView.setLayoutManager(manager);

@@ -7,6 +7,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDa
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.TitleDetailModel;
+import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
@@ -25,12 +26,12 @@ import java.util.Map;
 public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
     NoteEditorContract.View view;
-    NoteLoadModel model;
+    NoteRepository model;
     ImageRepository imageRepository;
     PageModel stateModel;
     TitleDetailModel titleDetailStateModel;
 
-    public NoteEidtorPresenter(NoteEditorContract.View view, NoteLoadModel model,ImageRepository imageRepository, PageModel stateModel, TitleDetailModel titleDetailStateModel){
+    public NoteEidtorPresenter(NoteEditorContract.View view, NoteRepository model, ImageRepository imageRepository, PageModel stateModel, TitleDetailModel titleDetailStateModel){
         this.view=view;
         this.model=model;
         this.stateModel=stateModel;
@@ -46,11 +47,17 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
             @Override
             public void onSuccess(List<Page> data) {
                 stateModel.addPage(data);
+                if(data.size()==0){
+                    view.shownotify();
+                }else{
+                    view.hidenotify();
+                }
                 view.closeprogress();
                 view.showprogress("讀取標題資訊");
                 model.getTitleDetail(noteUrl, new OnGetDataCallBack<TitleDetail>() {
                     @Override
                     public void onSuccess(TitleDetail data) {
+                        titleDetailStateModel.setTitleDetail(data);
                         view.closeprogress();
                     }
 
@@ -59,6 +66,25 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
                     }
                 });
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+    }
+
+    @Override
+    public void addNote(String user) {
+        view.showprogress("新增筆記");
+        view.shownotify();
+        titleDetailStateModel.setTitleDetail(new TitleDetail("#f6b9b9","Title"));
+        model.addNote(user, new OnUpLoadDataCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                view.setNoteId(s);
+                view.closeprogress();
             }
 
             @Override
@@ -114,31 +140,50 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
 
     @Override
     public void saveNote(final String noteUrl) {
-        view.showprogress("儲存筆記");
-        final Map<String,Object> map=stateModel.toMap();
+        if(titleDetailStateModel.getTitleDetail().getTitle().equals("")){
+            //消除筆記
+            view.showprogress("消除筆記");
+            model.deleteNote(noteUrl, new OnUpLoadDataCallback() {
+                @Override
+                public void onSuccess(Object o) {
+                    view.closeprogress();
+                    view.end();
+                }
 
-        model.updateNoteContent(noteUrl, map, new OnUpLoadDataCallback() {
-            @Override
-            public void onSuccess(Object o) {
-                model.updateTitleDetial(noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        view.closeprogress();
-                        view.end();
-                    }
+                @Override
+                public void onFailure() {
 
-                    @Override
-                    public void onFailure() {
+                }
+            });
 
-                    }
-                });
-            }
+        }else{
+            view.showprogress("儲存筆記");
+            final Map<String,Object> map=stateModel.toMap();
+            model.updateNoteContent(noteUrl, map, new OnUpLoadDataCallback() {
+                @Override
+                public void onSuccess(Object o) {
+                    model.updateTitleDetial(noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
+                        @Override
+                        public void onSuccess(Object o) {
+                            view.closeprogress();
+                            view.end();
+                        }
 
-            @Override
-            public void onFailure() {
+                        @Override
+                        public void onFailure() {
 
-            }
-        });
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure() {
+
+                }
+            });
+        }
+
+
 
     }
 
