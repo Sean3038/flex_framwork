@@ -57,9 +57,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorPrimary"
-            android:orientation="vertical"
             android:clickable="true"
-            android:visibility="gone">
+            android:orientation="vertical"
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/editor_btn"
@@ -75,17 +75,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_margin="10dp"></android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:id="@+id/pagemanage"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/closemanage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/cancel" />
+
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:stretchColumns="0,1">
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:baselineAligned="false">
+
+                        <Button
+                            android:id="@+id/add_page"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="新增素材" />
+
+                        <Button
+                            android:id="@+id/linkpage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="連結素材" />
+
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
 
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/supplyfragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </FrameLayout>
 
     <TextView
         android:id="@+id/notifyNoPage"
@@ -95,5 +134,12 @@
         android:text="目前沒有筆記頁，請加入筆記"
         android:textSize="24sp"
         android:visibility="visible" />
+
+    <FrameLayout
+        android:id="@+id/supplyfragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
 </FrameLayout>

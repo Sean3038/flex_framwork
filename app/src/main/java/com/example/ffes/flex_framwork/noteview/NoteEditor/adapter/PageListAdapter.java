@@ -103,7 +103,7 @@ public class PageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void viewBindValue(final ViewHolder vh, final int position){
         final Page page=model.getPage(position);
-        Picasso.with(vh.itemView.getContext()).load(page.getimageurl()).into(vh.pageImage);
+        Picasso.with(vh.itemView.getContext()).load(page.getimageurl()).resize(300,300).centerInside().into(vh.pageImage);
         if(isEditor){
             vh.delete.setVisibility(View.VISIBLE);
         }else{

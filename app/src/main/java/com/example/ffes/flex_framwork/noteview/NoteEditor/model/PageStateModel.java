@@ -12,6 +12,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,7 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
     @Override
     public void removePage(int index) {
         Page p=pagelist.remove(index);
+
         for(Supply supply:p.getsupplylist()){
             if(supply.getType()==2) {
                 imageRepository.removeSupplyPhoto(Uri.parse(supply.getContent()));
@@ -106,13 +108,24 @@ public class PageStateModel implements PageModel,StateModel<PageDataModel> {
 
     @Override
     public Map toMap(){
-
         Map<String,Object> map=new HashMap<>();
+        Map<String,Object> pmap=new HashMap<>();
+        Map<String,Object> kmap=new HashMap<>();
+
+        HashSet<String> keylist=new HashSet<>();
         int c=0;
         for(Page p:pagelist){
-            map.put(""+c,p.toMap());
+            pmap.put(""+c,p.toMap());
+            keylist.addAll(p.getkeywordlist().keySet());
             c++;
         }
+        c=0;
+        for(String key:keylist){
+            kmap.put(""+c,key);
+            c++;
+        }
+        map.put("page",pmap);
+        map.put("key",kmap);
         return map;
     }
 }

@@ -24,6 +24,7 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.LinkNoteAdapter;
 import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
@@ -51,18 +52,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class NoteEditorActivity extends BaseActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,
-        PageListAdapter.OnAddPageListener,PageListAdapter.OnSelectItemListener,OnImageClick{
+public class NoteEditorActivity extends BaseActivity implements NoteEditorContract.View,NoteTitleDialogFragment.Callback,PageListAdapter.OnSelectItemListener
+        ,OnImageClick,LinkMenuDialog.GetLinkNote{
 
     public static final String URL_KEY="NoteURL";
     private static final int REQUEST_GETPHOTO = 100;
 
-    LinearLayout editor_layout;
     TextView editor_btn;
-    RecyclerView pagelistview;
 
     PageIndicator pageIndicator;
     TitleToolBar titleToolBar;
+    PageManageWindow pageManageWindow;
 
     ViewPager content;
 
@@ -140,17 +140,14 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
 
             }
         });
-        pagelistview.setAdapter(pageListAdapter);
-        pagelistview.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
     }
 
     private void initUI(){
         content=(ViewPager)findViewById(R.id.content);
-        editor_layout=(LinearLayout)findViewById(R.id.editor_layout);
         editor_btn=(TextView)findViewById(R.id.editor_btn);
         notifyNoPage=(TextView)findViewById(R.id.notifyNoPage);
-        pagelistview=(RecyclerView)findViewById(R.id.pagelistview);
-
+        noteViewAdapter=new NoteViewAdapter(this,this);
+        pageListAdapter=new PageListAdapter(this);
         LinearLayout pagestatelayout=(LinearLayout) findViewById(R.id.pageindicator);
         pagestatelayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,13 +162,22 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
             }
         });
         pageIndicator=new PageIndicator(pagestatelayout);
+        pageManageWindow=new PageManageWindow((ViewGroup) findViewById(R.id.editor_layout), pageListAdapter,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getPhoto();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getLink();
+                    }
+                });
+
     }
 
     private void initAdapter(){
-        noteViewAdapter=new NoteViewAdapter(this,this);
-        pageListAdapter=new PageListAdapter(this);
-        pageListAdapter.setListener(this);
-
         stateModel=new PageStateModel();
         stateModel.addModel(pageIndicator);
         stateModel.addModel(pageListAdapter);
@@ -251,11 +257,11 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     }
 
     public void openPageEditor(){
-        editor_layout.setVisibility(View.VISIBLE);
+        pageManageWindow.openWindow();
     }
 
     public void closePageEditor(){
-        editor_layout.setVisibility(View.GONE);
+        pageManageWindow.closeWindow();
     }
 
     public void openSupplyEdit(List<Supply> supplies){
@@ -307,11 +313,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
 
         }
 
-    }
-
-    @Override
-    public void onAddPage() {
-        getPhoto();
     }
 
     @Override
@@ -393,5 +394,20 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         bundle.putString(URL_KEY,noteUrl);
         intent.putExtras(bundle);
         context.startActivity(intent);
+    }
+
+    public void getLink() {
+        LinkMenuDialog dialog=LinkMenuDialog.newInstance(noteUrl,this);
+        dialog.show(getSupportFragmentManager(),"LinkMenuDialog");
+    }
+
+    @Override
+    public void onCallBack(Map<String, List<String>> notelist) {
+        for(String id:notelist.keySet()){
+            for(String key:notelist.get(id)){
+                Log.d("NOTELIST",id+" "+key);
+            }
+        }
+
     }
 }

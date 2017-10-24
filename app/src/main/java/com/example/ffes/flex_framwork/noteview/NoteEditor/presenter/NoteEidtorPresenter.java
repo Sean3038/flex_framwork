@@ -139,6 +139,11 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     }
 
     @Override
+    public void addLinkPage(String noteUrl, Map<String, List<String>> notelist) {
+
+    }
+
+    @Override
     public void saveNote(final String noteUrl) {
         if(titleDetailStateModel.getTitleDetail().getTitle().equals("")){
             //消除筆記
@@ -159,9 +164,10 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
         }else{
             view.showprogress("儲存筆記");
             final Map<String,Object> map=stateModel.toMap();
-            model.updateNoteContent(noteUrl, map, new OnUpLoadDataCallback() {
+            model.updateNoteContent(noteUrl, (Map<String, Object>) map.get("page"), new OnUpLoadDataCallback() {
                 @Override
                 public void onSuccess(Object o) {
+                    model.updateKeyWord(noteUrl, (Map<String, Object>) map.get("key"));
                     model.updateTitleDetial(noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
                         @Override
                         public void onSuccess(Object o) {

@@ -7,6 +7,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
+import com.example.ffes.flex_framwork.noteview.data.LinkNote;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
@@ -115,6 +116,35 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
+    public void getPageByKeyWord(final String noteurl, final List<String> keylist, final OnGetDataCallBack<List<Page>> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+                    if(!childSnapshot.getKey().equals(noteurl)){
+                        for(DataSnapshot pageSnapshot:childSnapshot.child("notecontent").getChildren()){
+
+                            for(DataSnapshot keySnapshot:pageSnapshot.child("keywirdlist").getChildren()){
+                                if(keylist.contains(keySnapshot.getKey())){
+                                    //加入這頁筆記
+                                    break;
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
+            }
+        });
+    }
+
     @Override
     public void getKeyList(String url, OnGetDataCallBack<List<String>> callBack) {
 
@@ -127,6 +157,40 @@ public class NoteRepository implements NoteBrowserModel{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 TitleDetail titleDetail=dataSnapshot.getValue(TitleDetail.class);
                 callBack.onSuccess(titleDetail);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getAllNote(final String url, final OnGetDataCallBack<List<LinkNote>> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<LinkNote> linkNotes=new ArrayList<>();
+                for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+                    if(!childSnapshot.getKey().equals(url)){
+                        LinkNote linkNote=new LinkNote();
+                        linkNote.setTitle(childSnapshot.child("titledetail/title").getValue(String.class));
+                        linkNote.setName(childSnapshot.child("authorid").getValue(String.class));
+                        linkNote.setCoverurl(childSnapshot.child("cover").getValue(String.class));
+                        linkNote.setId(childSnapshot.getKey());
+                        linkNote.setSelfphoto("dsfaa");
+
+                        List<String> keys=new ArrayList<>();
+                        for(DataSnapshot keychild :childSnapshot.child("keylist").getChildren()){
+                            keys.add(keychild.getValue(String.class));
+                        }
+                        linkNote.setKeylsit(keys);
+
+                        linkNotes.add(linkNote);
+                    }
+                }
+                callBack.onSuccess(linkNotes);
             }
 
             @Override
@@ -203,6 +267,11 @@ public class NoteRepository implements NoteBrowserModel{
                 callback.onSuccess(null);
             }
         });
+    }
+
+    public void updateKeyWord(final String url, Map<String,Object> keylist){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+url+"/keylist/").setValue(keylist);
     }
 
     public void updatePage(String url, Page page, final OnUpLoadDataCallback callback){

@@ -1,0 +1,66 @@
+package com.example.ffes.flex_framwork.noteview.data;
+
+import java.util.List;
+
+/**
+ * Created by Ffes on 2017/10/23.
+ */
+
+public class LinkNote {
+    String id;
+    String name;
+    String title;
+    String coverurl;
+    String selfphoto;
+    List<String> keylsit;
+
+    public LinkNote(){}
+
+    public String getId() {
+        return id;
+    }
+
+    public List<String> getKeylist() {
+        return keylsit;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getCoverurl() {
+        return coverurl;
+    }
+
+    public String getSelfphoto() {
+        return selfphoto;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setKeylsit(List<String> keylsit) {
+        this.keylsit = keylsit;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setCoverurl(String coverurl) {
+        this.coverurl = coverurl;
+    }
+
+    public void setSelfphoto(String selfphoto) {
+        this.selfphoto = selfphoto;
+    }
+}

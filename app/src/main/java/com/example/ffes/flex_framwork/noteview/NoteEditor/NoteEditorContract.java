@@ -1,6 +1,9 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor;
 
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by Ffes on 2017/9/18.
  */
@@ -23,6 +26,7 @@ public interface NoteEditorContract {
         void updateTitleDetail(String noteurl,String title,String color);
         void getTitleDetail(String noteUrl);
         void addPage(String noteUrl,String photurl);
+        void addLinkPage(String noteUrl, Map<String,List<String>> notelist);
         void saveNote(String noteUrl);
     }
 }

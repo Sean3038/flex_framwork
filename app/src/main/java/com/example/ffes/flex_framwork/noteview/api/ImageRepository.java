@@ -51,7 +51,6 @@ public class ImageRepository {
     public void removePagePhoto(Uri imageuri){
         String path=imageuri.getLastPathSegment();
        storage.getReference().child(path).delete();
-        Log.d("TEST","Check");
     }
 
     public void removeSupplyPhoto(Uri imageuri){
