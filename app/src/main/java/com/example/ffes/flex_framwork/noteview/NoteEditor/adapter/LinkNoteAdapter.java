@@ -12,7 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
+import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
+import com.example.ffes.flex_framwork.noteview.data.Data.User;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -28,11 +33,14 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
     List<LinkNote> linkNoteList;
     Map<String,List<String>> selectedlist;
     Context context;
+    AuthRepository authRepository;
+
 
     public LinkNoteAdapter(Context context, List<LinkNote> linkNoteList){
         this.linkNoteList=linkNoteList;
         this.selectedlist=new HashMap<>();
         this.context=context;
+        this.authRepository=new AuthRepository(FirebaseAuth.getInstance(), FirebaseDatabase.getInstance());
     }
 
     @Override
@@ -42,8 +50,8 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        LinkNote linkNote=linkNoteList.get(holder.getAdapterPosition());
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final LinkNote linkNote=linkNoteList.get(holder.getAdapterPosition());
         LinkKeyAdapter keyAdapter=new LinkKeyAdapter(linkNote.getId(),linkNote.getKeylist(),this);
         holder.keylist.setLayoutManager(new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false));
         holder.keylist.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
@@ -69,10 +77,21 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
             }
         });
         holder.keylist.setAdapter(keyAdapter);
-        holder.setName(linkNote.getName());
+        authRepository.getUser(linkNote.getName(), new OnGetDataCallBack<User>() {
+            @Override
+            public void onSuccess(User data) {
+                holder.setName(data.getName());
+                holder.loadSelfPhoto(data.getPhotoUrl());
+            }
+
+            @Override
+            public void onFailure() {
+                holder.setName("UnKnow");
+                holder.loadSelfPhoto("zzzz");
+            }
+        });
         holder.setTitle(linkNote.getTitle());
         holder.loadCover(linkNote.getCoverurl());
-        holder.loadSelfPhoto(linkNote.getSelfphoto());
     }
 
     @Override
@@ -128,6 +147,7 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
             Picasso.with(context)
                     .load(imageurl)
                     .resize(500,500)
+                    .placeholder(R.drawable.flex_icon)
                     .centerInside()
                     .into(cover);
         }
@@ -136,6 +156,7 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
             Picasso.with(context)
                     .load(imageurl)
                     .resize(400,400)
+                    .placeholder(R.drawable.account)
                     .centerInside()
                     .into(selfphoto);
         }

@@ -14,22 +14,20 @@
         <activity
             android:name=".noteview.NoteBrowser.view.NoteBrowserActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden">
-
-        </activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".noteview.NoteEditor.view.NoteEditorActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
-
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".noteview.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity android:name=".noteview.Login.view.LoginActivity" />
+        <activity android:name=".noteview.EasyPersonalSpace.SpaceActivity"></activity>
     </application>
 
 </manifest>

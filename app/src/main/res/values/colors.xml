@@ -6,4 +6,20 @@
     <color name="titleColor">#426a96</color>
     <color name="pageIndicatorColor">#c8d3e0</color>
     <color name="keyListBackgroundColor">#f6f6f6</color>
+    <color name="bottomColor">#9ccbd9</color>
+    <color name="bottomColor2">#b4d3e9</color>
+    <color name="bottomColor3">#90B4D6</color>
+    <color name="bottomColor4">#A1C9F0</color>
+    <color name="bottomColor5">#013270</color>
+    <color name="colorButton">#991041</color>
+    <color name="button">#c8e0f0f7</color>
+    <color name="gray">#c8dddddd</color>
+    <color name="dirtywhite">#f7f7f7</color>
+    <color name="write">#8ba7cb</color>
+    <color name="white">#ffffff</color>
+    <drawable name="colorWhite">#FFFFFF</drawable>
+    <drawable name="blue">#99FFFF</drawable>
+    <drawable name="gray">#AAAAAA</drawable>
+    <color name="colorOverlay">#4Dffffff</color>
+    <color name="top">#4Dd0d0d0</color>
 </resources>

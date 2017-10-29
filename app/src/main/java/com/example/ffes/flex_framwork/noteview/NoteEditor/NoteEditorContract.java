@@ -22,7 +22,7 @@ public interface NoteEditorContract {
 
     interface Presenter{
         void loadData(String noteUrl);
-        void addNote(String user);
+        void addNote();
         void updateTitleDetail(String noteurl,String title,String color);
         void getTitleDetail(String noteUrl);
         void addPage(String noteUrl,String photurl);

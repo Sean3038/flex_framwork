@@ -2,7 +2,7 @@ package com.example.ffes.flex_framwork;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

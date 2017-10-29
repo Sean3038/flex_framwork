@@ -19,6 +19,7 @@ import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.NoteBrowserContract;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.NotePageAdapter;
+import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.presenter.NoteBrowserPresenter;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.adapter.KeyFilterAdapter;
@@ -27,6 +28,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.view.PageIndicator;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.SupplyWindow;
 import com.example.ffes.flex_framwork.noteview.widget.HackyViewPager;
 import com.example.ffes.flex_framwork.noteview.widget.LottieButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
@@ -61,7 +63,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         if(bundle!=null){
             noteurl=bundle.getString(URL_KEY);
         }
-        noteBrowserPresenter=new NoteBrowserPresenter(this,pageFilterStateModel,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()));
+        noteBrowserPresenter=new NoteBrowserPresenter(this,pageFilterStateModel,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance()));
         noteBrowserPresenter.loadNote(noteurl);
     }
 
@@ -73,6 +75,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
             filterToolBar.hideKeyList();
         }else{
             super.onBackPressed();
+            overridePendingTransition(R.anim.right_1,R.anim.right_2);
         }
     }
 
@@ -84,7 +87,6 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
             @Override
             public void onChanged() {
                 super.onChanged();
-                Log.d("PageFilter",""+pageFilterStateModel.getFilterCount());
                 if(pageFilterStateModel.getTotalPage()==0){
                     showFilterNotify();
                     filterToolBar.hideSupplyToggle();

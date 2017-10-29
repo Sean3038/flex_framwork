@@ -49,13 +49,13 @@ public class ImageRepository {
     }
 
     public void removePagePhoto(Uri imageuri){
-        String path=imageuri.getLastPathSegment();
-       storage.getReference().child(path).delete();
+//        String path=imageuri.getLastPathSegment();
+//       storage.getReference().child(path).delete();
     }
 
     public void removeSupplyPhoto(Uri imageuri){
-        String path=imageuri.getLastPathSegment();
-        storage.getReference().child(path).delete();
+//        String path=imageuri.getLastPathSegment();
+//        storage.getReference().child(path).delete();
     }
 
 }

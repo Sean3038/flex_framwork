@@ -26,8 +26,8 @@ public class SupplyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public static final int SUPPLYITEM_TEXT=1;
     public static final int SUPPLYITEM_IMAGE=2;
 
-    public static final int DISPLAY_HEIHT=1000;
-    public static final int DISPLAY_WIDTH=1000;
+    public static final int DISPLAY_HEIHT=800;
+    public static final int DISPLAY_WIDTH=800;
 
 
     SupplyModel model;

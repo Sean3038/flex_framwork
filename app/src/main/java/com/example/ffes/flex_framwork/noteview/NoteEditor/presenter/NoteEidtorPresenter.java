@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 
+import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
@@ -28,21 +29,23 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     NoteEditorContract.View view;
     NoteRepository model;
     ImageRepository imageRepository;
+    AuthRepository authRepository;
     PageModel stateModel;
     TitleDetailModel titleDetailStateModel;
 
-    public NoteEidtorPresenter(NoteEditorContract.View view, NoteRepository model, ImageRepository imageRepository, PageModel stateModel, TitleDetailModel titleDetailStateModel){
+    public NoteEidtorPresenter(NoteEditorContract.View view, NoteRepository model, ImageRepository imageRepository, AuthRepository authRepository, PageModel stateModel, TitleDetailModel titleDetailStateModel){
         this.view=view;
         this.model=model;
         this.stateModel=stateModel;
         this.imageRepository=imageRepository;
+        this.authRepository=authRepository;
         this.titleDetailStateModel=titleDetailStateModel;
     }
 
     @Override
     public void loadData(final String noteUrl) {
         view.showprogress("讀取頁面");
-        model.getPages(noteUrl, new OnGetDataCallBack<List<Page>>() {
+        model.getPages(authRepository.getCurrentId(),noteUrl, new OnGetDataCallBack<List<Page>>() {
 
             @Override
             public void onSuccess(List<Page> data) {
@@ -54,7 +57,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
                 }
                 view.closeprogress();
                 view.showprogress("讀取標題資訊");
-                model.getTitleDetail(noteUrl, new OnGetDataCallBack<TitleDetail>() {
+                model.getTitleDetail(authRepository.getCurrentId(),noteUrl, new OnGetDataCallBack<TitleDetail>() {
                     @Override
                     public void onSuccess(TitleDetail data) {
                         titleDetailStateModel.setTitleDetail(data);
@@ -76,11 +79,11 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     }
 
     @Override
-    public void addNote(String user) {
+    public void addNote() {
         view.showprogress("新增筆記");
         view.shownotify();
         titleDetailStateModel.setTitleDetail(new TitleDetail("#f6b9b9","Title"));
-        model.addNote(user, new OnUpLoadDataCallback<String>() {
+        model.addNote(authRepository.getCurrentId(), new OnUpLoadDataCallback<String>() {
             @Override
             public void onSuccess(String s) {
                 view.setNoteId(s);
@@ -116,7 +119,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
                 p.setkeywordlist(new HashMap<String, KeyWord>());
                 p.setimageurl(s);
                 stateModel.addPage(p);
-                model.addPage(noteUrl, p, new OnUpLoadDataCallback<String>() {
+                model.addPage(authRepository.getCurrentId(),noteUrl, p, new OnUpLoadDataCallback<String>() {
 
                     @Override
                     public void onSuccess(String s) {
@@ -139,58 +142,55 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
     }
 
     @Override
-    public void addLinkPage(String noteUrl, Map<String, List<String>> notelist) {
+    public void addLinkPage(String noteUrl, final Map<String, List<String>> notelist) {
+        view.showprogress("連結筆記");
+        final int[] c = {0};
+        if(notelist.size()==0){
+            view.closeprogress();
+        }
+        for(String key:notelist.keySet()){
+            model.getPageByKeyWord(authRepository.getCurrentId(),key, notelist.get(key), new OnGetDataCallBack<List<Page>>() {
+                @Override
+                public void onSuccess(List<Page> data) {
+                    stateModel.addPage(data);
+                    c[0]++;
+                    if(c[0] ==notelist.keySet().size()){
+                        view.closeprogress();
+                    }
+                }
 
+                @Override
+                public void onFailure() {
+                    view.closeprogress();
+                }
+            });
+        }
     }
 
     @Override
     public void saveNote(final String noteUrl) {
-        if(titleDetailStateModel.getTitleDetail().getTitle().equals("")){
-            //消除筆記
-            view.showprogress("消除筆記");
-            model.deleteNote(noteUrl, new OnUpLoadDataCallback() {
-                @Override
-                public void onSuccess(Object o) {
-                    view.closeprogress();
-                    view.end();
-                }
-
-                @Override
-                public void onFailure() {
-
-                }
-            });
-
-        }else{
-            view.showprogress("儲存筆記");
-            final Map<String,Object> map=stateModel.toMap();
-            model.updateNoteContent(noteUrl, (Map<String, Object>) map.get("page"), new OnUpLoadDataCallback() {
-                @Override
-                public void onSuccess(Object o) {
-                    model.updateKeyWord(noteUrl, (Map<String, Object>) map.get("key"));
-                    model.updateTitleDetial(noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
-                        @Override
-                        public void onSuccess(Object o) {
-                            view.closeprogress();
-                            view.end();
-                        }
-
-                        @Override
-                        public void onFailure() {
+        view.showprogress("儲存筆記");
+        final Map<String,Object> map=stateModel.toMap();
+        model.updateNoteContent(authRepository.getCurrentId(),noteUrl, (Map<String, Object>) map.get("page"), new OnUpLoadDataCallback() {
+            @Override
+            public void onSuccess(Object o) {
+                model.updateKeyWord(authRepository.getCurrentId(),noteUrl, (Map<String, Object>) map.get("key"));
+                model.updateTitleDetial(authRepository.getCurrentId(),noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
+                    @Override
+                    public void onSuccess(Object o) {
+                        view.closeprogress();
+                        view.end();
+                    }
+                    @Override
+                    public void onFailure() {
 
                         }
                     });
                 }
-
-                @Override
-                public void onFailure() {
-
-                }
-            });
-        }
-
-
-
+            @Override
+            public void onFailure() {
+            }
+        });
     }
 
 }

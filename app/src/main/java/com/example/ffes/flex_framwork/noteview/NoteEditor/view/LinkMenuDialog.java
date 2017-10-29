@@ -17,8 +17,10 @@ import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.LinkNoteAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
@@ -40,6 +42,7 @@ public class LinkMenuDialog extends DialogFragment{
     FrameLayout progress;
 
     NoteRepository noteRepository;
+    AuthRepository authRepository;
     LinkNoteAdapter adapter;
 
     GetLinkNote listener;
@@ -73,6 +76,7 @@ public class LinkMenuDialog extends DialogFragment{
         });
         progress=(FrameLayout)view.findViewById(R.id.progress);
         noteRepository=new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance());
+        authRepository=new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance());
         //從這開始找所有筆記的關鍵字
         getAllNote();
     }
@@ -80,7 +84,7 @@ public class LinkMenuDialog extends DialogFragment{
     public void getAllNote(){
         final Context context=this.getContext();
         showprogress();
-        noteRepository.getAllNote(getArguments().getString(URL_KEY), new OnGetDataCallBack<List<LinkNote>>() {
+        noteRepository.getAllNote(authRepository.getCurrentId(),getArguments().getString(URL_KEY), new OnGetDataCallBack<List<LinkNote>>() {
 
             @Override
             public void onSuccess(List<LinkNote> data) {

@@ -12,8 +12,8 @@ import java.util.List;
  */
 
 public interface NoteBrowserModel {
-    void getPages(final String url, final OnGetDataCallBack<List<Page>> callBack);
-    void getNoteName(String noteurl, OnUpLoadDataCallback<String> callBack);
+    void getPages(String uid,final String url, final OnGetDataCallBack<List<Page>> callBack);
+    void getNoteName(String uid,String noteurl, OnUpLoadDataCallback<String> callBack);
     void getKeyList(String url,OnGetDataCallBack<List<String>> callBack);
 
 }

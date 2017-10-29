@@ -6,6 +6,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteBrowserModel
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.data.Data.Note_data;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
 import com.example.ffes.flex_framwork.noteview.data.Page;
@@ -44,9 +45,9 @@ public class NoteRepository implements NoteBrowserModel{
     }
 
     @Override
-    public void getPages(final String url, final OnGetDataCallBack<List<Page>> callBack) {
+    public void getPages(String uid,final String url, final OnGetDataCallBack<List<Page>> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("user/"+uid+"/personalspace/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Page> pages=new ArrayList<>();
@@ -101,9 +102,9 @@ public class NoteRepository implements NoteBrowserModel{
     }
 
     @Override
-    public void getNoteName(final String noteurl, final OnUpLoadDataCallback<String> callBack) {
+    public void getNoteName(String uid,final String noteurl, final OnUpLoadDataCallback<String> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+noteurl+"/titledetail/title").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("user/"+uid+"/personalspace/"+noteurl+"/titledetail/title").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 callBack.onSuccess(dataSnapshot.getValue(String.class));
@@ -116,26 +117,83 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    public void getPageByKeyWord(final String noteurl, final List<String> keylist, final OnGetDataCallBack<List<Page>> callBack){
+    public void getPageByKeyWord(String uid,final String noteurl, final List<String> keylist, final OnGetDataCallBack<List<Page>> callBack){
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
-                    if(!childSnapshot.getKey().equals(noteurl)){
-                        for(DataSnapshot pageSnapshot:childSnapshot.child("notecontent").getChildren()){
+                List<Page> pages=new ArrayList<>();
+                for(DataSnapshot pageSnapshot:dataSnapshot.child(noteurl+"/notecontent/").getChildren()){
+                    for(DataSnapshot keySnapshot:pageSnapshot.child("keywordlist").getChildren()){
+                        if(keylist.contains(keySnapshot.getKey())){
+                            //加入這頁筆記
+                            Page page=new Page();
+                            page.setId(pageSnapshot.child("id").getValue(String.class));
+                            page.setimageurl(pageSnapshot.child("imageurl").getValue(String.class));
 
-                            for(DataSnapshot keySnapshot:pageSnapshot.child("keywirdlist").getChildren()){
-                                if(keylist.contains(keySnapshot.getKey())){
-                                    //加入這頁筆記
-                                    break;
+                            if(pageSnapshot.hasChild("keywordlist")){
+                                DataSnapshot keywordchild=pageSnapshot.child("keywordlist");
+                                GenericTypeIndicator<Map<String,KeyWord>> t=new GenericTypeIndicator<Map<String,KeyWord>>() {};
+                                Map<String,KeyWord> keyWordList=keywordchild.getValue(t);
+                                if(keyWordList==null){
+                                    keyWordList=new HashMap<>();
                                 }
+                                page.setkeywordlist(keyWordList);
+                            }else{
+                                page.setkeywordlist(new HashMap<String, KeyWord>());
                             }
-
+                            if(pageSnapshot.hasChild("supplylist")){
+                                DataSnapshot supplylistchild=pageSnapshot.child("supplylist");
+                                List<Supply> supplyList=new ArrayList<>();
+                                for(DataSnapshot supplychild:supplylistchild.getChildren()){
+                                    supplyList.add(supplychild.getValue(Supply.class));
+                                }
+                                page.setsupplylist(supplyList);
+                            }else{
+                                page.setsupplylist(new ArrayList<Supply>());
+                            }
+                            if(pageSnapshot.hasChild("qalist")){
+                                DataSnapshot qalistchild=pageSnapshot.child("qalist");
+                                List<QA> qaList=new ArrayList<>();
+                                for(DataSnapshot qachild:qalistchild.getChildren()){
+                                    qaList.add(qachild.getValue(QA.class));
+                                }
+                                page.setqalist(qaList);
+                            }else{
+                                page.setqalist(new ArrayList<QA>());
+                            }
+                            pages.add(page);
+                            Log.d("PAGE",page.getId());
+                            break;
                         }
-
                     }
                 }
+                callBack.onSuccess(pages);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
+            }
+        });
+    }
+
+    public void getPersonalSpaceAllNoteData(String uid, final OnGetDataCallBack<List<Note_data>> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/personalspace/").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Note_data> list=new ArrayList<>();
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    Note_data data=new Note_data();
+                    data.setCoverurl(child.child("notecontent/0/imageurl").getValue(String.class));
+                    data.setColor(child.child("titledetail/color").getValue(String.class));
+                    data.setNoteURL(child.getKey());
+                    data.setUid(child.child("authorid").getValue(String.class));
+                    data.setTitle(child.child("titledetail/title").getValue(String.class));
+                    list.add(data);
+                }
+                callBack.onSuccess(list);
             }
 
             @Override
@@ -150,9 +208,9 @@ public class NoteRepository implements NoteBrowserModel{
 
     }
 
-    public void getTitleDetail(String url, final OnGetDataCallBack<TitleDetail> callBack) {
+    public void getTitleDetail(String uid,String url, final OnGetDataCallBack<TitleDetail> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/titledetail").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("user/"+uid+"/personalspace/"+url+"/titledetail").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 TitleDetail titleDetail=dataSnapshot.getValue(TitleDetail.class);
@@ -166,9 +224,9 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    public void getAllNote(final String url, final OnGetDataCallBack<List<LinkNote>> callBack){
+    public void getAllNote(String uid,final String url, final OnGetDataCallBack<List<LinkNote>> callBack){
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("user/"+uid+"/personalspace/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<LinkNote> linkNotes=new ArrayList<>();
@@ -200,9 +258,9 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    public void updateTitleDetial(String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
+    public void updateTitleDetial(String uid,String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("user/"+uid+"/personalspace/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 callback.onSuccess(null);
@@ -210,24 +268,24 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    public void addNote(String username,final OnUpLoadDataCallback<String> callback){
+    public void addNote(String uid,final OnUpLoadDataCallback<String> callback){
         DatabaseReference ref=firebaseDatabase.getReference();
-        String noteid=ref.child("note/").push().getKey();
+        String noteid=ref.child("user/"+uid+"/personalspace/").push().getKey();
 
         Map<String,Object> map=new HashMap<>();
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
         Date currentTime = Calendar.getInstance().getTime();
         map.put("createat",sDateFormat.format(currentTime).toString());
         map.put("updateat",sDateFormat.format(currentTime).toString());
-        map.put("authorid",username);
+        map.put("authorid",uid);
         map.put("isLinked",false);
-        ref.child("note/"+noteid).setValue(map);
+        ref.child("user/"+uid+"/personalspace/"+noteid).setValue(map);
         callback.onSuccess(noteid);
     }
 
-    public void addPage(final String url, final Page page, final OnUpLoadDataCallback callback) {
+    public void addPage(String uid,final String url, final Page page, final OnUpLoadDataCallback callback) {
         final DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("user/"+uid+"/personalspace/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int c=0;
@@ -255,23 +313,23 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    public void updateNoteContent(final String url, Map<String,Object> p, final OnUpLoadDataCallback callback) {
+    public void updateNoteContent(final String uid, final String url, Map<String,Object> p, final OnUpLoadDataCallback callback) {
         final DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/notecontent/").setValue(p).addOnSuccessListener(new OnSuccessListener<Void>() {
+        ref.child("user/"+uid+"/personalspace/"+url+"/notecontent").setValue(p).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
                 Date currentTime = Calendar.getInstance().getTime();
 
-                ref.child("note/"+url+"/updateat").setValue(sDateFormat.format(currentTime).toString());
+                ref.child("user/"+uid+"/personalspace/"+url+"/updateat").setValue(sDateFormat.format(currentTime).toString());
                 callback.onSuccess(null);
             }
         });
     }
 
-    public void updateKeyWord(final String url, Map<String,Object> keylist){
+    public void updateKeyWord(String uid,final String url, Map<String,Object> keylist){
         final DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/keylist/").setValue(keylist);
+        ref.child("user/"+uid+"/personalspace/"+url+"/keylist/").setValue(keylist);
     }
 
     public void updatePage(String url, Page page, final OnUpLoadDataCallback callback){
@@ -284,17 +342,12 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    public void deletePage(String url,String pageurl,boolean isLink){
+    public void deletePage(String url,String pageurl){
 
     }
 
-    public void deleteNote(String url, final OnUpLoadDataCallback callback){
+    public void deleteNote(String uid,String url){
         DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                callback.onSuccess(null);
-            }
-        });
+        ref.child("user/"+uid+"/personalspace/"+url).removeValue();
     }
 }

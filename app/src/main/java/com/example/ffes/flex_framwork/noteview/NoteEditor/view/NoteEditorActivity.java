@@ -1,9 +1,11 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,9 +13,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,7 +23,7 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseActivity;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.LinkNoteAdapter;
+import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteFragment;
@@ -40,15 +39,12 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.presenter.NoteEidtorPr
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
-import com.example.ffes.flex_framwork.noteview.viewmodel.PageDataModel;
 import com.example.ffes.flex_framwork.noteview.widget.NoteTitleDialogFragment;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -88,7 +84,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         setContentView(R.layout.activity_note_editor);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.editor_toolbar);
-
         initUI();
         initToolBar();
         initAdapter();
@@ -98,9 +93,9 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         if(bundle!=null) {
             noteUrl = bundle.getString(URL_KEY);
         }
-        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),stateModel,titleDetailStateModel);
+        presenter=new NoteEidtorPresenter(this, new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new ImageRepository(FirebaseStorage.getInstance()),new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance()),stateModel,titleDetailStateModel);
         if(noteUrl==null){
-            presenter.addNote("Sean");
+            presenter.addNote();
         }else{
             presenter.loadData(noteUrl);
         }
@@ -254,6 +249,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
     @Override
     public void end() {
         finish();
+
     }
 
     public void openPageEditor(){
@@ -403,11 +399,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
 
     @Override
     public void onCallBack(Map<String, List<String>> notelist) {
-        for(String id:notelist.keySet()){
-            for(String key:notelist.get(id)){
-                Log.d("NOTELIST",id+" "+key);
-            }
-        }
-
+        presenter.addLinkPage(noteUrl,notelist);
     }
 }
