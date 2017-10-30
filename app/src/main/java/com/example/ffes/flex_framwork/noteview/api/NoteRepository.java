@@ -30,11 +30,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.internal.fuseable.HasUpstreamPublisher;
+
 /**
  * Created by Ffes on 2017/8/27.
  */
 
-public class NoteRepository implements NoteBrowserModel{
+public class NoteRepository{
 
     FirebaseDatabase firebaseDatabase;
     FirebaseStorage firebaseStorage;
@@ -44,7 +46,6 @@ public class NoteRepository implements NoteBrowserModel{
         this.firebaseStorage=firebaseStorage;
     }
 
-    @Override
     public void getPages(String uid,final String url, final OnGetDataCallBack<List<Page>> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -101,7 +102,6 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    @Override
     public void getNoteName(String uid,final String noteurl, final OnUpLoadDataCallback<String> callBack) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+noteurl+"/titledetail/title").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -203,9 +203,19 @@ public class NoteRepository implements NoteBrowserModel{
         });
     }
 
-    @Override
-    public void getKeyList(String url, OnGetDataCallBack<List<String>> callBack) {
+    public void getKeyList(String uid,String url, OnGetDataCallBack<List<String>> callBack) {
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(url).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void getTitleDetail(String uid,String url, final OnGetDataCallBack<TitleDetail> callBack) {
@@ -235,9 +245,8 @@ public class NoteRepository implements NoteBrowserModel{
                         LinkNote linkNote=new LinkNote();
                         linkNote.setTitle(childSnapshot.child("titledetail/title").getValue(String.class));
                         linkNote.setName(childSnapshot.child("authorid").getValue(String.class));
-                        linkNote.setCoverurl(childSnapshot.child("cover").getValue(String.class));
+                        linkNote.setCoverurl(childSnapshot.child("notecontent/0/imageurl").getValue(String.class));
                         linkNote.setId(childSnapshot.getKey());
-                        linkNote.setSelfphoto("dsfaa");
 
                         List<String> keys=new ArrayList<>();
                         for(DataSnapshot keychild :childSnapshot.child("keylist").getChildren()){
@@ -349,5 +358,33 @@ public class NoteRepository implements NoteBrowserModel{
     public void deleteNote(String uid,String url){
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url).removeValue();
+        ref.child("note/"+url).removeValue();
+    }
+
+    public void share(final String uid, final String noteurl, final String college, final String dep, final OnUpLoadDataCallback callback){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+
+        ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String,Object> map=new HashMap<>();
+                map.put("look",0);
+                map.put("link",0);
+                map.put("college",college);
+                map.put("dep",dep);
+                map.put("keylist",dataSnapshot.child(noteurl+"/keylist").getValue());
+
+                ref.child("note/"+noteurl).setValue(map);
+                callback.onSuccess(null);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onFailure();
+            }
+        });
+
+
+
     }
 }

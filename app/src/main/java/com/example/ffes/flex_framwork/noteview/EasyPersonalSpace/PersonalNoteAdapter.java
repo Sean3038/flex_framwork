@@ -1,7 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.EasyPersonalSpace;
 
-import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,12 +15,12 @@ import android.widget.TextView;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteBrowserActivity;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.NoteEditorActivity;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.Data.Note_data;
 import com.example.ffes.flex_framwork.noteview.data.Data.User;
+import com.example.ffes.flex_framwork.noteview.widget.ShareNoteDialog;
 import com.example.ffes.flex_framwork.noteview.widget.Triangle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,6 +32,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Ffes on 2017/10/29.
@@ -40,14 +41,17 @@ import butterknife.ButterKnife;
 public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapter.ViewHolder> {
 
     List<Note_data> note_dataList;
-    Context context;
+    FragmentManager fm;
+
+    ShareNoteDialog.OnClickShare onClickShare;
 
     NoteRepository noteRepository;
     AuthRepository authRepository;
 
-    PersonalNoteAdapter(Context context) {
+    PersonalNoteAdapter(ShareNoteDialog.OnClickShare onClickShareck, FragmentManager fm) {
         Log.d("PersonalNoteAdapter","START");
-        this.context = context;
+        this.fm=fm;
+        this.onClickShare=onClickShareck;
         note_dataList=new ArrayList<>();
         noteRepository=new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance());
         authRepository=new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance());
@@ -67,7 +71,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.selfnote_cardview, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.selfnote_cardview, parent, false));
     }
 
     @Override
@@ -103,7 +107,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
         holder.share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ShareNoteDialog.newInstance(data.getNoteURL(),onClickShare).show(fm,"ShareNoteDialog");
             }
         });
 
@@ -121,6 +125,22 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
     @Override
     public int getItemCount() {
         return note_dataList.size();
+    }
+
+    public void refresh(){
+        noteRepository.getPersonalSpaceAllNoteData(authRepository.getCurrentId(), new OnGetDataCallBack<List<Note_data>>() {
+            @Override
+            public void onSuccess(List<Note_data> data) {
+                note_dataList.clear();
+                note_dataList.addAll(data);
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -151,13 +171,13 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
 
         public void loadCover(String imageurl){
             if(imageurl!=null){
-                Picasso.with(itemView.getContext()).load(imageurl).placeholder(R.drawable.flex_icon).resize(400,400).centerInside().into(img);
+                Picasso.with(itemView.getContext()).load(imageurl).resize(200,200).centerInside().into(img);
             }
         }
 
         public void loadSelfPhoto(String imageurl){
             if(imageurl!=null){
-                Picasso.with(itemView.getContext()).load(imageurl).placeholder(R.drawable.account).resize(400,400).centerInside().into(selfphoto);
+                Picasso.with(itemView.getContext()).load(imageurl).resize(50,50).centerInside().into(selfphoto);
             }
         }
     }

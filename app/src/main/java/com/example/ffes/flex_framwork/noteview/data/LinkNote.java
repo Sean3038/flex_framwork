@@ -11,7 +11,6 @@ public class LinkNote {
     String name;
     String title;
     String coverurl;
-    String selfphoto;
     List<String> keylsit;
 
     public LinkNote(){}
@@ -36,10 +35,6 @@ public class LinkNote {
         return coverurl;
     }
 
-    public String getSelfphoto() {
-        return selfphoto;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -58,9 +53,5 @@ public class LinkNote {
 
     public void setCoverurl(String coverurl) {
         this.coverurl = coverurl;
-    }
-
-    public void setSelfphoto(String selfphoto) {
-        this.selfphoto = selfphoto;
     }
 }

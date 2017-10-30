@@ -53,6 +53,7 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
 
     public static final String URL_KEY="NoteURL";
     private static final int REQUEST_GETPHOTO = 100;
+    private static final int REQUEST_EDITOR=1111;
 
     TextView editor_btn;
 

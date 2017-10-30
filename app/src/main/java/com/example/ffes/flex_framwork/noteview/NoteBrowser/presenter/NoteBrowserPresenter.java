@@ -8,6 +8,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDa
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
+import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 
@@ -22,10 +23,10 @@ import java.util.List;
 public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
 
     NoteBrowserContract.View view;
-    NoteBrowserModel model;
+    NoteRepository model;
     PageModel pageModel;
     AuthRepository authRepository;
-    public NoteBrowserPresenter(NoteBrowserContract.View view, PageModel pageModel, NoteBrowserModel model, AuthRepository authRepository){
+    public NoteBrowserPresenter(NoteBrowserContract.View view, PageModel pageModel, NoteRepository model, AuthRepository authRepository){
         this.view=view;
         this.model=model;
         this.pageModel=pageModel;

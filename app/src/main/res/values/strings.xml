@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">flex_framwork</string>
+    <string-array name="Management">
+        <item>財物金融系</item>
+        <item>資訊管理系</item>
+        <item>企業管理系</item>
+        <item>工業與工程管理系</item>
+        <item>會計系</item>
+    </string-array>
+    <string-array name="Engine">
+        <item>Vanilla</item>
+        <item>Chocolate</item>
+        <item>Strawberry</item>
+    </string-array>
+    <string-array name="Human">
+        <item>Vanilla</item>
+        <item>Chocolate</item>
+        <item>Strawberry</item>
+    </string-array>
+    <string-array name="Design">
+        <item>Vanilla</item>
+        <item>Chocolate</item>
+        <item>Strawberry</item>
+    </string-array>
 </resources>

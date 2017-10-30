@@ -144,21 +144,25 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
         }
 
         public void loadCover(String imageurl){
-            Picasso.with(context)
-                    .load(imageurl)
-                    .resize(500,500)
-                    .placeholder(R.drawable.flex_icon)
-                    .centerInside()
-                    .into(cover);
+            if(imageurl!=null) {
+                Picasso.with(context)
+                        .load(imageurl)
+                        .resize(400, 400)
+                        //.placeholder(R.drawable.flex_icon)
+                        .centerInside()
+                        .into(cover);
+            }
         }
 
         public void loadSelfPhoto(String imageurl){
-            Picasso.with(context)
-                    .load(imageurl)
-                    .resize(400,400)
-                    .placeholder(R.drawable.account)
-                    .centerInside()
-                    .into(selfphoto);
+            if(imageurl!=null) {
+                Picasso.with(context)
+                        .load(imageurl)
+                        .resize(200, 200)
+                        //.placeholder(R.drawable.account)
+                        .centerInside()
+                        .into(selfphoto);
+            }
         }
 
         public void setTitle(String title){
