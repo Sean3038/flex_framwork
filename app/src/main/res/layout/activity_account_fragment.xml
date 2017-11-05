@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/f1"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary"></View>
+    <ImageView
+        app:srcCompat="@drawable/user"
+        android:id="@+id/background"
+        android:layout_height="257dp"
+        android:layout_width="wrap_content" />
+
+    <TextView
+        android:text="訪客"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="16dp"
+        android:id="@+id/textView"
+        android:textSize="19sp"
+        android:textColor="@color/bottomColor5" />
+    <ImageButton
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:background="@drawable/search"
+        android:id="@+id/imageButton4"
+        android:layout_toLeftOf="@+id/imageButton5"
+        android:layout_toStartOf="@+id/imageButton5"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:onClick="search" />
+
+    <ImageButton
+        android:layout_width="18dp"
+        android:layout_height="16dp"
+        android:background="@drawable/heart"
+        android:id="@+id/imageButton5"
+        android:layout_toLeftOf="@+id/imageButton6"
+        android:layout_toStartOf="@+id/imageButton6"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:onClick="heart" />
+
+    <ImageButton
+        android:layout_width="18dp"
+        android:layout_height="17dp"
+        android:background="@drawable/account1"
+        android:id="@+id/imageButton6"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="account" />
+
+    <TextView
+        android:text="追蹤中"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/like"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="16sp"
+        android:textColor="@drawable/gray" />
+
+    <TextView
+        android:text="粉絲人數"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tx2"
+        android:layout_marginRight="89dp"
+        android:layout_marginEnd="89dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="100dp"
+        android:textSize="16sp"
+        android:textColor="@drawable/gray" />
+
+    <TextView
+        android:text="筆記數"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/look"
+        android:layout_marginRight="174dp"
+        android:layout_marginEnd="174dp"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="16sp"
+        android:textColor="@color/bottomColor5" />
+
+    <TextView
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tx1_1"
+        android:layout_marginRight="42dp"
+        android:layout_marginEnd="42dp"
+        android:layout_marginTop="78dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="16sp"
+        android:textAllCaps="false"
+        android:textColor="@drawable/gray" />
+
+    <TextView
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tx2_2"
+        android:layout_marginRight="114dp"
+        android:layout_marginEnd="114dp"
+        android:layout_marginTop="78dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="16sp"
+        android:textColor="@drawable/gray" />
+
+    <TextView
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tx3_3"
+        android:layout_marginRight="194dp"
+        android:layout_marginEnd="194dp"
+        android:layout_marginTop="78dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textSize="16sp"
+        android:textColor="@color/bottomColor5" />
+
+    <Button
+        android:text="登入google帳號"
+        android:layout_height="30dp"
+        android:layout_marginTop="15dp"
+        android:id="@+id/button2"
+        android:background="@drawable/button_radius"
+
+        android:layout_width="200dp"
+        android:typeface="normal"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="16sp"
+        android:layout_below="@+id/like"
+        android:layout_alignRight="@+id/like"
+        android:layout_alignEnd="@+id/like" />
+
+    <ImageView
+        app:srcCompat="@drawable/guest_image"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:id="@+id/imageView2"
+        android:layout_width="80dp"
+        android:layout_alignTop="@+id/tx3_3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_height="78dp" />
+</RelativeLayout>

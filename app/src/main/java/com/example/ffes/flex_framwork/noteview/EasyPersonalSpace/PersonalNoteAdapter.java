@@ -81,7 +81,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
             @Override
             public void onSuccess(User data) {
                 holder.loadSelfPhoto(data.getPhotoUrl());
-                holder.personAccount.setText(data.getAccountName());
+                holder.personAccount.setText(data.getName());
             }
 
             @Override

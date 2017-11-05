@@ -75,7 +75,6 @@ public class AuthRepository {
         ref.child("account").orderByKey().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("USER",dataSnapshot.toString());
                 if(dataSnapshot.getValue()!=null) {
                     User user = dataSnapshot.child(uid).getValue(User.class);
                     callBack.onSuccess(user);
@@ -92,10 +91,9 @@ public class AuthRepository {
         });
     }
 
-    void upDateUser(User user, final OnUpLoadDataCallback callback){
-        FirebaseUser firebaseUser=auth.getCurrentUser();
+    public void upDateUser(String uid, User user, final OnUpLoadDataCallback<Void> callback){
         DatabaseReference ref=database.getReference();
-        ref.child("account/"+firebaseUser.getUid()).setValue(user)
+        ref.child("account/"+uid).setValue(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -113,11 +111,37 @@ public class AuthRepository {
     public void createUser(String uid,String email){
         DatabaseReference ref=database.getReference();
         Map<String,Object> map=new HashMap<>();
-        map.put("accountName",email);
+        map.put("email",email);
         map.put("info","None");
-        map.put("name","None");
+        map.put("name",email);
         map.put("photoUrl","zzz");
         ref.child("account/"+uid).setValue(map);
+    }
+
+    public void checkGoogleUser(){
+        if(auth.getCurrentUser()!=null) {
+            auth.getCurrentUser().getPhotoUrl();
+            auth.getCurrentUser().getDisplayName();
+            final DatabaseReference ref = database.getReference();
+            ref.child("account").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild(auth.getUid())) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("email", auth.getCurrentUser().getEmail());
+                        map.put("info", "None");
+                        map.put("name", auth.getCurrentUser().getDisplayName());
+                        map.put("photoUrl", auth.getCurrentUser().getPhotoUrl().toString());
+                        ref.child("account/" + auth.getUid()).setValue(map);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     interface SignInOut{

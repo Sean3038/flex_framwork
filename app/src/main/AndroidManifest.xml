@@ -26,8 +26,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".noteview.Login.view.LoginActivity" />
-        <activity android:name=".noteview.EasyPersonalSpace.SpaceActivity"></activity>
+        <activity
+            android:name=".noteview.Login.view.LoginActivity"
+            android:theme="@style/NoTitle" />
+        <activity android:name=".noteview.EasyPersonalSpace.SpaceActivity" />
+        <activity android:name=".noteview.MyAccountMVP.view.EditSelfFile"
+            android:theme="@style/NoTitle"></activity>
+        <activity android:name=".noteview.MyAccountMVP.view.AccountEditActivity"
+            android:theme="@style/NoTitle">
+        </activity>
     </application>
 
 </manifest>

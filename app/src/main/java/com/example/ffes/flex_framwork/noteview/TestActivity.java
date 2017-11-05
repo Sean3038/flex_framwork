@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.EasyPersonalSpace.SpaceActivity;
 import com.example.ffes.flex_framwork.noteview.Login.view.LoginActivity;
+import com.example.ffes.flex_framwork.noteview.MyAccountMVP.view.AccountEditActivity;
 import com.example.ffes.flex_framwork.noteview.NoteBrowser.view.NoteBrowserActivity;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.NoteEditorActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class TestActivity extends AppCompatActivity implements View.OnClickListener{
     public static final int REQUEST_LOGIN=100;
+
     Button editer;
     Button browser;
     Button addnote;
@@ -89,6 +91,9 @@ public class TestActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button2:
                 //NoteBrowserActivity.start(this,"sdf4K5df6a");
                 //overridePendingTransition(R.anim.right_1,R.anim.right_2);
+                Intent intent=new Intent();
+                intent.setClass(this,AccountEditActivity.class);
+                startActivity(intent);
                 break;
             case R.id.button3:
                 //NoteEditorActivity.start(this,"sdf4K5df6a");

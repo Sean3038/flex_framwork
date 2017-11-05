@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -221,6 +222,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
+            mGoogleApiClient.clearDefaultAccountAndReconnect();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
@@ -233,6 +235,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        final AuthRepository authRepository=new AuthRepository(FirebaseAuth.getInstance(), FirebaseDatabase.getInstance());
         showProgress("登入中....");
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         auth.signInWithCredential(credential)
@@ -241,6 +244,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             dismissProgress();
+                            authRepository.checkGoogleUser();
                             notifySuccess();
                         } else {
                             // If sign in fails, display a message to the user.

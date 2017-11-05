@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.api;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteBrowserModel;
@@ -11,6 +12,7 @@ import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
 import com.example.ffes.flex_framwork.noteview.data.Page;
 import com.example.ffes.flex_framwork.noteview.data.QA;
+import com.example.ffes.flex_framwork.noteview.data.SharedNote;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -267,6 +269,87 @@ public class NoteRepository{
         });
     }
 
+    public void getSelfSharedNote(final String uid, final OnGetDataCallBack<List<SharedNote>> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/personalspace/").orderByChild("isShare").equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<SharedNote> notes=new ArrayList<>();
+                final int total=(int)dataSnapshot.getChildrenCount();
+                final int[] c = {0};
+                for(final DataSnapshot child:dataSnapshot.getChildren()){
+                    ref.child("note/").orderByKey().equalTo(child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.d("ShareNote",dataSnapshot.toString());
+                            //平台上的筆記
+                            final SharedNote note=new SharedNote();
+                            final int[] i = {0};
+                            DataSnapshot value=dataSnapshot.child(child.getKey());
+                            note.setLike((int)value.child("like").getChildrenCount());
+                            note.setComment((int)value.child("message").getChildrenCount());
+                            note.setLook((int)value.child("look").getChildrenCount());
+                            note.setLink((int)value.child("link").getChildrenCount());
+                            //尋找筆記資料
+                            ref.child("user/"+uid+"/personalspace/"+child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                                    note.setTitle(dataSnapshot.child("titledetail/title").getValue(String.class));
+                                    Log.d("ShareNote","photourl"+note.getPhotoUrl());
+                                    Log.d("ShareNote","title"+note.getTitle());
+                                    i[0]++;
+                                    if(i[0]==2){
+                                        notes.add(note);
+                                        c[0]++;
+                                    }
+                                    if(c[0]==total){
+                                        callBack.onSuccess(notes);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            ref.child("account/"+value.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    note.setName(dataSnapshot.child("name").getValue(String.class));
+                                    note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                    i[0]++;
+                                    if(i[0]==2){
+                                        notes.add(note);
+                                        c[0]++;
+                                    }
+                                    if(c[0]==total){
+                                        callBack.onSuccess(notes);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void updateTitleDetial(String uid,String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url+"/titledetail/").setValue(titleDetail).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -368,12 +451,11 @@ public class NoteRepository{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String,Object> map=new HashMap<>();
-                map.put("look",0);
-                map.put("link",0);
                 map.put("college",college);
                 map.put("dep",dep);
+                map.put("authorid",uid);
                 map.put("keylist",dataSnapshot.child(noteurl+"/keylist").getValue());
-
+                ref.child("user/"+uid+"/personalspace/"+noteurl+"/isShare").setValue(true);
                 ref.child("note/"+noteurl).setValue(map);
                 callback.onSuccess(null);
             }
