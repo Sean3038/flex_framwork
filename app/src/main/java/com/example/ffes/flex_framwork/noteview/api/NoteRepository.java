@@ -1,13 +1,10 @@
 package com.example.ffes.flex_framwork.noteview.api;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteBrowserModel;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
-import com.example.ffes.flex_framwork.noteview.data.Data.Note_data;
+import com.example.ffes.flex_framwork.noteview.data.Data.PersonalNote;
 import com.example.ffes.flex_framwork.noteview.data.KeyWord;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
 import com.example.ffes.flex_framwork.noteview.data.Page;
@@ -31,8 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.reactivex.internal.fuseable.HasUpstreamPublisher;
 
 /**
  * Created by Ffes on 2017/8/27.
@@ -119,6 +114,21 @@ public class NoteRepository{
         });
     }
 
+    public void getNoteCover(String uid,final String noteurl, final OnGetDataCallBack<String> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/personalspace/"+noteurl+"/notecontent/0/imageurl").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                callBack.onSuccess(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callBack.onFailure();
+            }
+        });
+    }
+
     public void getPageByKeyWord(String uid,final String noteurl, final List<String> keylist, final OnGetDataCallBack<List<Page>> callBack){
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -180,17 +190,18 @@ public class NoteRepository{
         });
     }
 
-    public void getPersonalSpaceAllNoteData(String uid, final OnGetDataCallBack<List<Note_data>> callBack){
+    public void getPersonalSpaceAllNoteData(String uid, final OnGetDataCallBack<List<PersonalNote>> callBack){
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Note_data> list=new ArrayList<>();
+                List<PersonalNote> list=new ArrayList<>();
                 for(DataSnapshot child:dataSnapshot.getChildren()){
-                    Note_data data=new Note_data();
+                    PersonalNote data=new PersonalNote();
                     data.setCoverurl(child.child("notecontent/0/imageurl").getValue(String.class));
                     data.setColor(child.child("titledetail/color").getValue(String.class));
                     data.setNoteURL(child.getKey());
+                    data.setShare(child.child("isShare").getValue(Boolean.class));
                     data.setUid(child.child("authorid").getValue(String.class));
                     data.setTitle(child.child("titledetail/title").getValue(String.class));
                     list.add(data);
@@ -201,21 +212,6 @@ public class NoteRepository{
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 callBack.onFailure();
-            }
-        });
-    }
-
-    public void getKeyList(String uid,String url, OnGetDataCallBack<List<String>> callBack) {
-        DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(url).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
@@ -236,35 +232,52 @@ public class NoteRepository{
         });
     }
 
-    public void getAllNote(String uid,final String url, final OnGetDataCallBack<List<LinkNote>> callBack){
-        DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("user/"+uid+"/personalspace/").addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getLinkSpaceNote(final String uid, final String url, final OnGetDataCallBack<List<LinkNote>> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/linkspace/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<LinkNote> linkNotes=new ArrayList<>();
-                for(DataSnapshot childSnapshot:dataSnapshot.getChildren()){
-                    if(!childSnapshot.getKey().equals(url)){
-                        LinkNote linkNote=new LinkNote();
-                        linkNote.setTitle(childSnapshot.child("titledetail/title").getValue(String.class));
-                        linkNote.setName(childSnapshot.child("authorid").getValue(String.class));
-                        linkNote.setCoverurl(childSnapshot.child("notecontent/0/imageurl").getValue(String.class));
-                        linkNote.setId(childSnapshot.getKey());
-
-                        List<String> keys=new ArrayList<>();
-                        for(DataSnapshot keychild :childSnapshot.child("keylist").getChildren()){
-                            keys.add(keychild.getValue(String.class));
+                final List<LinkNote> linkNotes=new ArrayList<>();
+                final int[] c = {0};
+                final int total=(int)dataSnapshot.getChildrenCount();
+                //連結的url
+                for(final DataSnapshot childSnapshot:dataSnapshot.getChildren()){
+                    final String linkurl=childSnapshot.child("id").getValue(String.class);
+                    ref.child("note/").orderByKey().equalTo(linkurl).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            boolean flag=dataSnapshot.hasChild(linkurl);
+                            if(flag){
+                                LinkNote linkNote=new LinkNote();
+                                linkNote.setTitle(dataSnapshot.child(linkurl+"/title").getValue(String.class));
+                                linkNote.setName(dataSnapshot.child(linkurl+"/authorid").getValue(String.class));
+                                linkNote.setId(linkurl);
+                                List<String> keys=new ArrayList<>();
+                                for(DataSnapshot keychild :dataSnapshot.child(linkurl+"/keylist").getChildren()){
+                                    keys.add(keychild.getValue(String.class));
+                                }
+                                linkNote.setKeylsit(keys);
+                                linkNotes.add(linkNote);
+                            }else{
+                                ref.child("user/"+uid+"/linkspace/"+childSnapshot.getKey()).removeValue();
+                            }
+                            c[0]++;
+                            if(c[0]==total){
+                                callBack.onSuccess(linkNotes);
+                            }
                         }
-                        linkNote.setKeylsit(keys);
 
-                        linkNotes.add(linkNote);
-                    }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            callBack.onFailure();
+                        }
+                    });
                 }
-                callBack.onSuccess(linkNotes);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                callBack.onFailure();;
             }
         });
     }
@@ -371,25 +384,20 @@ public class NoteRepository{
         map.put("updateat",sDateFormat.format(currentTime).toString());
         map.put("authorid",uid);
         map.put("isLinked",false);
+        map.put("isShare",false);
         ref.child("user/"+uid+"/personalspace/"+noteid).setValue(map);
         callback.onSuccess(noteid);
     }
 
-    public void addPage(String uid,final String url, final Page page, final OnUpLoadDataCallback callback) {
+    public void addPage(final String uid, final String url, final Page page, final OnUpLoadDataCallback callback) {
         final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url+"/notecontent/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int c=0;
-                for(DataSnapshot child:dataSnapshot.getChildren()){
-                    if(c<Integer.parseInt(child.getKey())) {
-                        c = Integer.parseInt(child.getKey());
-                    }
-                }
-
-                final String uid=ref.child("note/"+url+"/notecontent/"+c).push().getKey();
-                page.setId(uid);
-                ref.child("note/"+url+"/notecontent/"+c).setValue(page).addOnSuccessListener(new OnSuccessListener<Void>() {
+                int c=((int)dataSnapshot.getChildrenCount())-1;
+                final String pageurl=ref.child("user/"+uid+"/personalspace/"+ url +"/"+c).push().getKey();
+                page.setId(pageurl);
+                ref.child("user/"+uid+"/personalspace/"+ url +"/"+c).setValue(pageurl).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         callback.onSuccess(null);
@@ -424,20 +432,6 @@ public class NoteRepository{
         ref.child("user/"+uid+"/personalspace/"+url+"/keylist/").setValue(keylist);
     }
 
-    public void updatePage(String url, Page page, final OnUpLoadDataCallback callback){
-        DatabaseReference ref=firebaseDatabase.getReference();
-        ref.child("note/"+url+"/notecontent/"+page.getId()).setValue(page.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                callback.onSuccess(null);
-            }
-        });
-    }
-
-    public void deletePage(String url,String pageurl){
-
-    }
-
     public void deleteNote(String uid,String url){
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url).removeValue();
@@ -446,27 +440,53 @@ public class NoteRepository{
 
     public void share(final String uid, final String noteurl, final String college, final String dep, final OnUpLoadDataCallback callback){
         final DatabaseReference ref=firebaseDatabase.getReference();
-
-        ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
+        checkNoteShareQualify(uid, noteurl, new OnGetDataCallBack<Boolean>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String,Object> map=new HashMap<>();
-                map.put("college",college);
-                map.put("dep",dep);
-                map.put("authorid",uid);
-                map.put("keylist",dataSnapshot.child(noteurl+"/keylist").getValue());
-                ref.child("user/"+uid+"/personalspace/"+noteurl+"/isShare").setValue(true);
-                ref.child("note/"+noteurl).setValue(map);
-                callback.onSuccess(null);
+            public void onSuccess(Boolean data) {
+                ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String,Object> map=new HashMap<>();
+                        map.put("college",college);
+                        map.put("dep",dep);
+                        map.put("authorid",uid);
+                        map.put("keylist",dataSnapshot.child(noteurl+"/keylist").getValue());
+                        map.put("title",dataSnapshot.child(noteurl+"/titledetail/title").getValue());
+                        ref.child("user/"+uid+"/personalspace/"+noteurl+"/isShare").setValue(true);
+                        ref.child("note/"+noteurl).setValue(map);
+                        callback.onSuccess(null);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        callback.onFailure();
+                    }
+                });
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onFailure() {
                 callback.onFailure();
             }
         });
 
+    }
 
+    public void checkNoteShareQualify(final String uid, final String url, final OnGetDataCallBack<Boolean> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/personalspace/").orderByKey().equalTo(url).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataSnapshot noteSnapShot=dataSnapshot.child(url);
+                boolean isShare=noteSnapShot.child("isShare").getValue(Boolean.class);
+                boolean isLink=noteSnapShot.child("isLinked").getValue(Boolean.class);
+                callBack.onSuccess(isShare&&isLink);
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError){
+                callBack.onFailure();
+            }
+        });
     }
 }

@@ -10,7 +10,6 @@ public class LinkNote {
     String id;
     String name;
     String title;
-    String coverurl;
     List<String> keylsit;
 
     public LinkNote(){}
@@ -31,10 +30,6 @@ public class LinkNote {
         return title;
     }
 
-    public String getCoverurl() {
-        return coverurl;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -49,9 +44,5 @@ public class LinkNote {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public void setCoverurl(String coverurl) {
-        this.coverurl = coverurl;
     }
 }

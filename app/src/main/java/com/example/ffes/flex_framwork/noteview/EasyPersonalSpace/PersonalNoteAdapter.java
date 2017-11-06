@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,7 @@ import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDa
 import com.example.ffes.flex_framwork.noteview.NoteEditor.view.NoteEditorActivity;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
-import com.example.ffes.flex_framwork.noteview.data.Data.Note_data;
+import com.example.ffes.flex_framwork.noteview.data.Data.PersonalNote;
 import com.example.ffes.flex_framwork.noteview.data.Data.User;
 import com.example.ffes.flex_framwork.noteview.widget.ShareNoteDialog;
 import com.example.ffes.flex_framwork.noteview.widget.Triangle;
@@ -32,7 +31,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by Ffes on 2017/10/29.
@@ -40,7 +38,7 @@ import butterknife.OnClick;
 
 public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapter.ViewHolder> {
 
-    List<Note_data> note_dataList;
+    List<PersonalNote> personalNote_List;
     FragmentManager fm;
 
     ShareNoteDialog.OnClickShare onClickShare;
@@ -49,16 +47,15 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
     AuthRepository authRepository;
 
     PersonalNoteAdapter(ShareNoteDialog.OnClickShare onClickShareck, FragmentManager fm) {
-        Log.d("PersonalNoteAdapter","START");
         this.fm=fm;
         this.onClickShare=onClickShareck;
-        note_dataList=new ArrayList<>();
+        personalNote_List =new ArrayList<>();
         noteRepository=new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance());
         authRepository=new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance());
-        noteRepository.getPersonalSpaceAllNoteData(authRepository.getCurrentId(), new OnGetDataCallBack<List<Note_data>>() {
+        noteRepository.getPersonalSpaceAllNoteData(authRepository.getCurrentId(), new OnGetDataCallBack<List<PersonalNote>>() {
             @Override
-            public void onSuccess(List<Note_data> data) {
-                note_dataList.addAll(data);
+            public void onSuccess(List<PersonalNote> data) {
+                personalNote_List.addAll(data);
                 notifyDataSetChanged();
             }
 
@@ -76,7 +73,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Note_data data=note_dataList.get(holder.getAdapterPosition());
+        final PersonalNote data= personalNote_List.get(holder.getAdapterPosition());
         authRepository.getUser(data.getUid(), new OnGetDataCallBack<User>() {
             @Override
             public void onSuccess(User data) {
@@ -89,6 +86,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
 
             }
         });
+        holder.share.setEnabled(!data.isShare());
         holder.loadCover(data.getCoverurl());
         holder.title.setText(data.getTitle());
         holder.cv.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +106,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
             @Override
             public void onClick(View v) {
                 ShareNoteDialog.newInstance(data.getNoteURL(),onClickShare).show(fm,"ShareNoteDialog");
+                data.setShare(true);
             }
         });
 
@@ -115,7 +114,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
             @Override
             public void onClick(View v) {
                 noteRepository.deleteNote(authRepository.getCurrentId(), data.getNoteURL());
-                note_dataList.remove(data);
+                personalNote_List.remove(data);
                 notifyItemRemoved(holder.getAdapterPosition());
             }
         });
@@ -124,15 +123,15 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<PersonalNoteAdapte
 
     @Override
     public int getItemCount() {
-        return note_dataList.size();
+        return personalNote_List.size();
     }
 
     public void refresh(){
-        noteRepository.getPersonalSpaceAllNoteData(authRepository.getCurrentId(), new OnGetDataCallBack<List<Note_data>>() {
+        noteRepository.getPersonalSpaceAllNoteData(authRepository.getCurrentId(), new OnGetDataCallBack<List<PersonalNote>>() {
             @Override
-            public void onSuccess(List<Note_data> data) {
-                note_dataList.clear();
-                note_dataList.addAll(data);
+            public void onSuccess(List<PersonalNote> data) {
+                personalNote_List.clear();
+                personalNote_List.addAll(data);
                 notifyDataSetChanged();
             }
 

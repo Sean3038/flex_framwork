@@ -111,7 +111,7 @@ public class AuthRepository {
     public void createUser(String uid,String email){
         DatabaseReference ref=database.getReference();
         Map<String,Object> map=new HashMap<>();
-        map.put("email",email);
+        map.put("account",email);
         map.put("info","None");
         map.put("name",email);
         map.put("photoUrl","zzz");

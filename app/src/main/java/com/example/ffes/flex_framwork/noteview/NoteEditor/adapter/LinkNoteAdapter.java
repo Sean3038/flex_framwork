@@ -14,10 +14,12 @@ import android.widget.TextView;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
+import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.Data.User;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -34,13 +36,14 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
     Map<String,List<String>> selectedlist;
     Context context;
     AuthRepository authRepository;
-
+    NoteRepository noteRepository;
 
     public LinkNoteAdapter(Context context, List<LinkNote> linkNoteList){
         this.linkNoteList=linkNoteList;
         this.selectedlist=new HashMap<>();
         this.context=context;
         this.authRepository=new AuthRepository(FirebaseAuth.getInstance(), FirebaseDatabase.getInstance());
+        this.noteRepository=new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance());
     }
 
     @Override
@@ -87,11 +90,21 @@ public class LinkNoteAdapter extends RecyclerView.Adapter<LinkNoteAdapter.ViewHo
             @Override
             public void onFailure() {
                 holder.setName("UnKnow");
-                holder.loadSelfPhoto("zzzz");
+                holder.loadSelfPhoto("");
+            }
+        });
+        noteRepository.getNoteCover(linkNote.getName(),linkNote.getId(), new OnGetDataCallBack<String>() {
+            @Override
+            public void onSuccess(String data) {
+                holder.loadCover(data);
+            }
+
+            @Override
+            public void onFailure() {
+
             }
         });
         holder.setTitle(linkNote.getTitle());
-        holder.loadCover(linkNote.getCoverurl());
     }
 
     @Override

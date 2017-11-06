@@ -7,7 +7,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,7 +15,6 @@ import android.widget.FrameLayout;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.LinkNoteAdapter;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.LinkNote;
@@ -84,7 +82,7 @@ public class LinkMenuDialog extends DialogFragment{
     public void getAllNote(){
         final Context context=this.getContext();
         showprogress();
-        noteRepository.getAllNote(authRepository.getCurrentId(),getArguments().getString(URL_KEY), new OnGetDataCallBack<List<LinkNote>>() {
+        noteRepository.getLinkSpaceNote(authRepository.getCurrentId(),getArguments().getString(URL_KEY), new OnGetDataCallBack<List<LinkNote>>() {
 
             @Override
             public void onSuccess(List<LinkNote> data) {
