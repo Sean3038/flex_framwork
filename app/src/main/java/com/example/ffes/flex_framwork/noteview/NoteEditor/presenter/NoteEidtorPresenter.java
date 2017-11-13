@@ -3,7 +3,6 @@ package com.example.ffes.flex_framwork.noteview.NoteEditor.presenter;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.ImageRepository;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.NoteEditorContract;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.model.NoteLoadModel;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.statemodel.PageModel;
@@ -149,7 +148,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
             view.closeprogress();
         }
         for(String key:notelist.keySet()){
-            model.getPageByKeyWord(authRepository.getCurrentId(),key, notelist.get(key), new OnGetDataCallBack<List<Page>>() {
+            model.getLinkPageByKeyWord(key, notelist.get(key), new OnGetDataCallBack<List<Page>>() {
                 @Override
                 public void onSuccess(List<Page> data) {
                     stateModel.addPage(data);
@@ -157,6 +156,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
                     if(c[0] ==notelist.keySet().size()){
                         view.closeprogress();
                     }
+                    view.hidenotify();
                 }
 
                 @Override

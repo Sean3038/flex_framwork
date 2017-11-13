@@ -52,7 +52,7 @@ public class ImageRepository {
 
     public void updateUserPicture(String uid, String filepath, final OnUpLoadDataCallback<String> callback){
         File file=new File(filepath);
-        storage.getReference("users").child(uid+"/"+"selfpictue")
+        storage.getReference("users").child(uid+"/selfpictue")
                 .putFile(Uri.fromFile(file))
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override

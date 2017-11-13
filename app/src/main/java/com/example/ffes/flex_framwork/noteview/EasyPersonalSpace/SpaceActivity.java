@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.personalspace.view.NoteSpaceFragment;
 
 public class SpaceActivity extends AppCompatActivity {
 
@@ -26,12 +27,18 @@ public class SpaceActivity extends AppCompatActivity {
     }
 
     public void initPersonalSpaceFragment(){
-        PersonalSpaceFragment fragment=PersonalSpaceFragment.newInstance();
+//        NoteSpaceFragment fragment=NoteSpaceFragment.newInstance();
+//        FragmentManager fm=getSupportFragmentManager();
+//        FragmentTransaction ft=fm.beginTransaction();
+//        ft.replace(R.id.personal,fragment,"NoteSpaceFragment");
+//        ft.commit();
+//        Log.d("NoteSpaceFragment","START");
+        NoteSpaceFragment fragment= NoteSpaceFragment.newInstance();
         FragmentManager fm=getSupportFragmentManager();
         FragmentTransaction ft=fm.beginTransaction();
-        ft.replace(R.id.personal,fragment,"PersonalSpaceFragment");
+        ft.replace(R.id.content,fragment,"NoteSpaceFragment");
         ft.commit();
-        Log.d("PersonalSpaceFragment","START");
+        Log.d("NoteSpaceFragment","START");
     }
 
     public static void start(Context context){

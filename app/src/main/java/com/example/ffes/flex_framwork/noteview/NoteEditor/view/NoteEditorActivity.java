@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.NoteEditor.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -247,6 +248,11 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
 
     @Override
     public void end() {
+        Intent intent=new Intent();
+        Bundle bundle=new Bundle();
+        bundle.putString(URL_KEY,noteUrl);
+        intent.putExtras(bundle);
+        setResult(RESULT_OK,intent);
         finish();
 
     }
@@ -389,6 +395,16 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         bundle.putString(URL_KEY,noteUrl);
         intent.putExtras(bundle);
         context.startActivity(intent);
+    }
+
+    public static  void start(Activity activity,String noteUrl,int requestCode){
+        Intent intent=new Intent();
+        intent.setClass(activity,NoteEditorActivity.class);
+        Bundle bundle=new Bundle();
+        bundle.putString(URL_KEY,noteUrl);
+        intent.putExtras(bundle);
+        activity.startActivityForResult(intent,requestCode);
+
     }
 
     public void getLink() {

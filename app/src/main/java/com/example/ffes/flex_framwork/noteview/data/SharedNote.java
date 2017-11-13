@@ -7,6 +7,8 @@ import java.util.List;
  */
 
 public class SharedNote {
+
+    String id;
     int like;
     int look;
     int link;
@@ -19,6 +21,9 @@ public class SharedNote {
 
     public SharedNote(){}
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setSelfpicture(String selfpicture) {
         this.selfpicture = selfpicture;
@@ -90,5 +95,9 @@ public class SharedNote {
 
     public String getSelfpicture() {
         return selfpicture;
+    }
+
+    public String getId() {
+        return id;
     }
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.BaseFragment;
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnUpLoadDataCallback;
+import com.example.ffes.flex_framwork.noteview.NoteEditor.view.NoteEditorActivity;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.widget.ShareNoteDialog;
@@ -29,7 +30,7 @@ import butterknife.Unbinder;
  * Created by Ffes on 2017/10/29.
  */
 
-public class PersonalSpaceFragment extends BaseFragment  implements ShareNoteDialog.OnClickShare {
+public class PersonalSpaceFragment extends BaseFragment  implements ShareNoteDialog.OnClickShare,PersonalNoteAdapter.OnAddNote {
 
     @BindView(R.id.notelist)
     RecyclerView notelist;
@@ -59,7 +60,7 @@ public class PersonalSpaceFragment extends BaseFragment  implements ShareNoteDia
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        adapter=new PersonalNoteAdapter(this,getFragmentManager());
+        adapter=new PersonalNoteAdapter(this,this,getFragmentManager());
         notelist.setLayoutManager(new GridLayoutManager(this.getActivity(),3,GridLayoutManager.VERTICAL,false));
         notelist.setAdapter(adapter);
     }
@@ -89,5 +90,15 @@ public class PersonalSpaceFragment extends BaseFragment  implements ShareNoteDia
                 }
             });
         }
+    }
+
+    @Override
+    public void onAdd() {
+        NoteEditorActivity.start(getContext(),null);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

@@ -30,11 +30,21 @@
             android:name=".noteview.Login.view.LoginActivity"
             android:theme="@style/NoTitle" />
         <activity android:name=".noteview.EasyPersonalSpace.SpaceActivity" />
-        <activity android:name=".noteview.MyAccountMVP.view.EditSelfFile"
+        <activity
+            android:name=".noteview.MyAccountMVP.view.EditSelfFile"
+            android:theme="@style/NoTitle" />
+        <activity
+            android:name=".noteview.MyAccountMVP.view.AccountEditActivity"
             android:theme="@style/NoTitle"></activity>
-        <activity android:name=".noteview.MyAccountMVP.view.AccountEditActivity"
-            android:theme="@style/NoTitle">
-        </activity>
+        <activity
+            android:name=".noteview.personalspace.view.NoteCover"
+            android:theme="@style/NoTitle"
+            android:windowSoftInputMode="adjustPan"></activity>
+        <activity
+            android:name=".noteview.personalspace.view.NoteBook_Note"
+            android:theme="@style/NoTitle" />
+        <activity android:name=".noteview.personalspace.view.SelectPersonalNote"
+            android:theme="@style/NoTitle"></activity>
     </application>
 
 </manifest>
