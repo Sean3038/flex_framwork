@@ -106,7 +106,7 @@ public class PersonalNoteAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             h.cv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    NoteBrowserActivity.start(h.itemView.getContext(), data.getNoteURL());
+                    NoteBrowserActivity.start(h.itemView.getContext(),data.getUid(), data.getNoteURL());
                 }
             });
             h.edit.setOnClickListener(new View.OnClickListener() {

@@ -15,7 +15,9 @@ import com.daimajia.swipe.SwipeLayout;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.api.AuthRepository;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
+import com.example.ffes.flex_framwork.noteview.data.LinkNote;
 import com.example.ffes.flex_framwork.noteview.data.SharedNote;
+import com.example.ffes.flex_framwork.noteview.linknote.view.ShareNoteBrowser;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -61,8 +63,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
         public ViewHolder(View v) {
             super(v);
             cv = (CardView) v.findViewById(R.id.cv);
-            cv.setElevation(0);
-
             person_picture = (ImageView) v.findViewById(R.id.selfpicture);
             note_picture = (ImageView) v.findViewById(R.id.note_picture);
             person_account = (TextView) v.findViewById(R.id.person_account);
@@ -131,6 +131,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             @Override
             public void onClick(View view){
                 //連到筆記本
+                ShareNoteBrowser.start(mContext,note.getId());
             }
         });
 

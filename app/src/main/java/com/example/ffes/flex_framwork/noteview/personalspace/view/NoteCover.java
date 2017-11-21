@@ -127,6 +127,7 @@ public class NoteCover extends BaseActivity implements CoverAdapter.OnCoverSelec
         blurView = (BlurView)findViewById(R.id.blurView);
         topBlurView = (BlurView)findViewById(R.id.top);
     }
+
     private void init(){
         mPhone = new DisplayMetrics();
         mData = new ArrayList<>();

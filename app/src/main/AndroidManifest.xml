@@ -11,31 +11,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <provider
+            android:name="br.com.mauker.materialsearchview.db.HistoryProvider"
+            android:authorities="br.com.mauker.materialsearchview.searchhistorydatabase"
+            android:exported="false"
+            android:protectionLevel="signature"
+            android:syncable="true"/>
+        <activity android:name=".noteview.NoteEditor.view.NoteEditorActivity" />
+
         <activity
             android:name=".noteview.NoteBrowser.view.NoteBrowserActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name=".noteview.NoteEditor.view.NoteEditorActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
-        <activity android:name=".noteview.TestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".noteview.Login.view.LoginActivity"
             android:theme="@style/NoTitle" />
         <activity android:name=".noteview.EasyPersonalSpace.SpaceActivity" />
         <activity
-            android:name=".noteview.MyAccountMVP.view.EditSelfFile"
+            android:name=".noteview.account.EditSelfFile"
             android:theme="@style/NoTitle" />
-        <activity
-            android:name=".noteview.MyAccountMVP.view.AccountEditActivity"
-            android:theme="@style/NoTitle"></activity>
+
         <activity
             android:name=".noteview.personalspace.view.NoteCover"
             android:theme="@style/NoTitle"
@@ -43,8 +39,25 @@
         <activity
             android:name=".noteview.personalspace.view.NoteBook_Note"
             android:theme="@style/NoTitle" />
+
         <activity android:name=".noteview.personalspace.view.SelectPersonalNote"
             android:theme="@style/NoTitle"></activity>
-    </application>
 
+        <activity android:name=".noteview.searchmaterial.view.Teach"
+        android:theme="@style/NoTitle"/>
+
+        <activity android:name=".noteview.MainActivity"
+            android:theme="@style/NoTitle">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".noteview.searchmaterial.view.SearchResult"
+            android:theme="@style/NoTitle"/>
+        <activity android:name=".noteview.linknote.view.ShareNoteBrowser"
+            android:theme="@style/NoTitle"></activity>
+    </application>
 </manifest>

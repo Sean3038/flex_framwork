@@ -1,6 +1,5 @@
 package com.example.ffes.flex_framwork.noteview.personalspace.adapter;
 
-import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -11,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.ffes.flex_framwork.R;
-import com.example.ffes.flex_framwork.noteview.NoteEditor.adapter.PageListAdapter;
-import com.example.ffes.flex_framwork.noteview.personalspace.data.Cover;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

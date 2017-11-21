@@ -34,6 +34,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 public class NoteBrowserActivity extends BaseActivity implements NoteBrowserContract.View,View.OnClickListener {
     public static final String URL_KEY="NoteURL";
+    public static final String UID_KEY="uid";
 
     FilterToolBar filterToolBar;
     PageIndicator pageIndicator;
@@ -52,7 +53,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
     PageFilterStateModel pageFilterStateModel;
 
     String noteurl;
-
+    String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +63,7 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         Bundle bundle=this.getIntent().getExtras();
         if(bundle!=null){
             noteurl=bundle.getString(URL_KEY);
+            uid=bundle.getString(UID_KEY);
         }
         noteBrowserPresenter=new NoteBrowserPresenter(this,pageFilterStateModel,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance()));
         noteBrowserPresenter.loadNote(noteurl);
@@ -217,11 +219,12 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         dismissProgress();
     }
 
-    public static void start(Context context, String noteUrl){
+    public static void start(Context context,String uid, String noteUrl){
         Intent intent=new Intent();
         intent.setClass(context,NoteBrowserActivity.class);
         Bundle bundle=new Bundle();
         bundle.putString(URL_KEY,noteUrl);
+        bundle.putString(UID_KEY,uid);
         intent.putExtras(bundle);
         context.startActivity(intent);
     }

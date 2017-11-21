@@ -1,6 +1,5 @@
 package com.example.ffes.flex_framwork.noteview.api;
 
-import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
 
@@ -14,10 +13,10 @@ import com.example.ffes.flex_framwork.noteview.data.QA;
 import com.example.ffes.flex_framwork.noteview.data.SharedNote;
 import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
-import com.example.ffes.flex_framwork.noteview.personalspace.data.Note;
+import com.example.ffes.flex_framwork.noteview.linknote.data.Message;
 import com.example.ffes.flex_framwork.noteview.personalspace.data.Notebook;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,8 +34,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.ffes.flex_framwork.R.id.child;
 
 /**
  * Created by Ffes on 2017/8/27.
@@ -367,7 +369,7 @@ public class NoteRepository{
                 final int total=(int)dataSnapshot.getChildrenCount();
                 //連結的url
                 for(final DataSnapshot childSnapshot:dataSnapshot.getChildren()){
-                    final String linkurl=childSnapshot.child("id").getValue(String.class);
+                    final String linkurl=childSnapshot.getValue(String.class);
                     ref.child("note/").orderByKey().equalTo(linkurl).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -419,49 +421,42 @@ public class NoteRepository{
                     ref.child("note/").orderByKey().equalTo(child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            Log.d("ShareNote",dataSnapshot.toString());
                             //平台上的筆記
                             final SharedNote note=new SharedNote();
                             final int[] i = {0};
-                            DataSnapshot value=dataSnapshot.child(child.getKey());
+                            final DataSnapshot value=dataSnapshot.child(child.getKey());
                             note.setLike((int)value.child("like").getChildrenCount());
                             note.setComment((int)value.child("message").getChildrenCount());
                             note.setLook((int)value.child("look").getChildrenCount());
                             note.setLink((int)value.child("link").getChildrenCount());
+                            note.setId(value.getKey());
+                            note.setUid(value.child("authorid").getValue(String.class));
+
                             //尋找筆記資料
                             ref.child("user/"+uid+"/personalspace/"+child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
-                                    note.setTitle(dataSnapshot.child("titledetail/title").getValue(String.class));
-                                    i[0]++;
-                                    if(i[0]==2){
-                                        notes.add(note);
-                                        c[0]++;
-                                    }
-                                    if(c[0]==total){
-                                        callBack.onSuccess(notes);
-                                    }
-                                }
+                                    note.setTitle(dataSnapshot.child("title").getValue(String.class));
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                                    ref.child("account/"+value.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            note.setName(dataSnapshot.child("name").getValue(String.class));
+                                            note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                            notes.add(note);
+                                            c[0]++;
+                                            if(c[0]==total){
+                                                callBack.onSuccess(notes);
+                                                Log.d("UID",""+c[0]);
+                                            }
+                                        }
 
-                                }
-                            });
-                            ref.child("account/"+value.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    note.setName(dataSnapshot.child("name").getValue(String.class));
-                                    note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
-                                    i[0]++;
-                                    if(i[0]==2){
-                                        notes.add(note);
-                                        c[0]++;
-                                    }
-                                    if(c[0]==total){
-                                        callBack.onSuccess(notes);
-                                    }
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
                                 }
 
                                 @Override
@@ -512,8 +507,6 @@ public class NoteRepository{
                         }
                     }
                     if(flag){
-                        Log.d("datasnap",title);
-                        Log.d("datasnap",keylist.toString());
                         PersonalNote data=new PersonalNote();
                         data.setCoverurl(child.child("notecontent/0/imageurl").getValue(String.class));
                         data.setColor(child.child("color").getValue(String.class));
@@ -534,6 +527,98 @@ public class NoteRepository{
         });
     }
 
+    public void getShareNote(String noteurl, final OnGetDataCallBack<SharedNote> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final SharedNote note = new SharedNote();
+                note.setLike((int) dataSnapshot.child("like").getChildrenCount());
+                note.setComment((int) dataSnapshot.child("message").getChildrenCount());
+                note.setLook((int) dataSnapshot.child("look").getChildrenCount());
+                note.setLink((int) dataSnapshot.child("link").getChildrenCount());
+                note.setId(dataSnapshot.getKey());
+                note.setUid(dataSnapshot.child("authorid").getValue(String.class));
+                //尋找筆記資料
+                ref.child("user/" + dataSnapshot.child("authorid").getValue(String.class) + "/personalspace/" + dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                        note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                        ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                note.setName(dataSnapshot.child("name").getValue(String.class));
+                                note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                callBack.onSuccess(note);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void checkLike(final String uid, final String noteurl, final OnGetDataCallBack<Boolean> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/" + noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean flag = false;
+                for (DataSnapshot child : dataSnapshot.child("like").getChildren()) {
+                    if (uid.equals(child.getValue(String.class))) {
+                        flag=true;
+                        break;
+                    }
+                }
+                callBack.onSuccess(flag);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void checkLink(final String uid, final String noteurl, final OnGetDataCallBack<Boolean> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/" + noteurl).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                boolean flag = false;
+                for (DataSnapshot child : dataSnapshot.child("link").getChildren()) {
+                    if (uid.equals(child.getValue(String.class))) {
+                        flag=true;
+                        break;
+                    }
+                }
+                callBack.onSuccess(flag);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void getSharedNoteFromSpace(final String uid, final OnGetDataCallBack<List<SharedNote>> callBack){
         final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/linkspace").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -543,7 +628,7 @@ public class NoteRepository{
                 final int total=(int)dataSnapshot.getChildrenCount();
                 final int[] c = {0};
                 for(final DataSnapshot child:dataSnapshot.getChildren()){
-                    final String id=child.child("id").getValue(String.class);
+                    final String id=child.getValue(String.class);
                     ref.child("note/"+id).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -554,7 +639,8 @@ public class NoteRepository{
                                 note.setComment((int)dataSnapshot.child("message").getChildrenCount());
                                 note.setLook((int)dataSnapshot.child("look").getChildrenCount());
                                 note.setLink((int)dataSnapshot.child("link").getChildrenCount());
-
+                                note.setId(id);
+                                note.setUid(dataSnapshot.child("authorid").getValue(String.class));
                                 ref.child("user/"+dataSnapshot.child("authorid").getValue(String.class)+"/personalspace/"+dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -724,6 +810,231 @@ public class NoteRepository{
         });
     }
 
+    public void getNewestShareNote(final OnGetDataCallBack<List<SharedNote>> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        final int[] c = {0};
+        ref.child("note").orderByChild("time").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final int total=(int)dataSnapshot.getChildrenCount();
+                final List<SharedNote> notes=new ArrayList<>();
+
+                for(DataSnapshot child:dataSnapshot.getChildren()) {
+                    final SharedNote note = new SharedNote();
+                    note.setLike((int) child.child("like").getChildrenCount());
+                    note.setComment((int) child.child("message").getChildrenCount());
+                    note.setLook((int) child.child("look").getChildrenCount());
+                    note.setLink((int) child.child("link").getChildrenCount());
+                    note.setId(child.getKey());
+                    note.setUid(child.child("authorid").getValue(String.class));
+                    //尋找筆記資料
+                    ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                            note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                            ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    note.setName(dataSnapshot.child("name").getValue(String.class));
+                                    note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                    notes.add(note);
+                                    c[0]++;
+                                    if (c[0] == total) {
+                                        callBack.onSuccess(notes);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getNoteMessage(String noteurl, final OnGetDataCallBack<Message> callBack){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl+"/message").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Message message=new Message();
+                message.setId(dataSnapshot.child("uid").getValue(String.class));
+                message.setMessage(dataSnapshot.child("message").getValue(String.class));
+                message.setimageurl(dataSnapshot.child("photo").getValue(String.class));
+                callBack.onSuccess(message);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getHotestShareNote(final OnGetDataCallBack<List<SharedNote>> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        final int[] c = {0};
+        ref.child("note").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final int total=(int)dataSnapshot.getChildrenCount();
+                final List<SharedNote> notes=new ArrayList<>();
+                for(DataSnapshot child:dataSnapshot.getChildren()) {
+                    final SharedNote note = new SharedNote();
+                    note.setLike((int) child.child("like").getChildrenCount());
+                    note.setComment((int) child.child("message").getChildrenCount());
+                    note.setLook((int) child.child("look").getChildrenCount());
+                    note.setLink((int) child.child("link").getChildrenCount());
+                    note.setId(child.getKey());
+                    note.setUid(child.child("authorid").getValue(String.class));
+                    //尋找筆記資料
+                    ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                            note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                            ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    int i=0;
+                                    note.setName(dataSnapshot.child("name").getValue(String.class));
+                                    note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                    for(SharedNote s:notes){
+                                        int look=s.getLook();
+                                        if(note.getLook()>look){
+                                            break;
+                                        }
+                                        i++;
+                                    }
+                                    notes.add(i,note);
+                                    c[0]++;
+                                    if (c[0] == total) {
+                                        callBack.onSuccess(notes);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateLike(final String uid, final String noteurl, final boolean result){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl+"/like").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    Log.d("Child",child.toString());
+                    if(uid.equals(child.getValue(String.class))){
+                        ref.child("note/"+noteurl+"/like/"+child.getKey()).removeValue();
+                        break;
+                    }
+                }
+                if(result){
+                    ref.child("note/"+noteurl+"/like/").push().setValue(uid);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateLink(final String uid, final String noteurl, final boolean result){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl+"/link").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    if(uid.equals(child.getValue(String.class))){
+                        ref.child("note/"+noteurl+"/link/"+child.getKey()).removeValue();
+                        deleteLinkNote(uid,noteurl);
+                        break;
+                    }
+                }
+                if(result){
+                    ref.child("note/"+noteurl+"/link/").push().setValue(uid);
+                    addLinkNote(uid,noteurl);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateLook(final String uid, final String noteurl){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl+"/look").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    if(uid.equals(child.getValue(String.class))){
+                        ref.child("note/"+noteurl+"/look/"+child.getKey()).removeValue();
+                        break;
+                    }
+                }
+                ref.child("note/"+noteurl+"/look/").push().setValue(uid);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void updateTitleDetial(String uid,String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
         DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url+"/title").setValue(titleDetail.getTitle());
@@ -836,6 +1147,11 @@ public class NoteRepository{
         }
     }
 
+    public void addLinkNote(String uid,String noteurl){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/linkspace/").push().setValue(noteurl);
+    }
+
     public void deleteNote(String uid,String url){
         DatabaseReference ref=firebaseDatabase.getReference();
         StorageReference sef=firebaseStorage.getReference();
@@ -920,6 +1236,241 @@ public class NoteRepository{
             }
         });
 
+    }
+
+    public void searchSharedNote(String college, final String dep, final String key, final OnGetDataCallBack<List<SharedNote>> callBack){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        final List<SharedNote> notes=new ArrayList<>();
+        ValueEventListener listener=new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final int total=(int)dataSnapshot.getChildrenCount();
+                final int[] c={0};
+                if(dep.length()!=0){
+                    for(DataSnapshot child:dataSnapshot.getChildren()){
+                        if(child.child("dep").getValue(String.class).equals(dep)){
+                            Log.d("DEP",dep+" "+child.child("dep").getValue(String.class));
+                            if(key.length()==0){
+                                Log.d("DEP",dep+" "+child.child("dep").getValue(String.class));
+                                final SharedNote note = new SharedNote();
+                                note.setLike((int) child.child("like").getChildrenCount());
+                                note.setComment((int) child.child("message").getChildrenCount());
+                                note.setLook((int) child.child("look").getChildrenCount());
+                                note.setLink((int) child.child("link").getChildrenCount());
+                                note.setId(child.getKey());
+                                //尋找筆記資料
+                                ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                                        note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                                        ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                note.setName(dataSnapshot.child("name").getValue(String.class));
+                                                note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                                notes.add(note);
+                                                c[0]++;
+                                                if (c[0] == total) {
+                                                    callBack.onSuccess(notes);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }else {
+                                String title = child.child("title").getValue(String.class);
+                                List<String> keylist = new ArrayList<>();
+                                boolean flag = false;
+                                for (DataSnapshot key : child.child("keylist").getChildren()) {
+                                    keylist.add(key.getValue(String.class));
+                                }
+
+                                if (!flag) {
+                                    for (String keyword : keylist) {
+                                        if (keyword.contains(key)) {
+                                            flag = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (title.contains(key) || keylist.contains(key)) {
+                                    flag = true;
+                                }
+                                if (flag) {
+                                    final SharedNote note = new SharedNote();
+                                    note.setLike((int) child.child("like").getChildrenCount());
+                                    note.setComment((int) child.child("message").getChildrenCount());
+                                    note.setLook((int) child.child("look").getChildrenCount());
+                                    note.setLink((int) child.child("link").getChildrenCount());
+                                    //尋找筆記資料
+                                    ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                                            note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                                            ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                    note.setName(dataSnapshot.child("name").getValue(String.class));
+                                                    note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                                    notes.add(note);
+                                                    c[0]++;
+                                                    if (c[0] == total) {
+                                                        callBack.onSuccess(notes);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                } else {
+                                    c[0]++;
+                                    if (c[0] == total) {
+                                        callBack.onSuccess(notes);
+                                    }
+                                }
+                            }
+                        }else{
+                            c[0]++;
+                            if (c[0] == total) {
+                                callBack.onSuccess(notes);
+                            }
+                        }
+                    }
+                }else{
+                    for(DataSnapshot child:dataSnapshot.getChildren()){
+                        if(key==""){
+                            final SharedNote note = new SharedNote();
+                            note.setLike((int) child.child("like").getChildrenCount());
+                            note.setComment((int) child.child("message").getChildrenCount());
+                            note.setLook((int) child.child("look").getChildrenCount());
+                            note.setLink((int) child.child("link").getChildrenCount());
+                            //尋找筆記資料
+                            ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                                    note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                                    ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            note.setName(dataSnapshot.child("name").getValue(String.class));
+                                            note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                            notes.add(note);
+                                            c[0]++;
+                                            if (c[0] == total) {
+                                                callBack.onSuccess(notes);
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }else {
+                            String title = child.child("title").getValue(String.class);
+                            List<String> keylist = new ArrayList<>();
+                            boolean flag = false;
+                            for (DataSnapshot key : child.child("keylist").getChildren()) {
+                                keylist.add(key.getValue(String.class));
+                            }
+
+                            if (!flag) {
+                                for (String keyword : keylist) {
+                                    if (keyword.contains(key)) {
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (title.contains(key) || keylist.contains(key)) {
+                                flag = true;
+                            }
+                            if (flag) {
+                                final SharedNote note = new SharedNote();
+                                note.setLike((int) child.child("like").getChildrenCount());
+                                note.setComment((int) child.child("message").getChildrenCount());
+                                note.setLook((int) child.child("look").getChildrenCount());
+                                note.setLink((int) child.child("link").getChildrenCount());
+                                //尋找筆記資料
+                                ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                                        note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                                        ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                note.setName(dataSnapshot.child("name").getValue(String.class));
+                                                note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                                notes.add(note);
+                                                c[0]++;
+                                                if (c[0] == total) {
+                                                    callBack.onSuccess(notes);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            } else {
+                                c[0]++;
+                                if (c[0] == total) {
+                                    callBack.onSuccess(notes);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        if(college.length()==0){
+            ref.child("note").addListenerForSingleValueEvent(listener);
+        }else{
+            ref.child("note").orderByChild("college").equalTo(college).addListenerForSingleValueEvent(listener);
+        }
     }
 
     public void checkNoteShareQualify(final String uid, final String url, final OnGetDataCallBack<Boolean> callBack){

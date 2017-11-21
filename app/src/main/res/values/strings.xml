@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">flex_framwork</string>
+
+    <string-array name="College">
+        <item>管理學院</item>
+        <item>工程學院</item>
+        <item>設計學院</item>
+        <item>人文學院</item>
+    </string-array>
+
     <string-array name="Management">
         <item>財物金融系</item>
         <item>資訊管理系</item>
@@ -8,18 +16,32 @@
         <item>會計系</item>
     </string-array>
     <string-array name="Engine">
-        <item>Vanilla</item>
-        <item>Chocolate</item>
-        <item>Strawberry</item>
+        <item>機械工程系</item>
+        <item>電機工程系</item>
+        <item>電子工程系</item>
+        <item>環境與安全衛生工程系</item>
+        <item>化學工程與材料工程系</item>
+        <item>營建工程系</item>
+        <item>資訊工程系</item>
     </string-array>
     <string-array name="Human">
-        <item>Vanilla</item>
-        <item>Chocolate</item>
-        <item>Strawberry</item>
+        <item>工業設計系</item>
+        <item>視覺傳達設計系</item>
+        <item>建築與室內設計系</item>
+        <item>數位媒體設計系</item>
+        <item>創意生活設計系</item>
     </string-array>
     <string-array name="Design">
-        <item>Vanilla</item>
-        <item>Chocolate</item>
-        <item>Strawberry</item>
+        <item>文化資產維護系</item>
+        <item>應用外語系</item>
     </string-array>
+    <string name="tab_1">自己的筆記</string>
+    <string name="tab_2">引用的筆記</string>
+    <string name="tab_3">個人空間</string>
+    <string name="tab_4">我的帳號</string>
+    <string name="hi">你叫做</string>
+    <string name="search_title">搜尋作者</string>
+    <string name="search_hint">搜尋作者</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
 </resources>

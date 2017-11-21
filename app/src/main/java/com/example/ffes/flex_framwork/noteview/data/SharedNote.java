@@ -17,9 +17,14 @@ public class SharedNote {
     String photoUrl;
     String selfpicture;
     String name;
+    String uid;
     List<String> keywordlist;
 
     public SharedNote(){}
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
 
     public void setId(String id) {
         this.id = id;
@@ -59,6 +64,10 @@ public class SharedNote {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public String getName() {

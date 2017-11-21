@@ -404,7 +404,6 @@ public class NoteEditorActivity extends BaseActivity implements NoteEditorContra
         bundle.putString(URL_KEY,noteUrl);
         intent.putExtras(bundle);
         activity.startActivityForResult(intent,requestCode);
-
     }
 
     public void getLink() {
