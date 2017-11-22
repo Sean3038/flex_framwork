@@ -633,54 +633,59 @@ public class NoteRepository{
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if(dataSnapshot.hasChildren()){
-                                final SharedNote note=new SharedNote();
-                                final int[] i = {0};
-                                note.setLike((int)dataSnapshot.child("like").getChildrenCount());
-                                note.setComment((int)dataSnapshot.child("message").getChildrenCount());
-                                note.setLook((int)dataSnapshot.child("look").getChildrenCount());
-                                note.setLink((int)dataSnapshot.child("link").getChildrenCount());
-                                note.setId(id);
-                                note.setUid(dataSnapshot.child("authorid").getValue(String.class));
-                                ref.child("user/"+dataSnapshot.child("authorid").getValue(String.class)+"/personalspace/"+dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
-                                        note.setTitle(dataSnapshot.child("title").getValue(String.class));
-                                        i[0]++;
-                                        if(i[0]==2){
-                                            sharedNotes.add(note);
-                                            c[0]++;
+                                if(dataSnapshot.child("title").getValue(String.class)!=null) {
+                                    final SharedNote note = new SharedNote();
+                                    final int[] i = {0};
+                                    note.setLike((int) dataSnapshot.child("like").getChildrenCount());
+                                    note.setComment((int) dataSnapshot.child("message").getChildrenCount());
+                                    note.setLook((int) dataSnapshot.child("look").getChildrenCount());
+                                    note.setLink((int) dataSnapshot.child("link").getChildrenCount());
+                                    note.setId(id);
+                                    note.setUid(dataSnapshot.child("authorid").getValue(String.class));
+                                    ref.child("user/" + dataSnapshot.child("authorid").getValue(String.class) + "/personalspace/" + dataSnapshot.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            note.setPhotoUrl(dataSnapshot.child("notecontent/0/imageurl").getValue(String.class));
+                                            note.setTitle(dataSnapshot.child("title").getValue(String.class));
+                                            i[0]++;
+                                            if (i[0] == 2) {
+                                                sharedNotes.add(note);
+                                                c[0]++;
+                                            }
+                                            if (c[0] == total) {
+                                                callBack.onSuccess(sharedNotes);
+                                            }
                                         }
-                                        if(c[0]==total){
-                                            callBack.onSuccess(sharedNotes);
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
                                         }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-                                ref.child("account/"+dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        note.setName(dataSnapshot.child("name").getValue(String.class));
-                                        note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
-                                        i[0]++;
-                                        if(i[0]==2){
-                                            sharedNotes.add(note);
-                                            c[0]++;
+                                    });
+                                    ref.child("account/" + dataSnapshot.child("authorid").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            note.setName(dataSnapshot.child("name").getValue(String.class));
+                                            note.setSelfpicture(dataSnapshot.child("photoUrl").getValue(String.class));
+                                            i[0]++;
+                                            if (i[0] == 2) {
+                                                sharedNotes.add(note);
+                                                c[0]++;
+                                            }
+                                            if (c[0] == total) {
+                                                callBack.onSuccess(sharedNotes);
+                                            }
                                         }
-                                        if(c[0]==total){
-                                            callBack.onSuccess(sharedNotes);
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
                                         }
-                                    }
+                                    });
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
+                                }else{
+                                    ref.child("user/"+uid+"/linkspace/"+child.getKey()).removeValue();
+                                }
                             }else{
                                 ref.child("user/"+uid+"/linkspace/"+child.getKey()).removeValue();
                             }
@@ -1103,9 +1108,22 @@ public class NoteRepository{
         });
     }
 
-    public void updateKeyWord(String uid,final String url, Map<String,Object> keylist){
+    public void updateKeyWord(String uid, final String url, final Map<String,Object> keylist){
         final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url+"/keylist/").setValue(keylist);
+        ref.child("user/"+uid+"/personalspace/"+url+"/isShare").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue(Boolean.class)==true){
+                    ref.child("note/"+url+"/keylist").setValue(keylist);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void updateNoteBook(final String uid, final String bookurl, final String title, byte[] coverbyte, final OnUpLoadDataCallback<Void> callback){
@@ -1180,13 +1198,26 @@ public class NoteRepository{
         });
     }
 
-    public void deleteLinkNote(final String uid, String url){
+    public void deleteLinkNote(final String uid, final String url){
         final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/linkspace/").orderByValue().equalTo(url).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child:dataSnapshot.getChildren()){
                     ref.child("user/"+uid+"/linkspace/"+child.getKey()).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        ref.child("note/"+url+"/link").orderByValue().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child:dataSnapshot.getChildren()){
+                    ref.child("note/"+url+"/link/"+child.getKey()).removeValue();
                 }
             }
 
@@ -1202,6 +1233,12 @@ public class NoteRepository{
         StorageReference sef=firebaseStorage.getReference();
         ref.child("user/"+uid+"/notebookspace/"+bookurl).removeValue();
         sef.child("user/"+uid+"/notebookspace/"+bookurl).delete();
+    }
+
+    public void unshare(String uid,String noteurl){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("user/"+uid+"/personalspace/"+noteurl+"/isShare/").setValue(false);
+        ref.child("note/"+noteurl).removeValue();
     }
 
     public void share(final String uid, final String noteurl, final String college, final String dep, final OnUpLoadDataCallback callback){
@@ -1248,10 +1285,10 @@ public class NoteRepository{
                 final int[] c={0};
                 if(dep.length()!=0){
                     for(DataSnapshot child:dataSnapshot.getChildren()){
-                        if(child.child("dep").getValue(String.class).equals(dep)){
-                            Log.d("DEP",dep+" "+child.child("dep").getValue(String.class));
-                            if(key.length()==0){
-                                Log.d("DEP",dep+" "+child.child("dep").getValue(String.class));
+                        if(child.child("dep").getValue(String.class).equals(dep)) {
+                            Log.d("DEP", dep + " " + child.child("dep").getValue(String.class));
+                            if (key.length() == 0) {
+                                Log.d("DEP", dep + " " + child.child("dep").getValue(String.class));
                                 final SharedNote note = new SharedNote();
                                 note.setLike((int) child.child("like").getChildrenCount());
                                 note.setComment((int) child.child("message").getChildrenCount());
@@ -1288,7 +1325,7 @@ public class NoteRepository{
 
                                     }
                                 });
-                            }else {
+                            } else {
                                 String title = child.child("title").getValue(String.class);
                                 List<String> keylist = new ArrayList<>();
                                 boolean flag = false;
@@ -1359,7 +1396,7 @@ public class NoteRepository{
                     }
                 }else{
                     for(DataSnapshot child:dataSnapshot.getChildren()){
-                        if(key==""){
+                        if(key.length()==0){
                             final SharedNote note = new SharedNote();
                             note.setLike((int) child.child("like").getChildrenCount());
                             note.setComment((int) child.child("message").getChildrenCount());

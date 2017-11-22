@@ -83,7 +83,21 @@ public class SearchResult extends AppCompatActivity implements View.OnClickListe
             @Override
             public boolean onQueryTextSubmit(String query) {
                 key=query;
+                currentcollege="";
+                currentdep="";
                 search(currentcollege,currentdep,key);
+                mData.clear();
+                adapter.notifyDataSetChanged();
+                all.setTextColor(Color.parseColor("#8ba7cb"));
+                all.setPaintFlags(0);
+                college.setTextColor(Color.parseColor("#8ba7cb"));
+                college.setPaintFlags(0);
+                college1.setTextColor(Color.parseColor("#8ba7cb"));
+                college1.setPaintFlags(0);
+                college2.setTextColor(Color.parseColor("#8ba7cb"));
+                college2.setPaintFlags(0);
+                college3.setTextColor(Color.parseColor("#8ba7cb"));
+                college3.setPaintFlags(0);
                 return true;
             }
 

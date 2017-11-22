@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.personalspace.view;
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -63,6 +64,12 @@ public class LinkNoteFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        prepareNote();
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView)view.findViewById(R.id.list_view);
@@ -78,7 +85,6 @@ public class LinkNoteFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
-        prepareNote();
     }
 
     private void prepareNote() {

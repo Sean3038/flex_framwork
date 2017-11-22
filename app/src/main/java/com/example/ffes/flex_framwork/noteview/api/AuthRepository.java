@@ -50,7 +50,7 @@ public class AuthRepository {
                 });
     }
 
-    void revoke(){
+    public void revoke(){
         auth.signOut();
     }
 

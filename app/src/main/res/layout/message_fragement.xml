@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/f1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="56dp"/>
+
+    <com.example.ffes.flex_framwork.noteview.linknote.view.InputMessage
+        android:id="@+id/message_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignLeft="@+id/l1"
+        android:layout_marginLeft="70dp"
+        android:layout_alignTop="@+id/l1">
+
+    </com.example.ffes.flex_framwork.noteview.linknote.view.InputMessage>
+
+    <LinearLayout
+        android:id="@+id/l1"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="510dp"
+        android:background="@drawable/boder"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/camera"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@drawable/camera_" />
+    </LinearLayout>
+</RelativeLayout>

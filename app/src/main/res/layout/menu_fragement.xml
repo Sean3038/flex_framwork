@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="260dp"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu">
+    <View
+        android:layout_height="5px"
+        android:background="@color/bottomColor5"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="150dp"
+        android:id="@+id/view"></View>
+
+    <TextView
+        android:id="@+id/t1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="85dp"
+        android:layout_marginTop="115dp"
+        android:text="管理學院"
+        android:textColor="@color/bottomColor5"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/complete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view"
+        android:layout_marginLeft="45dp"
+        android:layout_marginTop="10dp"
+        android:text="科系"
+        android:textColor="@color/bottomColor5" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="45dp"
+        android:layout_below="@+id/complete"
+        android:layout_marginTop="10dp"/>
+    <ImageButton
+        android:id="@+id/ib3"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:background="@mipmap/back"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

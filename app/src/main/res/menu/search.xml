@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/search"
+        android:title="search"
+        android:icon="@drawable/ic_action_search_white"
+        android:orderInCategory="100"
+        app:showAsAction="always" />
+
+    <!-- 注意最末這 2 行開頭要與第 5 行一致，在本例為 "app" -->
+</menu>
+

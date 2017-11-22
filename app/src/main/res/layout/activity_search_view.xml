@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_search_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.user.searchmaterial.otherlayout.SearchView">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="50dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/search_bg"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_margin="10dp"
+                android:background="@mipmap/search" />
+            <!-- 输入的搜索信息 -->
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="搜尋素材"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:textColor="@color/bottomColor5"
+                android:textColorHint="#b0c6ce"
+                android:textSize="17sp" />
+
+
+            <Button
+                android:id="@+id/bt_clear"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:layout_margin="10dp"
+                android:background="@mipmap/delete" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

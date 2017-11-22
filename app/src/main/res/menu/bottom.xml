@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/title_"
+        android:icon="@drawable/info"
+        android:title="找素材"
+    />
+    <item
+        android:id="@+id/add"
+        android:icon="@drawable/add"
+        android:title="做筆記"
+        />
+    <item
+        android:id="@+id/note"
+        android:icon="@drawable/note"
+        android:title="個人空間"
+        />
+    <item
+        android:id="@+id/people"
+        android:icon="@drawable/people"
+        android:title="我的帳號" />
+
+</menu>

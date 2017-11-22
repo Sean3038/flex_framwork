@@ -4,11 +4,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ffes.flex_framwork.R;
+import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.SharedNote;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,8 +25,11 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
 
     List<SharedNote> list;
 
+    NoteRepository noteRepository;
+
     SelfSharedNoteAdapter(List<SharedNote> list){
         this.list=list;
+        noteRepository=new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance());
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -37,6 +44,8 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
         ImageView selfpicture;
         ImageView notepicture;
 
+        ImageButton delete;
+
         public ViewHolder(View itemView) {
             super(itemView);
             like=(TextView)itemView.findViewById(R.id.like);
@@ -47,6 +56,7 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
             name=(TextView)itemView.findViewById(R.id.person_account);
             selfpicture=(ImageView)itemView.findViewById(R.id.selfpicture);
             notepicture=(ImageView)itemView.findViewById(R.id.note_picture);
+            delete=(ImageButton)itemView.findViewById(R.id.delete);
         }
 
         public void loadSelfPicture(String imageurl){
@@ -65,13 +75,21 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        SharedNote data=list.get(position);
+        final SharedNote data=list.get(position);
         holder.comment.setText(""+data.getComment());
         holder.like.setText(""+data.getLike());
         holder.link.setText(""+data.getLink());
         holder.look.setText(""+data.getLook());
         holder.title.setText(""+data.getTitle());
         holder.name.setText(""+data.getName());
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noteRepository.unshare(data.getUid(),data.getId());
+                list.remove(data);
+                notifyDataSetChanged();
+            }
+        });
         holder.loadSelfPicture(data.getSelfpicture());
         holder.loadNotePicture(data.getPhotoUrl());
     }
@@ -80,4 +98,5 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
     public int getItemCount() {
         return list.size();
     }
+
 }

@@ -73,7 +73,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
             message = (TextView) v.findViewById(R.id.message);
             swipeLayout = (SwipeLayout) v.findViewById(R.id.swipe_layout);
             delete = (ImageButton) v.findViewById(R.id.delete);
-
+            swipeLayout.setSwipeEnabled(false);
             swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
                 @Override
                 public void onStartOpen(SwipeLayout layout) {
