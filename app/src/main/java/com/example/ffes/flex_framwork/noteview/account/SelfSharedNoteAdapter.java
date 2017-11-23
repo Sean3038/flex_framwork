@@ -1,5 +1,6 @@
 package com.example.ffes.flex_framwork.noteview.account;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.example.ffes.flex_framwork.R;
 import com.example.ffes.flex_framwork.noteview.api.NoteRepository;
 import com.example.ffes.flex_framwork.noteview.data.SharedNote;
+import com.example.ffes.flex_framwork.noteview.linknote.view.ShareNoteBrowser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
@@ -43,6 +45,7 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
         TextView name;
         ImageView selfpicture;
         ImageView notepicture;
+        CardView cv;
 
         ImageButton delete;
 
@@ -57,6 +60,7 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
             selfpicture=(ImageView)itemView.findViewById(R.id.selfpicture);
             notepicture=(ImageView)itemView.findViewById(R.id.note_picture);
             delete=(ImageButton)itemView.findViewById(R.id.delete);
+            cv=(CardView)itemView.findViewById(R.id.cv);
         }
 
         public void loadSelfPicture(String imageurl){
@@ -74,7 +78,7 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final SharedNote data=list.get(position);
         holder.comment.setText(""+data.getComment());
         holder.like.setText(""+data.getLike());
@@ -88,6 +92,12 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
                 noteRepository.unshare(data.getUid(),data.getId());
                 list.remove(data);
                 notifyDataSetChanged();
+            }
+        });
+        holder.cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShareNoteBrowser.start(v.getContext(),data.getId());
             }
         });
         holder.loadSelfPicture(data.getSelfpicture());

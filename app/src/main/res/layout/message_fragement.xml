@@ -1,43 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/f1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="56dp"/>
-
-    <com.example.ffes.flex_framwork.noteview.linknote.view.InputMessage
-        android:id="@+id/message_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/l1"
-        android:layout_marginLeft="70dp"
-        android:layout_alignTop="@+id/l1">
-
-    </com.example.ffes.flex_framwork.noteview.linknote.view.InputMessage>
+        android:layout_marginBottom="45dp" />
 
     <LinearLayout
         android:id="@+id/l1"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="510dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/boder"
-        android:gravity="center_vertical|center_horizontal"
+        android:layout_gravity="bottom"
         android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/camera"
+        <FrameLayout
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:background="@drawable/camera_" />
+            android:background="@color/bottomColor5">
+
+            <ImageButton
+                android:id="@+id/camera"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/camera_" />
+
+        </FrameLayout>
+
+        <EditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="textMultiLine"
+            android:maxHeight="100dp"
+            android:maxLines="5" />
+
+        <ImageButton
+            android:id="@+id/send"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            app:srcCompat="@android:drawable/ic_menu_send" />
+
+
     </LinearLayout>
-</RelativeLayout>
+
+</FrameLayout>

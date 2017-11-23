@@ -1,6 +1,7 @@
 package com.example.ffes.flex_framwork.noteview.api;
 
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.ffes.flex_framwork.noteview.NoteEditor.model.callback.OnGetDataCallBack;
@@ -15,6 +16,7 @@ import com.example.ffes.flex_framwork.noteview.data.Supply;
 import com.example.ffes.flex_framwork.noteview.data.TitleDetail;
 import com.example.ffes.flex_framwork.noteview.linknote.data.Message;
 import com.example.ffes.flex_framwork.noteview.personalspace.data.Notebook;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +40,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.ffes.flex_framwork.R.id.cancel_action;
 import static com.example.ffes.flex_framwork.R.id.child;
 
 /**
@@ -1237,8 +1240,10 @@ public class NoteRepository{
 
     public void unshare(String uid,String noteurl){
         DatabaseReference ref=firebaseDatabase.getReference();
+        StorageReference sef=firebaseStorage.getReference();
         ref.child("user/"+uid+"/personalspace/"+noteurl+"/isShare/").setValue(false);
         ref.child("note/"+noteurl).removeValue();
+        sef.child("note/"+noteurl).delete();
     }
 
     public void share(final String uid, final String noteurl, final String college, final String dep, final OnUpLoadDataCallback callback){
@@ -1508,6 +1513,51 @@ public class NoteRepository{
         }else{
             ref.child("note").orderByChild("college").equalTo(college).addListenerForSingleValueEvent(listener);
         }
+    }
+
+    public void addMessage(String noteurl, Message message, final OnUpLoadDataCallback<Void> callback){
+        DatabaseReference ref=firebaseDatabase.getReference();
+        ref.child("note/"+noteurl+"/message").push().setValue(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                callback.onSuccess(null);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onFailure();
+            }
+        });
+    }
+
+    public void addImageMessage(final String noteurl, final Message message, byte[] image, final OnUpLoadDataCallback<Void> callback){
+        final DatabaseReference ref=firebaseDatabase.getReference();
+        StorageReference sef=firebaseStorage.getReference();
+        final String key=ref.child("note/"+noteurl+"/message").push().getKey();
+        sef.child("note/"+noteurl+"/message/"+key).putBytes(image).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                message.setimageurl(taskSnapshot.getDownloadUrl().toString());
+                ref.child("note/"+noteurl+"/message/"+key).setValue(message.toMap()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        callback.onSuccess(null);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        callback.onFailure();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                callback.onFailure();
+            }
+        });
+
+
     }
 
     public void checkNoteShareQualify(final String uid, final String url, final OnGetDataCallBack<Boolean> callBack){

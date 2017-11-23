@@ -1,5 +1,8 @@
 package com.example.ffes.flex_framwork.noteview.linknote.data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by user on 2017/11/20.
  */
@@ -40,5 +43,15 @@ public class Message {
 
     public void setMessage(String message){
         this.message = message;
+    }
+
+    public Map<String,Object> toMap(){
+        Map<String,Object> map=new HashMap<>();
+        map.put("uid",id);
+        map.put("message",message);
+        map.put("photo",imageurl);
+
+        return map;
+
     }
 }

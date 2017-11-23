@@ -39,9 +39,13 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
-                    android:text="這是我做的筆記希望大家喜歡!"
                     android:textColor="@color/white"
                     android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/photo_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </android.support.v7.widget.CardView>
         </LinearLayout>
@@ -52,7 +56,7 @@
             android:layout_height="45dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="top"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp" />
     </LinearLayout>

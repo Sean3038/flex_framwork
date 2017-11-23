@@ -84,13 +84,12 @@ public class AccountFragment extends BaseFragment{
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                auth.revoke();
-                                getActivity().finish();
+
                             }
                         })
                         .setPositiveButton("確認", new DialogInterface.OnClickListener() {
                             @Override public void onClick(DialogInterface dialog, int which) {
-                                getActivity().finish();
+                                auth.revoke();
                             } }).create() .show();
             }
         });
