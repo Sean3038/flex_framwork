@@ -69,6 +69,7 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
                 .enableAutoManage(LoginActivity.this /* FragmentActivity */, LoginActivity.this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+        mGoogleApiClient.connect();
 
         auth = FirebaseAuth.getInstance();
     }
@@ -214,8 +215,9 @@ public class LoginActivity extends BaseActivity implements GoogleApiClient.OnCon
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
-            mGoogleApiClient.clearDefaultAccountAndReconnect();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            mGoogleApiClient.clearDefaultAccountAndReconnect();
+
             if (result.isSuccess()) {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
