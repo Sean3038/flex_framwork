@@ -55,7 +55,7 @@ public class SelfSharedNoteAdapter extends RecyclerView.Adapter<SelfSharedNoteAd
             look=(TextView)itemView.findViewById(R.id.look);
             link=(TextView)itemView.findViewById(R.id.link);
             comment=(TextView)itemView.findViewById(R.id.message);
-            title=(TextView)itemView.findViewById(R.id.title);
+            title=(TextView)itemView.findViewById(R.id.title_content);
             name=(TextView)itemView.findViewById(R.id.person_account);
             selfpicture=(ImageView)itemView.findViewById(R.id.selfpicture);
             notepicture=(ImageView)itemView.findViewById(R.id.note_picture);

@@ -24,6 +24,6 @@ public interface NoteBrowserContract {
         void setTitle(String title);
     }
     interface Presenter{
-        void loadNote(String noteurl);
+        void loadNote(String uid,String noteurl);
     }
 }

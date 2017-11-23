@@ -1255,11 +1255,14 @@ public class NoteRepository{
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Map<String,Object> map=new HashMap<>();
+                        SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMdd");
+                        Date currentTime = Calendar.getInstance().getTime();
+                        map.put("time",sDateFormat.format(currentTime).toString());
                         map.put("college",college);
                         map.put("dep",dep);
                         map.put("authorid",uid);
                         map.put("keylist",dataSnapshot.child(noteurl+"/keylist").getValue());
-                        map.put("title",dataSnapshot.child(noteurl+"/titledetail/title").getValue());
+                        map.put("title",dataSnapshot.child(noteurl+"/title").getValue());
                         ref.child("user/"+uid+"/personalspace/"+noteurl+"/isShare").setValue(true);
                         ref.child("note/"+noteurl).setValue(map);
                         callback.onSuccess(null);

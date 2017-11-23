@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">flex_framwork</string>
+    <string name="app_name">FLEX</string>
 
     <string-array name="College">
         <item>管理學院</item>
@@ -9,7 +9,7 @@
     </string-array>
 
     <string-array name="Management">
-        <item>財物金融系</item>
+        <item>財務金融系</item>
         <item>資訊管理系</item>
         <item>企業管理系</item>
         <item>工業與工程管理系</item>

@@ -34,10 +34,10 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
     }
 
     @Override
-    public void loadNote(final String noteUrl) {
+    public void loadNote(final String uid,final String noteUrl) {
         view.showMessageProgress("讀取筆記資料");
         final int[] c = {0};
-        model.getPages(authRepository.getCurrentId(),noteUrl, new OnGetDataCallBack<List<Page>>() {
+        model.getPages(uid,noteUrl, new OnGetDataCallBack<List<Page>>() {
             @Override
             public void onSuccess(List<Page> data) {
                 pageModel.addPage(data);
@@ -51,7 +51,7 @@ public class NoteBrowserPresenter implements NoteBrowserContract.Presenter{
 
             }
         });
-        model.getNoteName(authRepository.getCurrentId(),noteUrl, new OnUpLoadDataCallback<String>() {
+        model.getNoteName(uid,noteUrl, new OnUpLoadDataCallback<String>() {
             @Override
             public void onSuccess(String s) {
                 view.setTitle(s);

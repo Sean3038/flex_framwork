@@ -64,9 +64,11 @@ public class NoteBrowserActivity extends BaseActivity implements NoteBrowserCont
         if(bundle!=null){
             noteurl=bundle.getString(URL_KEY);
             uid=bundle.getString(UID_KEY);
+            Log.d("TAG","noteurl "+noteurl +" uid "+ uid);
         }
+
         noteBrowserPresenter=new NoteBrowserPresenter(this,pageFilterStateModel,new NoteRepository(FirebaseDatabase.getInstance(), FirebaseStorage.getInstance()),new AuthRepository(FirebaseAuth.getInstance(),FirebaseDatabase.getInstance()));
-        noteBrowserPresenter.loadNote(noteurl);
+        noteBrowserPresenter.loadNote(uid,noteurl);
     }
 
     @Override
