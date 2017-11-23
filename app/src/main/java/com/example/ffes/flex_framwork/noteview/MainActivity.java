@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     AccountViewPager viewPager;
     MenuItem prevMenuItem;
+
     private static final String TAG = "Account";
 
     FirebaseAuth auth;

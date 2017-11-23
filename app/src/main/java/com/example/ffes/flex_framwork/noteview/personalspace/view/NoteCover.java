@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -112,10 +113,11 @@ public class NoteCover extends BaseActivity implements CoverAdapter.OnCoverSelec
         context.startActivity(intent);
     }
 
-    public static void newNoteBook(Activity activity,int requestcode) {
+    public static void newNoteBook(Fragment fragment, int requestcode) {
         Intent intent = new Intent();
-        intent.setClass(activity, NoteCover.class);
-        activity.startActivityForResult(intent,requestcode);
+        intent.setClass(fragment.getContext(), NoteCover.class);
+        fragment.startActivityForResult(intent,requestcode);
+
     }
 
     private void initUI(){
@@ -281,7 +283,6 @@ public class NoteCover extends BaseActivity implements CoverAdapter.OnCoverSelec
 
             }
         });
-
     }
 
     @Override

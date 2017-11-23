@@ -86,7 +86,7 @@ public class NoteBookFragment extends Fragment implements NoteBookAdapter.OnAddN
 
     @Override
     public void onAdd() {
-        NoteCover.newNoteBook(getActivity(),REQUEST_NOTEBOOK);
+        NoteCover.newNoteBook(this,REQUEST_NOTEBOOK);
     }
 }
 

@@ -129,6 +129,7 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
                     public void onFailure() {
 
                     }
+
                 });
                 view.hidenotify();
             }
@@ -172,21 +173,24 @@ public class NoteEidtorPresenter implements NoteEditorContract.Presenter{
         view.showprogress("儲存筆記");
         final Map<String,Object> map=stateModel.toMap();
         model.updateNoteContent(authRepository.getCurrentId(),noteUrl, (Map<String, Object>) map.get("page"), new OnUpLoadDataCallback() {
+
             @Override
             public void onSuccess(Object o) {
                 model.updateKeyWord(authRepository.getCurrentId(),noteUrl, (Map<String, Object>) map.get("key"));
                 model.updateTitleDetial(authRepository.getCurrentId(),noteUrl, titleDetailStateModel.getTitleDetail(), new OnUpLoadDataCallback() {
+
                     @Override
                     public void onSuccess(Object o) {
                         view.closeprogress();
                         view.end();
                     }
+
                     @Override
                     public void onFailure() {
 
                         }
                     });
-                }
+            }
             @Override
             public void onFailure() {
             }

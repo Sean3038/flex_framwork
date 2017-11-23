@@ -42,6 +42,7 @@ import java.util.Map;
 
 import static com.example.ffes.flex_framwork.R.id.cancel_action;
 import static com.example.ffes.flex_framwork.R.id.child;
+import static com.example.ffes.flex_framwork.R.id.keylist;
 
 /**
  * Created by Ffes on 2017/8/27.
@@ -1043,10 +1044,23 @@ public class NoteRepository{
         });
     }
 
-    public void updateTitleDetial(String uid,String url, TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
-        DatabaseReference ref=firebaseDatabase.getReference();
+    public void updateTitleDetial(String uid, final String url, final TitleDetail titleDetail, final OnUpLoadDataCallback callback) {
+        final DatabaseReference ref=firebaseDatabase.getReference();
         ref.child("user/"+uid+"/personalspace/"+url+"/title").setValue(titleDetail.getTitle());
         ref.child("user/"+uid+"/personalspace/"+url+"/color").setValue(titleDetail.getColor());
+        ref.child("user/"+uid+"/personalspace/"+url+"/isShare").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue(Boolean.class)==true){
+                    ref.child("note/"+url+"/title").setValue(titleDetail.getTitle());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         callback.onSuccess(null);
     }
 
@@ -1176,9 +1190,9 @@ public class NoteRepository{
     public void deleteNote(String uid,String url){
         DatabaseReference ref=firebaseDatabase.getReference();
         StorageReference sef=firebaseStorage.getReference();
-        sef.child("user/"+uid+"/personalspace/"+url).delete();
+        //sef.child("user/"+uid+"/personalspace/"+url).delete();
         ref.child("user/"+uid+"/personalspace/"+url).removeValue();
-        ref.child("note/"+url).removeValue();
+        //ref.child("note/"+url).removeValue();
     }
 
     public void deleteNoteFromNoteBook(final String uid, final String bookurl, String url){

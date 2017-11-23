@@ -76,7 +76,9 @@ public class NoteBook_Note extends BaseActivity implements ShareNoteDialog.OnCli
         recyclerView.setHasFixedSize(true);
     }
     private void prepareNote(){
+
         noteRepository.getNoteBook(authRepository.getCurrentId(), bookurl, new OnGetDataCallBack<Notebook>() {
+
             @Override
             public void onSuccess(Notebook data) {
                 notebookname.setText(data.getTitle());
@@ -87,6 +89,7 @@ public class NoteBook_Note extends BaseActivity implements ShareNoteDialog.OnCli
 
             }
         });
+
         noteRepository.getPersonalNoteFromNotebook(authRepository.getCurrentId(),bookurl, new OnGetDataCallBack<List<PersonalNote>>() {
             @Override
             public void onSuccess(List<PersonalNote> data) {
@@ -98,6 +101,7 @@ public class NoteBook_Note extends BaseActivity implements ShareNoteDialog.OnCli
 
             }
         });
+
     }
 
     public static void startAction(Context context,String bookurl){
