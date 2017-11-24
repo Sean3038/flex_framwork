@@ -1372,6 +1372,7 @@ public class NoteRepository{
                                     note.setComment((int) child.child("message").getChildrenCount());
                                     note.setLook((int) child.child("look").getChildrenCount());
                                     note.setLink((int) child.child("link").getChildrenCount());
+                                    note.setId(child.getKey());
                                     //尋找筆記資料
                                     ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
@@ -1424,6 +1425,7 @@ public class NoteRepository{
                             note.setComment((int) child.child("message").getChildrenCount());
                             note.setLook((int) child.child("look").getChildrenCount());
                             note.setLink((int) child.child("link").getChildrenCount());
+                            note.setId(child.getKey());
                             //尋找筆記資料
                             ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -1479,6 +1481,7 @@ public class NoteRepository{
                                 note.setComment((int) child.child("message").getChildrenCount());
                                 note.setLook((int) child.child("look").getChildrenCount());
                                 note.setLink((int) child.child("link").getChildrenCount());
+                                note.setId(child.getKey());
                                 //尋找筆記資料
                                 ref.child("user/" + child.child("authorid").getValue(String.class) + "/personalspace/" + child.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
