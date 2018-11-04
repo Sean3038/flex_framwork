@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Ffes\AndroidStudioProjects\flex_framwork\app\app.iml" filepath="C:\Users\Ffes\AndroidStudioProjects\flex_framwork\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/flex_framwork.iml" filepath="$PROJECT_DIR$/flex_framwork.iml" />
+      <module fileurl="file://C:\Users\Ffes\AndroidStudioProjects\flex_framwork\flex_framwork.iml" filepath="C:\Users\Ffes\AndroidStudioProjects\flex_framwork\flex_framwork.iml" />
     </modules>
   </component>
 </project>
